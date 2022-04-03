@@ -20,6 +20,7 @@
               <li class="pr-2"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
           </ul>
+          <%= render "_user_menu.html", assigns %>
         </nav>
     </header>
     <%= @inner_content %>
