@@ -9,20 +9,19 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col">
     <header class="bg-blue-600 p-2 text-white text-sm">
         <nav class="flex">
           <div class="flex flex-1">Galley</div>
           <ul class="flex">
-            <li class="pr-2"><a href="https://hexdocs.pm/phoenix/overview.html">Login</a></li>
-            <li class="pr-2"><a href="https://hexdocs.pm/phoenix/overview.html">About</a></li>
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li class="pr-2"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
+              <li class="pr-2"><%= link "Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
+
+            <%= render "_user_menu.html", assigns %>
           </ul>
-          <%= render "_user_menu.html", assigns %>
         </nav>
     </header>
-    <%= @inner_content %>
+      <%= @inner_content %>
   </body>
 </html>

@@ -5,6 +5,14 @@
 @tailwind utilities;
 
 
+@layer components{
+  .btn {
+    @apply bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded self-start text-sm;
+  }
+
+}
+
+
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;
