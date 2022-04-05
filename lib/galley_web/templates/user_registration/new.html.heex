@@ -1,28 +1,31 @@
-<h1>Register</h1>
+<div class="w-full bg-gray-200 flex justify-center items-center flex-1 flex-col lg:pb-48">
+<div class="w-full md:w-3/5 lg:w-2/5 px-4 ">
+  <h1 class="text-xl mb-4 flex-start font-bold">Register on Galley</h1>
 
-<.form let={f} for={@changeset} action={Routes.user_registration_path(@conn, :create)}>
+  <.form let={f} for={@changeset} action={Routes.user_registration_path(@conn, :create)}>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <div class="bg-red">
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
-  <%= error_tag f, :email %>
+  <div class="flex flex-col bg-white border drop-shadow-lg rounded p-4 border-gray-500">
+    <%= label f, :email, class: "pb-2 text-sm" %>
+    <%= email_input f, :email, required: true, class: "border rounded mb-2 p-1 px-2" %>
+    <%= error_tag f, :email %>
 
-  <%= label f, :password %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
+    <%= label f, :password, class: "pb-2 text-sm" %>
+    <%= password_input f, :password, required: true, class: "border rounded mb-2 p-1 px-2" %>
+    <%= error_tag f, :password %>
 
-  <div>
-    <%= submit "Register" %>
+      <%= submit "Register", class: "mt-2 btn" %>
   </div>
-  </div>
-</.form>
+  </.form>
 
-<p>
-  <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
-  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
-</p>
+  <p class="mt-2 text-sm">
+    <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
+    <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+  </p>
+
+</div>
+</div>
