@@ -78,6 +78,16 @@ defmodule GalleyWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+
+    # recipes
+    # get "/recipe/new", RecipeController, :new
+    live "/recipes", RecipeLive.Index, :index
+    live "/recipes/new", RecipeLive.Index, :new
+    live "/recipes/:id/edit", RecipeLive.Index, :edit
+
+    live "/recipes/:id", RecipeLive.Show, :show
+    live "/recipes/:id/show/edit", RecipeLive.Show, :edit
+
   end
 
   scope "/", GalleyWeb do

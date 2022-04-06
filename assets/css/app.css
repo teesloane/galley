@@ -6,6 +6,11 @@
 
 
 @layer components{
+  input {
+    @apply border rounded mb-2 p-0 px-2;
+  }
+
+
   .btn {
     @apply bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded self-start text-sm;
   }

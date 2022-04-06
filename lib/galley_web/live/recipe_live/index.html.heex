@@ -1,0 +1,51 @@
+<h1>Listing Recipes</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.recipe_index_path(@socket, :index)}>
+    <.live_component
+      module={GalleyWeb.RecipeLive.FormComponent}
+      id={@recipe.id || :new}
+      title={@page_title}
+      action={@live_action}
+      recipe={@recipe}
+      return_to={Routes.recipe_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Source</th>
+      <th>Author</th>
+      <th>Cook time</th>
+      <th>Prep time</th>
+      <th>Total time</th>
+      <th>Yields</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="recipes">
+    <%= for recipe <- @recipes do %>
+      <tr id={"recipe-#{recipe.id}"}>
+        <td><%= recipe.title %></td>
+        <td><%= recipe.source %></td>
+        <td><%= recipe.author %></td>
+        <td><%= recipe.cook_time %></td>
+        <td><%= recipe.prep_time %></td>
+        <td><%= recipe.total_time %></td>
+        <td><%= recipe.yields %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.recipe_show_path(@socket, :show, recipe) %></span>
+          <span><%= live_patch "Edit", to: Routes.recipe_index_path(@socket, :edit, recipe) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: recipe.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Recipe", to: Routes.recipe_index_path(@socket, :new) %></span>
