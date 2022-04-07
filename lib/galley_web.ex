@@ -45,7 +45,8 @@ defmodule GalleyWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {GalleyWeb.LayoutView, "live.html"}
+        layout: {GalleyWeb.LayoutView, "live.html"},
+        container: {:div, class: "flex w-full"}
 
       unquote(view_helpers())
     end

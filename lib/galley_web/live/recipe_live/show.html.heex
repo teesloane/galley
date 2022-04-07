@@ -1,5 +1,3 @@
-<h1>Show Recipe</h1>
-
 <%= if @live_action in [:edit] do %>
   <.modal return_to={Routes.recipe_show_path(@socket, :show, @recipe)}>
     <.live_component
@@ -13,44 +11,19 @@
   </.modal>
 <% end %>
 
-<ul>
+<div class="container mx-auto py-4 px-8">
+  <div class="bg-img bg-gray-300 h-96 w-full my-8" />
+  <h1 class="text-3xl pb-4"> <%= @recipe.title %></h1>
 
-  <li>
-    <strong>Tite:</strong>
-    <%= @recipe.title %>
-  </li>
+  <div id="info-row" class="flex justify-between pb-2 border-b-2 border-neutral-900 ">
+    <span>Yields: <%= @recipe.yields %></span>
+    <span>By: <%= String.capitalize(@recipe.author) %></span>
+    <%= if @recipe.source do %>
+      <a href={@recipe.source}>Source</a>
+    <% end %>
+    <span>Time: <%= @recipe.total_time %></span>
+  </div>
 
-  <li>
-    <strong>Source:</strong>
-    <%= @recipe.source %>
-  </li>
+</div>
 
-  <li>
-    <strong>Author:</strong>
-    <%= @recipe.author %>
-  </li>
-
-  <li>
-    <strong>Cook time:</strong>
-    <%= @recipe.cook_time %>
-  </li>
-
-  <li>
-    <strong>Prep time:</strong>
-    <%= @recipe.prep_time %>
-  </li>
-
-  <li>
-    <strong>Total time:</strong>
-    <%= @recipe.total_time %>
-  </li>
-
-  <li>
-    <strong>Yields:</strong>
-    <%= @recipe.yields %>
-  </li>
-
-</ul>
-
-<span><%= live_patch "Edit", to: Routes.recipe_show_path(@socket, :edit, @recipe), class: "btn" %></span> |
-<span><%= live_redirect "Back", to: Routes.recipe_index_path(@socket, :index) %></span>
+<span><%= live_patch "Edit this recipe", to: Routes.recipe_show_path(@socket, :edit, @recipe), class: "btn-clear fixed left-0 bottom-0 m-4" %></span> |

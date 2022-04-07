@@ -15,6 +15,11 @@
     @apply bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded self-start text-sm;
   }
 
+  .btn-clear {
+    @apply btn;
+    @apply bg-white text-black hover:bg-gray-50 border border-black hover:shadow-sm;
+  }
+
 }
 
 
