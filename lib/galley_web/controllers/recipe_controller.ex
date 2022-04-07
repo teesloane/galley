@@ -2,7 +2,8 @@ defmodule GalleyWeb.RecipeController do
   use GalleyWeb, :controller
 
   def new(conn, _params) do
-    IO.inspect(_params)
+
+
     render(conn, "new.html")
   end
 
