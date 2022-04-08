@@ -63,7 +63,7 @@ defmodule GalleyWeb.RecipeLiveTest do
         |> render_submit()
         |> follow_redirect(conn, Routes.recipe_index_path(conn, :index))
 
-      assert html =~ "Recipe updated successfully"
+      assert html =~ "Recipe updated successfully!"
       assert html =~ "some updated author"
     end
 
@@ -103,7 +103,7 @@ defmodule GalleyWeb.RecipeLiveTest do
         |> render_submit()
         |> follow_redirect(conn, Routes.recipe_show_path(conn, :show, recipe))
 
-      assert html =~ "Recipe updated successfully"
+      assert html =~ "Recipe updated successfully!"
       assert html =~ "some updated author"
     end
   end

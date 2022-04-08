@@ -25,25 +25,16 @@
 
 /* Alerts and form errors used by phx.new */
 .alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  @apply p-2 fixed top-0 right-0 m-4 text-sm border shadow-sm cursor-pointer rounded-sm text-slate-800;
 }
 .alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
+  @apply alert bg-green-100 border-green-400;
 }
 .alert-warning {
-  color: #8a6d3b;
-  background-color: #fcf8e3;
-  border-color: #faebcc;
+  @apply alert bg-amber-100 border-amber-300;
 }
 .alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
+  @apply alert bg-red-100 border-red-300;
 }
 .alert p {
   margin-bottom: 0;

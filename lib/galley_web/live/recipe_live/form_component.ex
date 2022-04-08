@@ -32,7 +32,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       {:ok, _recipe} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Recipe updated successfully")
+         |> put_flash(:info, "Recipe updated successfully!")
          |> push_redirect(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
