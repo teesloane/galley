@@ -82,8 +82,8 @@ defmodule GalleyWeb.Router do
     # recipes
     # get "/recipe/new", RecipeController, :new
     live "/recipes", RecipeLive.Index, :index
-    live "/recipes/new", RecipeLive.Index, :new
-    live "/recipes/:id/edit", RecipeLive.Index, :edit
+    live "/recipes/new", RecipeLive.Upsert, :new
+    live "/recipes/:id/edit", RecipeLive.Upsert, :edit
 
     live "/recipes/:id", RecipeLive.Show, :show
     live "/recipes/:id/show/edit", RecipeLive.Show, :edit

@@ -1,0 +1,11 @@
+  <.live_component
+    module={GalleyWeb.RecipeLive.FormComponent}
+    id={@recipe.id || :new}
+    title={@page_title}
+    action={@live_action}
+    formState={@formState}
+    recipe={@recipe}
+    return_to={Routes.recipe_index_path(@socket, :index)}
+  />
+
+  <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
