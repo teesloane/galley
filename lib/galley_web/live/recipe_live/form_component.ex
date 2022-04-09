@@ -2,6 +2,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   use GalleyWeb, :live_component
 
   alias Galley.Recipes
+  alias Galley.Recipes.Recipe
+  alias Galley.Recipes.RecipeStep
 
   @impl true
   def update(%{recipe: recipe} = assigns, socket) do
@@ -26,6 +28,31 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def handle_event("save", %{"recipe" => recipe_params}, socket) do
     save_recipe(socket, socket.assigns.action, recipe_params)
   end
+
+  def handle_event("add-instruction", _val, socket) do
+    existing_steps = Map.get(
+      socket.assigns.changeset.changes, :steps, socket.assigns.recipe.steps
+    )
+
+    IO.inspect(existing_steps)
+
+    steps =
+      existing_steps
+      |> Enum.concat([%RecipeStep{id: "foo"}])
+    IO.puts("--------------------------------")
+    IO.inspect(steps)
+    IO.inspect(socket.assigns.changeset)
+
+      changeset =
+        socket.assigns.changeset
+        # |> Ecto.Changeset.put_assoc(:steps, steps)
+
+      {:noreply, assign(socket, changeset: changeset)}
+
+  end
+
+
+
 
   defp save_recipe(socket, :edit, recipe_params) do
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
@@ -52,4 +79,5 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
 end

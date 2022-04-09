@@ -1,9 +1,9 @@
 <div>
-  <h2 class="mb-4 text-2xl"><%= @title %></h2>
-  <%= @formState  %>
+    <h2 class="mb-4 text-2xl"><%= @title %></h2>
+    <%= @formState  %>
 
 
-  <.form
+    <.form
     let={f}
     for={@changeset}
     id="recipe-form"
@@ -12,37 +12,50 @@
     phx-change="validate"
     phx-submit="save">
 
-      <%= label f, :title %>
-      <%= text_input f, :title %>
-      <%= error_tag f, :title %>
+    <%= label f, :title %>
+    <%= text_input f, :title %>
+    <%= error_tag f, :title %>
 
-      <%= label f, :source %>
-      <%= text_input f, :source %>
-      <%= error_tag f, :source %>
+    <%= label f, :source %>
+    <%= text_input f, :source %>
+    <%= error_tag f, :source %>
 
-      <%= label f, :author %>
-      <%= text_input f, :author %>
-      <%= error_tag f, :author %>
+    <%= label f, :author %>
+    <%= text_input f, :author %>
+    <%= error_tag f, :author %>
 
-      <%= label f, :cook_time %>
-      <%= text_input f, :cook_time %>
-      <%= error_tag f, :cook_time %>
+    <%= label f, :cook_time %>
+    <%= text_input f, :cook_time %>
+    <%= error_tag f, :cook_time %>
 
-      <%= label f, :prep_time %>
-      <%= text_input f, :prep_time %>
-      <%= error_tag f, :prep_time %>
+    <%= label f, :prep_time %>
+    <%= text_input f, :prep_time %>
+    <%= error_tag f, :prep_time %>
 
-      <%= label f, :total_time %>
-      <%= text_input f, :total_time %>
-      <%= error_tag f, :total_time %>
+    <%= label f, :total_time %>
+    <%= text_input f, :total_time %>
+    <%= error_tag f, :total_time %>
 
-      <%= label f, :yields %>
-      <%= text_input f, :yields %>
-      <%= error_tag f, :yields %>
+    <%= label f, :yields %>
+    <%= text_input f, :yields , phx_change: "add-instruction" %>
+    <%= error_tag f, :yields  %>
+
+    <%= inspect f.params, pretty: true %>
+
+    <!-- possible solution for getting steps working -->
+    <!-- https://github.com/tfwright/saitama/blob/master/lib/saitama_web/templates/timer/form.html.leex -->
+    <%= inputs_for f, :steps, fn fp -> %>
+        <%= text_input fp, :timer %>
+        <%= text_input fp, :instruction %>
+    <% end %>
+    <%#= text_input f, :email, phx_change: "email_changed", phx_target: @myself %>
+
+    <button class="btn" type="button" phx-click="add-instruction" phx-target={@myself} >Add instructionssss </button>
 
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>
   </.form>
+
 
 </div>
