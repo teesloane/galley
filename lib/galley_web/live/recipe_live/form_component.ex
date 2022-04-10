@@ -36,21 +36,13 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
     IO.inspect(existing_steps)
 
-    steps =
-      existing_steps
-      |> Enum.concat([%RecipeStep{id: "foo"}])
-    IO.puts("--------------------------------")
-    IO.inspect(steps)
-    IO.inspect(socket.assigns.changeset)
-
-      changeset =
-        socket.assigns.changeset
-        # |> Ecto.Changeset.put_assoc(:steps, steps)
-
-      {:noreply, assign(socket, changeset: changeset)}
+    steps = existing_steps |> Enum.concat([%RecipeStep{id: get_temp_id()}])
+    changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
+    {:noreply, assign(socket, changeset: changeset)}
 
   end
 
+  defp get_temp_id, do: :crypto.strong_rand_bytes(5) |> Base.url_encode64 |> binary_part(0, 5)
 
 
 

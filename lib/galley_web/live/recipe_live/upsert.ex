@@ -42,6 +42,10 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     {:noreply, update(socket, :formState, fn fS -> fS + 1 end)}
   end
 
+  def handle_event("form_move_backward", _val, socket) do
+    {:noreply, update(socket, :formState, fn fS -> fS - 1 end)}
+  end
+
   # def handle_event("add-instruction", val, socket) do
   #   IO.inspect(socket, pretty: true)
   #   # new_recipe = Kernel.put_in(socket, [:Recipe, :steps], %RecipeStep{timer: "", instruction: ""})
