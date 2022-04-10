@@ -4,9 +4,33 @@ defmodule GalleyWeb.RecipeLiveTest do
   import Phoenix.LiveViewTest
   import Galley.RecipesFixtures
 
-  @create_attrs %{author: "some author", cook_time: "some cook_time", prep_time: "some prep_time", source: "some source", title: "some title", total_time: "some total_time", yields: "some yields"}
-  @update_attrs %{author: "some updated author", cook_time: "some updated cook_time", prep_time: "some updated prep_time", source: "some updated source", title: "some updated title", total_time: "some updated total_time", yields: "some updated yields"}
-  @invalid_attrs %{author: nil, cook_time: nil, prep_time: nil, source: nil, title: nil, total_time: nil, yields: nil}
+  @create_attrs %{
+    author: "some author",
+    cook_time: "some cook_time",
+    prep_time: "some prep_time",
+    source: "some source",
+    title: "some title",
+    total_time: "some total_time",
+    yields: "some yields"
+  }
+  @update_attrs %{
+    author: "some updated author",
+    cook_time: "some updated cook_time",
+    prep_time: "some updated prep_time",
+    source: "some updated source",
+    title: "some updated title",
+    total_time: "some updated total_time",
+    yields: "some updated yields"
+  }
+  @invalid_attrs %{
+    author: nil,
+    cook_time: nil,
+    prep_time: nil,
+    source: nil,
+    title: nil,
+    total_time: nil,
+    yields: nil
+  }
 
   defp create_recipe(_) do
     recipe = recipe_fixture()

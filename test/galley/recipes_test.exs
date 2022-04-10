@@ -8,7 +8,15 @@ defmodule Galley.RecipesTest do
 
     import Galley.RecipesFixtures
 
-    @invalid_attrs %{author: nil, cook_time: nil, prep_time: nil, source: nil, title: nil, total_time: nil, yields: nil}
+    @invalid_attrs %{
+      author: nil,
+      cook_time: nil,
+      prep_time: nil,
+      source: nil,
+      title: nil,
+      total_time: nil,
+      yields: nil
+    }
 
     test "list_recipes/0 returns all recipes" do
       recipe = recipe_fixture()
@@ -21,7 +29,15 @@ defmodule Galley.RecipesTest do
     end
 
     test "create_recipe/1 with valid data creates a recipe" do
-      valid_attrs = %{author: "some author", cook_time: "some cook_time", prep_time: "some prep_time", source: "some source", title: "some title", total_time: "some total_time", yields: "some yields"}
+      valid_attrs = %{
+        author: "some author",
+        cook_time: "some cook_time",
+        prep_time: "some prep_time",
+        source: "some source",
+        title: "some title",
+        total_time: "some total_time",
+        yields: "some yields"
+      }
 
       assert {:ok, %Recipe{} = recipe} = Recipes.create_recipe(valid_attrs)
       assert recipe.author == "some author"
@@ -39,7 +55,16 @@ defmodule Galley.RecipesTest do
 
     test "update_recipe/2 with valid data updates the recipe" do
       recipe = recipe_fixture()
-      update_attrs = %{author: "some updated author", cook_time: "some updated cook_time", prep_time: "some updated prep_time", source: "some updated source", title: "some updated title", total_time: "some updated total_time", yields: "some updated yields"}
+
+      update_attrs = %{
+        author: "some updated author",
+        cook_time: "some updated cook_time",
+        prep_time: "some updated prep_time",
+        source: "some updated source",
+        title: "some updated title",
+        total_time: "some updated total_time",
+        yields: "some updated yields"
+      }
 
       assert {:ok, %Recipe{} = recipe} = Recipes.update_recipe(recipe, update_attrs)
       assert recipe.author == "some updated author"

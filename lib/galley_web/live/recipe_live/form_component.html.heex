@@ -1,63 +1,63 @@
 <div class="container mx-auto p-4 w-4/5" >
-    <h2 class="mb-4 text-2xl mt-4 mb-4  "><%= @title %></h2>
-    <.form
-    let={f}
-    for={@changeset}
-    id="recipe-form"
-    class="flex flex-col"
-    phx-target={@myself}
-    phx-change="validate"
-    phx-submit="save">
+  <h2 class="mb-4 text-2xl mt-4 mb-4  "><%= @title %></h2>
+  <.form
+  let={f}
+  for={@changeset}
+  id="recipe-form"
+  class="flex flex-col"
+  phx-target={@myself}
+  phx-change="validate"
+  phx-submit="save">
 
-      <div class="flex flex-col md:flex-row justify-between">
-        <div class="flex flex-col w-full">
-          <%= label f, :title %>
-          <%= text_input f, :title %>
-          <%= error_tag f, :title %>
-       </div>
-
-        <div class="flex flex-col w-full">
-          <%= label f, :source %>
-          <%= text_input f, :source %>
-          <%= error_tag f, :source %>
-        </div>
-
-      </div>
-
-      <%= label f, :author %>
-      <%= text_input f, :author %>
-      <%= error_tag f, :author %>
-
-      <%= label f, :total_time %>
-      <div class="flex">
-        <%= time_select f, :total_time %>
-      </div>
-      <%= error_tag f, :total_time %>
-
-      <%= label f, :yields %>
-      <%= text_input f, :yields , phx_change: "add-instruction" %>
-      <%= error_tag f, :yields  %>
-
-
-    <%= if @formState == 1 do %>
-        <div class="flex flex-col">
-          <%= inputs_for f, :steps, fn fp -> %>
-            <%= text_input fp, :timer %>
-            <%= text_input fp, :instruction %>
-          <% end %>
-
-          <button class="btn" type="button" phx-click="add-instruction" phx-target={@myself} >
-            Add Instructions
-          </button>
-        </div>
-    <%=  end %>
-
-    <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
-    <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>
-
-    <div>
-      <%= submit "Save", phx_disable_with: "Saving..." %>
+  <div class="flex flex-col md:flex-row justify-between">
+    <div class="flex flex-col w-full">
+      <%= label f, :title %>
+      <%= text_input f, :title %>
+      <%= error_tag f, :title %>
     </div>
+
+    <div class="flex flex-col w-full">
+      <%= label f, :source %>
+      <%= text_input f, :source %>
+      <%= error_tag f, :source %>
+    </div>
+
+  </div>
+
+  <%= label f, :author %>
+  <%= text_input f, :author %>
+  <%= error_tag f, :author %>
+
+  <%= label f, :total_time %>
+  <div class="flex">
+    <%= time_select f, :total_time %>
+  </div>
+  <%= error_tag f, :total_time %>
+
+  <%= label f, :yields %>
+  <%= text_input f, :yields , phx_change: "add-instruction" %>
+  <%= error_tag f, :yields  %>
+
+
+  <%= if @formState == 1 do %>
+    <div class="flex flex-col">
+      <%= inputs_for f, :steps, fn fp -> %>
+        <%= text_input fp, :timer %>
+        <%= text_input fp, :instruction %>
+      <% end %>
+
+      <button class="btn" type="button" phx-click="add-instruction" phx-target={@myself} >
+        Add Instructions
+      </button>
+    </div>
+  <%=  end %>
+
+  <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
+  <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>
+
+  <div>
+    <%= submit "Save", phx_disable_with: "Saving..." %>
+  </div>
   </.form>
 
 

@@ -35,6 +35,6 @@ defmodule Galley.Recipes.RecipeStep do
 
   def changeset(step, attrs) do
     step
-    |>cast(attrs, [:timer, :instruction])
+    |> cast(attrs, [:timer, :instruction])
   end
 end

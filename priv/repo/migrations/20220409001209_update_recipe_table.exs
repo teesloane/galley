@@ -5,6 +5,5 @@ defmodule Galley.Repo.Migrations.UpdateRecipeTable do
     alter table(:recipes) do
       add :steps, {:array, :map}, default: []
     end
-
   end
 end

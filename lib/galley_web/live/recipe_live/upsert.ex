@@ -10,6 +10,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     state = %{
       formState: 0
     }
+
     {:ok, assign(socket, state)}
   end
 
@@ -23,7 +24,6 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     socket
     |> assign(:page_title, "Edit Recipe")
     |> assign(:recipe, Recipes.get_recipe!(id))
-
   end
 
   defp apply_action(socket, :new, _params) do
@@ -31,10 +31,11 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     |> assign(:page_title, "New Recipe")
     # we have to prefill the steps with the embedded schema
     |> assign(:recipe, %Recipe{
-          steps: [
-            %RecipeStep{id: 1, timer: "fo", instruction: "jo"},
-            %RecipeStep{id: 2, timer: "fo", instruction: "joooo"}
-          ]})
+      steps: [
+        %RecipeStep{id: 1, timer: "fo", instruction: "jo"},
+        %RecipeStep{id: 2, timer: "fo", instruction: "joooo"}
+      ]
+    })
   end
 
   @impl true
@@ -61,6 +62,4 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   #   {:noreply, socket}
 
   # end
-
-
 end

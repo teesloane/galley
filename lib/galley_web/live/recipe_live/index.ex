@@ -10,8 +10,8 @@ defmodule GalleyWeb.RecipeLive.Index do
       recipes: list_recipes(),
       formState: 0
     }
-    {:ok, assign(socket, state)}
 
+    {:ok, assign(socket, state)}
   end
 
   @impl true
