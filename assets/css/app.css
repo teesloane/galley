@@ -1,13 +1,23 @@
 /* This file is for your main application CSS */
 
+@import './recipe_form';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
-@layer components{
+@layer components {
   input {
     @apply border rounded mb-2 p-0 px-2;
+  }
+
+  input::placeholder {
+    @apply text-sm;
+  }
+
+  .recipe-form-label {
+    @apply text-gray-700 text-sm;
   }
 
 
@@ -49,7 +59,7 @@
 .invalid-feedback {
   color: #a94442;
   display: block;
-  margin: 0rem 0 2rem;
+  /* margin: 0rem 0 2rem; */
   font-size: 12px;
 }
 

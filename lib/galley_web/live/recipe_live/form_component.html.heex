@@ -1,4 +1,4 @@
-<div class="container mx-auto p-4 w-4/5" >
+<div class="container mx-auto p-4 w-3/5" >
   <h2 class="mb-4 text-2xl mt-4 mb-4  "><%= @title %></h2>
   <.form
   let={f}
@@ -9,34 +9,48 @@
   phx-change="validate"
   phx-submit="save">
 
-  <div class="flex flex-col md:flex-row justify-between">
+  <div class="grid grid-cols-2 gap-3 ">
     <div class="flex flex-col w-full">
-      <%= label f, :title %>
+      <span class="flex items-center pb-1">
+        <%= label f, :title, class: "recipe-form-label" %>
+        <span class="ml-2"><%= error_tag(f, :title) %></span>
+      </span>
       <%= text_input f, :title %>
-      <%= error_tag f, :title %>
     </div>
 
     <div class="flex flex-col w-full">
-      <%= label f, :source %>
-      <%= text_input f, :source %>
-      <%= error_tag f, :source %>
+      <span class="flex items-center justify-between pb-1">
+        <%= label f, :source, "Source", class: "recipe-form-label"  %>
+        <%= error_tag f, :source %>
+      </span>
+      <%= text_input f, :source, placeholder: "Link to recipe (optional)" %>
     </div>
 
+    <div class="flex flex-col w-full">
+      <span class="flex items-center justify-between pb-1">
+        <%= label f, :author, class: "recipe-form-label" %>
+      </span>
+      <%= text_input f, :author, placeholder: "Who wrote the recipe (optional)" %>
+    </div>
+
+    <div class="flex flex-col w-full">
+      <span class="flex items-center justify-between pb-1">
+        <%= label f, :total_time, "Total time (hh:mm)", class: "recipe-form-label" %>
+        <%= error_tag f, :total_time %>
+      </span>
+
+      <div class="recipe-form-time-select">
+        <%= time_select f, :total_time, hour: [options: 0..10], class: "" %>
+      </div>
+    </div>
+
+    <div class="flex flex-col w-full">
+      <span class="flex items-center justify-between pb-1">
+        <%= label f, :yields, class: "recipe-form-label" %>
+      </span>
+      <%= text_input f, :yield, placeholder: "ex: 2 Servings; 12 Miffins; 2 Milkshakes, etc" %>
+    </div>
   </div>
-
-  <%= label f, :author %>
-  <%= text_input f, :author %>
-  <%= error_tag f, :author %>
-
-  <%= label f, :total_time %>
-  <div class="flex">
-    <%= time_select f, :total_time %>
-  </div>
-  <%= error_tag f, :total_time %>
-
-  <%= label f, :yields %>
-  <%= text_input f, :yields , phx_change: "add-instruction" %>
-  <%= error_tag f, :yields  %>
 
 
   <%= if @formState == 1 do %>
