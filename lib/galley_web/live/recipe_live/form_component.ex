@@ -60,7 +60,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     IO.inspect(recipe_params)
     case Recipes.create_recipe(recipe_params) do
       {:ok, _recipe} ->
-        IO.puts("it worked>>>>>>>>>>>>>")
         {:noreply,
          socket
          |> put_flash(:info, "Recipe created successfully")

@@ -55,13 +55,15 @@
   </div>
 
 
-  <section class="mt-4">
-    <h2 class="text-2xl mb-4">Instructions</h2>
+  <section class="mt-8">
+    <h2 class="text-2xl mb-8">Instructions</h2>
 
     <div class="flex flex-col">
       <%= inputs_for f, :steps, fn fp -> %>
-        <%= text_input fp, :timer %>
-        <%= text_input fp, :instruction %>
+        <div class="flex mb-4">
+        <%= text_input fp, :timer, class: "w-32 self-start" %>
+        <%= textarea fp, :instruction, class: "flex flex-1 ml-2"  %>
+        </div>
       <% end %>
     </div>
 
