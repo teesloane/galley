@@ -17,11 +17,9 @@
 
   <div id="info-row" class="flex justify-between pb-2 border-b-2 border-neutral-900 ">
     <span>Yields: <%= @recipe.yields %></span>
-    <span>By: <%= String.capitalize(@recipe.author) %></span>
     <%= if @recipe.source do %>
       <a href={@recipe.source}>Source</a>
     <% end %>
-    <span>Time: <%= @recipe.total_time %></span>
   </div>
 
   <section class="my-8 flex">

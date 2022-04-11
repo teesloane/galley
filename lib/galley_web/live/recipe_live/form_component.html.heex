@@ -9,11 +9,13 @@
   phx-change="validate"
   phx-submit="save">
 
-  <div class="grid grid-cols-2 gap-3 ">
+  <%= inspect @changeset %>
+
+    <div class="grid grid-cols-2 gap-3 ">
     <div class="flex flex-col w-full">
-      <span class="flex items-center pb-1">
+      <span class="flex items-center pb-1 justify-between">
         <%= label f, :title, class: "recipe-form-label" %>
-        <span class="ml-2"><%= error_tag(f, :title) %></span>
+        <%= error_tag(f, :title) %>
       </span>
       <%= text_input f, :title %>
     </div>
@@ -26,45 +28,47 @@
       <%= text_input f, :source, placeholder: "Link to recipe (optional)" %>
     </div>
 
-    <div class="flex flex-col w-full">
-      <span class="flex items-center justify-between pb-1">
-        <%= label f, :author, class: "recipe-form-label" %>
-      </span>
-      <%= text_input f, :author, placeholder: "Who wrote the recipe (optional)" %>
-    </div>
-
-    <div class="flex flex-col w-full">
-      <span class="flex items-center justify-between pb-1">
-        <%= label f, :total_time, "Total time (hh:mm)", class: "recipe-form-label" %>
-        <%= error_tag f, :total_time %>
-      </span>
-
-      <div class="recipe-form-time-select">
-        <%= time_select f, :total_time, hour: [options: 0..10], class: "" %>
-      </div>
-    </div>
 
     <div class="flex flex-col w-full">
       <span class="flex items-center justify-between pb-1">
         <%= label f, :yields, class: "recipe-form-label" %>
+        <%= error_tag f, :yields %>
       </span>
-      <%= text_input f, :yield, placeholder: "ex: 2 Servings; 12 Miffins; 2 Milkshakes, etc" %>
+      <%= text_input f, :yields, placeholder: "ex: 2 Servings; 12 Miffins; 4 Milkshakes, etc" %>
     </div>
+
+    <div class="flex flex-col w-full">
+      <span class="flex items-center justify-between pb-1">
+        <%= label f, :time, "Total time (hh:mm)", class: "recipe-form-label" %>
+        <%= error_tag f, :time %>
+      </span>
+
+      <div class="flex">
+        <%= inputs_for f, :time, fn fp -> %>
+          <%=  select fp, :hour, 0..12, class: "border rounded bg-white w-16 mr-2 py-1" %>
+          <span> : </span>
+          <%=  select fp, :minute, 0..59, class: "border rounded bg-white w-16 ml-2 py-1" %>
+        <% end %>
+      </div>
+    </div>
+
   </div>
 
 
-  <%= if @formState == 1 do %>
+  <section class="mt-4">
+    <h2 class="text-2xl mb-4">Instructions</h2>
+
     <div class="flex flex-col">
       <%= inputs_for f, :steps, fn fp -> %>
         <%= text_input fp, :timer %>
         <%= text_input fp, :instruction %>
       <% end %>
+    </div>
 
       <button class="btn" type="button" phx-click="add-instruction" phx-target={@myself} >
         Add Instructions
       </button>
-    </div>
-  <% end %>
+  </section>
 
   <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
   <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>

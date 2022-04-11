@@ -14,7 +14,7 @@ defmodule Galley.RecipesTest do
       prep_time: nil,
       source: nil,
       title: nil,
-      total_time: nil,
+      time: nil,
       yields: nil
     }
 

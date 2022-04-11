@@ -32,8 +32,9 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     # we have to prefill the steps with the embedded schema
     |> assign(:recipe, %Recipe{
       steps: [
-        %RecipeStep{id: 1, timer: "fo", instruction: "jo"},
-        %RecipeStep{id: 2, timer: "fo", instruction: "joooo"}
+        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
+        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
+        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""}
       ]
     })
   end
@@ -47,19 +48,4 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     {:noreply, update(socket, :formState, fn fS -> fS - 1 end)}
   end
 
-  # def handle_event("add-instruction", val, socket) do
-  #   IO.inspect(socket, pretty: true)
-  #   # new_recipe = Kernel.put_in(socket, [:Recipe, :steps], %RecipeStep{timer: "", instruction: ""})
-  #   # assign(socket, :recipe, new_recipe)
-  #   {:noreply, socket}
-
-  # end
-
-  # def handle_event("add-instruction", val, socket) do
-  #   IO.inspect(val, pretty: true)
-  #   # new_recipe = Kernel.put_in(socket, [:Recipe, :steps], %RecipeStep{timer: "", instruction: ""})
-  #   # assign(socket, :recipe, new_recipe)
-  #   {:noreply, socket}
-
-  # end
 end

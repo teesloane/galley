@@ -10,7 +10,7 @@ defmodule GalleyWeb.RecipeLiveTest do
     prep_time: "some prep_time",
     source: "some source",
     title: "some title",
-    total_time: "some total_time",
+    time: "some time",
     yields: "some yields"
   }
   @update_attrs %{
@@ -19,7 +19,7 @@ defmodule GalleyWeb.RecipeLiveTest do
     prep_time: "some updated prep_time",
     source: "some updated source",
     title: "some updated title",
-    total_time: "some updated total_time",
+    time: "some updated time",
     yields: "some updated yields"
   }
   @invalid_attrs %{
@@ -28,7 +28,7 @@ defmodule GalleyWeb.RecipeLiveTest do
     prep_time: nil,
     source: nil,
     title: nil,
-    total_time: nil,
+    time: nil,
     yields: nil
   }
 

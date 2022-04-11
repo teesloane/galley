@@ -7,6 +7,7 @@ defmodule Galley.Recipes do
   alias Galley.Repo
 
   alias Galley.Recipes.Recipe
+  alias Galley.Recipes
 
   @doc """
   Returns the list of recipes.
@@ -100,5 +101,10 @@ defmodule Galley.Recipes do
   """
   def change_recipe(%Recipe{} = recipe, attrs \\ %{}) do
     Recipe.changeset(recipe, attrs)
+  end
+
+
+  def change_step(%Recipes.RecipeStep{} = recipe_step, attrs \\ %{}) do
+    Recipes.RecipeStep.changeset(recipe_step, attrs)
   end
 end
