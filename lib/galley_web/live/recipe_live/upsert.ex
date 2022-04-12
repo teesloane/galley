@@ -39,9 +39,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
         %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""}
       ],
       steps: [
-        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
-        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
-        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""}
+        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil},
       ]
     })
   end

@@ -1,12 +1,12 @@
 <%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.recipe_show_path(@socket, :show, @recipe)}>
+  <.modal return_to={Routes.recipe_show_path(@socket, :show, @recipe, @recipe.slug)}>
     <.live_component
       module={GalleyWeb.RecipeLive.FormComponent}
       id={@recipe.id}
       title={@page_title}
       action={@live_action}
       recipe={@recipe}
-      return_to={Routes.recipe_show_path(@socket, :show, @recipe)}
+      return_to={Routes.recipe_show_path(@socket, :show, @recipe, @recipe.slug)}
     />
   </.modal>
 <% end %>
@@ -26,7 +26,7 @@
     <div class="ingredients flex-1 p-4">
       <h3 class="text-2xl font-bold mb-8">Ingredients</h3>
 
-      <%=  for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
+      <%=  for item <- @recipe.ingredients do %>
         <p>
           <span> <%= item.quantity %></span>
           <span> <%= item.measurement %></span>

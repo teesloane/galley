@@ -22,11 +22,9 @@ defmodule Galley.Recipes.Recipe do
     recipe
     |> cast(attrs, [:title, :source, :yields, :slug])
     |> cast_embed(:ingredients)
-    |> cast_embed(:steps)
+    |> cast_embed(:steps, with: &R.RecipeStep.changeset/2, required: true)
     |> cast_embed(:time)
     |> validate_required([:title, :yields, :steps, :time])
-
-    # |> validate_length(:steps, min: 1) # I don't think this is working.
   end
 
   defp slug_map(%{"title" => title}) do
@@ -50,6 +48,7 @@ defmodule Galley.Recipes.RecipeStep do
   def changeset(step, attrs) do
     step
     |> cast(attrs, [:timer, :instruction])
+    |> validate_required([:instruction])
   end
 end
 
@@ -68,6 +67,7 @@ defmodule Galley.Recipes.RecipeIngredient do
   def changeset(step, attrs) do
     step
     |> cast(attrs, [:ingredient, :quantity, :measurement])
+    |> validate_required([:ingredient])
   end
 end
 
