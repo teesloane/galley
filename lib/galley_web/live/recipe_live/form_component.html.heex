@@ -1,4 +1,4 @@
-<div class="container mx-auto p-4 w-3/5" >
+<div class="container mx-auto p-4 w-full lg:w-3/5 pb-16" >
   <h2 class="mb-4 text-2xl mt-4 mb-4  "><%= @title %></h2>
   <.form
   let={f}
@@ -9,7 +9,9 @@
   phx-change="validate"
   phx-submit="save">
 
-    <div class="grid grid-cols-2 gap-3 ">
+  <%=  inspect @changeset %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
     <div class="flex flex-col w-full">
       <span class="flex items-center pb-1 justify-between">
         <%= label f, :title, class: "recipe-form-label" %>
@@ -53,8 +55,8 @@
   </div>
 
 
-  <section class="mt-8">
-    <h2 class="text-2xl mb-8">Ingredients</h2>
+  <section class="mt-8 border-t border-gray-200">
+    <h2 class="text-2xl my-8">Ingredients</h2>
 
     <div class="flex flex-col">
       <%= inputs_for f, :ingredients, fn fp -> %>
@@ -71,8 +73,8 @@
       </button>
   </section>
 
-  <section class="mt-8">
-    <h2 class="text-2xl mb-8">Instructions</h2>
+  <section class="mt-8 border-t border-gray-200">
+    <h2 class="text-2xl my-8">Instructions</h2>
 
     <div class="flex flex-col">
       <%= inputs_for f, :steps, fn fp -> %>
@@ -92,13 +94,20 @@
 
   <div class="flex flex-1 justify-between mt-8">
     <%=  if @formState do %>
-    <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
-    <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>
+      <!-- <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button> -->
+      <!-- <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button> -->
     <% end %>
   </div>
 
-  <div>
-    <%= submit "Save", phx_disable_with: "Saving...", class: "btn mt-8" %>
+  <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white border-t border-gray-300 flex justify-end items-center">
+    <%=  if @action == :edit do %>
+      <%= submit "Save changes",
+      disabled: @changeset.valid?,
+      phx_disable_with: "Saving...",
+      class: "btn" %>
+    <% else %>
+      <%= submit "Create recipe", disabled: @changeset.valid?, phx_disable_with: "Saving...", class: "btn" %>
+    <% end %>
   </div>
   </.form>
 
