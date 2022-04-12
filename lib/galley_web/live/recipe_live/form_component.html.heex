@@ -9,8 +9,6 @@
   phx-change="validate"
   phx-submit="save">
 
-  <%= inspect @changeset %>
-
     <div class="grid grid-cols-2 gap-3 ">
     <div class="flex flex-col w-full">
       <span class="flex items-center pb-1 justify-between">
@@ -46,7 +44,7 @@
       <div class="flex">
         <%= inputs_for f, :time, fn fp -> %>
           <%=  select fp, :hour, 0..12, class: "border rounded bg-white w-16 mr-2 py-1" %>
-          <span> : </span>
+          <span class="self-center"> : </span>
           <%=  select fp, :minute, 0..59, class: "border rounded bg-white w-16 ml-2 py-1" %>
         <% end %>
       </div>
@@ -62,7 +60,7 @@
       <%= inputs_for f, :steps, fn fp -> %>
         <div class="flex mb-4">
         <%= text_input fp, :timer, class: "w-32 self-start" %>
-        <%= textarea fp, :instruction, class: "flex flex-1 ml-2"  %>
+        <%= textarea fp, :instruction, rows: 1,  class: "flex flex-1 ml-2"  %>
         </div>
       <% end %>
     </div>
@@ -72,11 +70,15 @@
       </button>
   </section>
 
-  <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
-  <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>
+  <div class="flex flex-1 justify-between mt-8">
+    <%=  if @formState do %>
+    <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button>
+    <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button>
+    <% end %>
+  </div>
 
   <div>
-    <%= submit "Save", phx_disable_with: "Saving..." %>
+    <%= submit "Save", phx_disable_with: "Saving...", class: "btn mt-8" %>
   </div>
   </.form>
 
