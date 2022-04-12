@@ -4,6 +4,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   alias Galley.Recipes
   alias Galley.Recipes.Recipe
   alias Galley.Recipes.RecipeStep
+  alias Galley.Recipes.RecipeIngredient
 
   @impl true
   def mount(_params, _session, socket) do
@@ -35,6 +36,14 @@ defmodule GalleyWeb.RecipeLive.Upsert do
         %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
         %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""},
         %RecipeStep{id: GalleyUtils.get_temp_id(), timer: "", instruction: ""}
+      ]
+    })
+
+    |> assign(:recipe, %Recipe{
+      ingredients: [
+        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""},
+        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""},
+        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""}
       ]
     })
   end

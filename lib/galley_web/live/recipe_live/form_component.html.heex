@@ -1,5 +1,5 @@
 <div class="container mx-auto p-4 w-full lg:w-3/5 pb-24" >
-  <h2 class="mb-4 text-2xl mt-4 mb-4  "><%= @title %></h2>
+  <h2 class="text-2xl mt-16 mb-8"><%= @title %></h2>
   <.form
   let={f}
   for={@changeset}
@@ -8,8 +8,6 @@
   phx-target={@myself}
   phx-change="validate"
   phx-submit="save">
-
-  <%=  inspect @changeset %>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
     <div class="flex flex-col w-full">
@@ -54,27 +52,51 @@
 
   </div>
 
+  <hr class="my-16">
 
-  <section class="mt-8 border-t border-gray-200">
-    <h2 class="text-2xl my-8">Ingredients</h2>
+  <section class="">
+    <h2 class="text-2xl mb-4">Ingredients</h2>
+      <table class="table-fixed">
+      <thead class="">
+        <tr class="py-2">
+          <th class="th_small w-32">Quantity</th>
+          <th class="th_small w-32">Measurement</th>
+          <th class="th_small w-full">Ingredient</th>
+        </tr>
+      </thead>
 
-    <div class="flex flex-col">
+        <tr class="text-sm text-gray-300 pb-2">
+          <td>Ex: 1/3</td>
+          <td>cups</td>
+          <td>vegetable broth</td>
+        </tr>
+
+        <tr class="mt-2">
+          <td><br/></td>
+          <td><br/></td>
+          <td><br/></td>
+        </tr>
       <%= inputs_for f, :ingredients, fn fp -> %>
-        <div class="flex mb-4">
-        <%= number_input fp, :quantity, class: "w-16 mr-2 self-start" %>
-        <%= text_input fp, :measurement, class: "w-32 mr-2 self-start" %>
-        <%= text_input fp, :ingredient, class: "w-full self-start" %>
-        </div>
-      <% end %>
-    </div>
 
-      <button class="btn" type="button" phx-click="add-ingredient" phx-target={@myself} >
+
+        <tr class="mt-2">
+          <td><%= text_input fp, :quantity, class: "w-16 md:w-32 mr-2" %> </td>
+          <td><%= text_input fp, :measurement, class: "w-16 md:w-32 mr-2" %></td>
+          <td><%= text_input fp, :ingredient, class: "w-full" %></td>
+        </tr>
+      <% end %>
+      </table>
+
+      <button class="btn mt-4" type="button" phx-click="add-ingredient" phx-target={@myself} >
         Add Ingredients
       </button>
   </section>
 
-  <section class="mt-8 border-t border-gray-200">
-    <h2 class="text-2xl my-8">Instructions</h2>
+
+  <hr class="my-16"/>
+
+  <section class="">
+    <h2 class="text-2xl mb-8">Instructions</h2>
 
     <div class="flex flex-col">
       <%= inputs_for f, :steps, fn fp -> %>

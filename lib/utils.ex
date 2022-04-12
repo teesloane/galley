@@ -4,5 +4,4 @@ defmodule GalleyUtils do
     |> Base.url_encode64()
     |> binary_part(0, 5)
    end
-
 end

@@ -38,6 +38,9 @@ defmodule Galley.Recipes do
   """
   def get_recipe!(id), do: Repo.get!(Recipe, id)
 
+
+  def get_recipe_by_id_and_slug!(id, slug), do: Repo.get_by!(Recipe, [id: id, slug: slug])
+
   @doc """
   Creates a recipe.
 

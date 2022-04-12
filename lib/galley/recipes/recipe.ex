@@ -61,7 +61,7 @@ defmodule Galley.Recipes.RecipeIngredient do
 
   embedded_schema do
     field :ingredient, :string
-    field :quantity, :float
+    field :quantity, :string
     field :measurement, :string
   end
 
