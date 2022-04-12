@@ -85,8 +85,8 @@ defmodule GalleyWeb.Router do
     live "/recipes/new", RecipeLive.Upsert, :new
     live "/recipes/:id/edit", RecipeLive.Upsert, :edit
 
-    live "/recipes/:id", RecipeLive.Show, :show
-    live "/recipes/:id/show/edit", RecipeLive.Show, :edit
+    live "/recipes/:id/:slug", RecipeLive.Show, :show
+    # live "/recipes/:id/show/edit", RecipeLive.Show, :edit
   end
 
   scope "/", GalleyWeb do

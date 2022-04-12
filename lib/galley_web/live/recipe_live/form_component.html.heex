@@ -102,12 +102,10 @@
   <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white border-t border-gray-300 flex justify-end items-center">
     <%=  if @action == :edit do %>
       <%= submit "Save changes",
-      disabled: @changeset.valid?,
       phx_disable_with: "Saving...",
       class: "btn" %>
     <% else %>
       <%= submit "Create recipe",  [
-        disabled: "#{!@changeset.valid?}" ,
         phx_disable_with: "Saving...",
         class: "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}"] %>
     <% end %>

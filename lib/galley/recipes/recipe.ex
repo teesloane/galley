@@ -6,6 +6,7 @@ defmodule Galley.Recipes.Recipe do
   schema "recipes" do
     field :source, :string
     field :title, :string
+    field :slug, :string
     field :yields, :string
     embeds_many :steps, R.RecipeStep, on_replace: :delete
     embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
@@ -16,14 +17,23 @@ defmodule Galley.Recipes.Recipe do
 
   @doc false
   def changeset(recipe, attrs) do
+    attrs = Map.merge(attrs, slug_map(attrs)) # add slug to the mix
+
     recipe
-    |> cast(attrs, [:title, :source, :yields])
-    |> validate_required([:title, :yields])
+    |> cast(attrs, [:title, :source, :yields, :slug])
     |> cast_embed(:ingredients)
     |> cast_embed(:steps)
     |> cast_embed(:time)
+    |> validate_required([:title, :yields, :steps, :time])
+
+    # |> validate_length(:steps, min: 1) # I don't think this is working.
   end
 
+  defp slug_map(%{"title" => title}) do
+    %{"slug" => title |> String.downcase() |> String.replace(" ", "-")}
+  end
+
+  defp slug_map(_params), do: %{}
 end
 
 ## -----------------------------------------------------------------------------
@@ -43,7 +53,6 @@ defmodule Galley.Recipes.RecipeStep do
   end
 end
 
-
 ## -----------------------------------------------------------------------------
 
 defmodule Galley.Recipes.RecipeIngredient do
@@ -51,9 +60,9 @@ defmodule Galley.Recipes.RecipeIngredient do
   import Ecto.Changeset
 
   embedded_schema do
-    field :ingredient
-    field :quantity
-    field :measurement
+    field :ingredient, :string
+    field :quantity, :float
+    field :measurement, :string
   end
 
   def changeset(step, attrs) do
