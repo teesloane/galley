@@ -54,6 +54,23 @@
 
 
   <section class="mt-8">
+    <h2 class="text-2xl mb-8">Ingredients</h2>
+
+    <div class="flex flex-col">
+      <%= inputs_for f, :ingredients, fn fp -> %>
+        <div class="flex mb-4">
+        <%= text_input fp, :timer, class: "w-32 self-start" %>
+        <%= textarea fp, :instruction, rows: 1,  class: "flex flex-1 ml-2"  %>
+        </div>
+      <% end %>
+    </div>
+
+      <button class="btn" type="button" phx-click="add-ingredient" phx-target={@myself} >
+        Add Ingredients
+      </button>
+  </section>
+
+  <section class="mt-8">
     <h2 class="text-2xl mb-8">Instructions</h2>
 
     <div class="flex flex-col">
@@ -69,6 +86,8 @@
         Add Instructions
       </button>
   </section>
+
+
 
   <div class="flex flex-1 justify-between mt-8">
     <%=  if @formState do %>

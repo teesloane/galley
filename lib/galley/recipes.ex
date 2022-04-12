@@ -107,4 +107,8 @@ defmodule Galley.Recipes do
   def change_step(%Recipes.RecipeStep{} = recipe_step, attrs \\ %{}) do
     Recipes.RecipeStep.changeset(recipe_step, attrs)
   end
+
+  def change_ingredient(%Recipes.RecipeIngredient{} = recipe_ingredient, attrs \\ %{}) do
+    Recipes.RecipeIngredient.changeset(recipe_ingredient, attrs)
+  end
 end

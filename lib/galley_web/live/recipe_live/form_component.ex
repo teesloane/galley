@@ -3,6 +3,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   alias Galley.Recipes
   alias Galley.Recipes.RecipeStep
+  alias Galley.Recipes.RecipeIngredient
 
   @impl true
   def update(%{recipe: recipe} = assigns, socket) do
@@ -40,6 +41,21 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       Recipes.change_step(%RecipeStep{id: GalleyUtils.get_temp_id()})
     ])
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_event("add-ingredient", _val, socket) do
+    existing_steps =
+      Map.get(
+        socket.assigns.changeset.changes,
+        :ingredients,
+        socket.assigns.recipe.ingredients
+      )
+
+    steps = existing_steps |> Enum.concat([
+      Recipes.change_ingredient(%RecipeIngredient{id: GalleyUtils.get_temp_id()})
+    ])
+    changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, steps)
     {:noreply, assign(socket, changeset: changeset)}
   end
 

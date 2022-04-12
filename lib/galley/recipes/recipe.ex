@@ -1,13 +1,15 @@
 defmodule Galley.Recipes.Recipe do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Galley.Recipes, as: R
 
   schema "recipes" do
     field :source, :string
     field :title, :string
     field :yields, :string
-    embeds_many :steps, Galley.Recipes.RecipeStep, on_replace: :delete
-    embeds_one :time, Galley.Recipes.RecipeTime, on_replace: :update
+    embeds_many :steps, R.RecipeStep, on_replace: :delete
+    embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
+    embeds_one :time, R.RecipeTime, on_replace: :update
 
     timestamps()
   end
@@ -17,6 +19,7 @@ defmodule Galley.Recipes.Recipe do
     recipe
     |> cast(attrs, [:title, :source, :yields])
     |> validate_required([:title, :yields])
+    |> cast_embed(:ingredients)
     |> cast_embed(:steps)
     |> cast_embed(:time)
   end
@@ -40,6 +43,23 @@ defmodule Galley.Recipes.RecipeStep do
   end
 end
 
+
+## -----------------------------------------------------------------------------
+
+defmodule Galley.Recipes.RecipeIngredient do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :ingredient
+    field :quantity
+  end
+
+  def changeset(step, attrs) do
+    step
+    |> cast(attrs, [:ingredient, :quantity])
+  end
+end
 
 ## -----------------------------------------------------------------------------
 
