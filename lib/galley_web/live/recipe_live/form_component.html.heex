@@ -77,8 +77,6 @@
           <td><br/></td>
         </tr>
       <%= inputs_for f, :ingredients, fn fp -> %>
-
-
         <tr class="mt-2">
           <td><%= text_input fp, :quantity, class: "w-16 md:w-32 mr-2" %> </td>
           <td><%= text_input fp, :measurement, class: "w-16 md:w-32 mr-2" %></td>
@@ -98,14 +96,21 @@
   <section class="">
     <h2 class="text-2xl mb-8">Instructions</h2>
 
-    <div class="flex flex-col">
+    <table class="table-fixed">
+      <thead class="">
+        <tr class="py-2">
+          <th class="th_small w-32">Timer</th>
+          <th class="th_small w-full">Instruction</th>
+        </tr>
+      </thead>
+
       <%= inputs_for f, :steps, fn fp -> %>
-        <div class="flex mb-4">
-        <%= text_input fp, :timer, class: "w-32 self-start" %>
-        <%= textarea fp, :instruction, rows: 1,  class: "flex flex-1 ml-2"  %>
-        </div>
+        <tr class="mt-2">
+          <td><%= text_input fp, :timer, class: "w-32 mr-2" %> </td>
+          <td> <%= textarea fp, :instruction, rows: 1,  class: "w-full" %> </td>
+        </tr>
       <% end %>
-    </div>
+    </table>
 
       <button class="btn" type="button" phx-click="add-instruction" phx-target={@myself} >
         Add Instructions
