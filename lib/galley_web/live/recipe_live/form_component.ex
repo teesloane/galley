@@ -73,7 +73,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :new, recipe_params) do
-    IO.inspect(recipe_params)
     case Recipes.create_recipe(recipe_params) do
       {:ok, _recipe} ->
         {:noreply,

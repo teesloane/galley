@@ -53,11 +53,12 @@ defmodule Galley.Recipes.RecipeIngredient do
   embedded_schema do
     field :ingredient
     field :quantity
+    field :measurement
   end
 
   def changeset(step, attrs) do
     step
-    |> cast(attrs, [:ingredient, :quantity])
+    |> cast(attrs, [:ingredient, :quantity, :measurement])
   end
 end
 

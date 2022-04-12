@@ -59,8 +59,9 @@
     <div class="flex flex-col">
       <%= inputs_for f, :ingredients, fn fp -> %>
         <div class="flex mb-4">
-        <%= text_input fp, :timer, class: "w-32 self-start" %>
-        <%= textarea fp, :instruction, rows: 1,  class: "flex flex-1 ml-2"  %>
+        <%= number_input fp, :quantity, class: "w-16 mr-2 self-start" %>
+        <%= text_input fp, :measurement, class: "w-32 mr-2 self-start" %>
+        <%= text_input fp, :ingredient, class: "w-full self-start" %>
         </div>
       <% end %>
     </div>
