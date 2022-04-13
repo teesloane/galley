@@ -134,7 +134,6 @@
     <% else %>
       <%= submit "Create recipe",  [
         phx_disable_with: "Saving...",
-        disabled: "#{!@changeset.valid?}",
         class: "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}"] %>
     <% end %>
   </div>

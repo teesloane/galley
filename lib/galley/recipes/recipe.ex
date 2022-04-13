@@ -67,7 +67,7 @@ defmodule Galley.Recipes.RecipeIngredient do
   def changeset(step, attrs) do
     step
     |> cast(attrs, [:ingredient, :quantity, :measurement])
-    |> validate_required([:ingredient])
+    |> validate_required([:ingredient, :quantity])
   end
 end
 
