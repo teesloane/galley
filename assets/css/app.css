@@ -9,7 +9,7 @@
 
 @layer components {
   input {
-    @apply border rounded mb-2 p-0 p-1 outline-0;
+    @apply border border-slate-300 rounded mb-2 p-0 p-1 outline-0;
   }
 
   textarea {
@@ -39,7 +39,7 @@
 
   .btn-clear {
     @apply btn;
-    @apply bg-white text-black hover:bg-gray-50 border border-black hover:shadow-sm;
+    @apply bg-white text-slate-500 hover:bg-gray-50 border border-slate-300 hover:border-slate-400 hover:shadow-sm;
   }
 
   .select-time {
