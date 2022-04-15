@@ -8,14 +8,5 @@
   padding: 0 10px;
 }
 
-.recipe-form-time-select > select:first-child {
-  @apply mr-2 ml-0
-
-}
-.recipe-form-time-select > select {
-   @apply border rounded mb-2 p-0 px-2 ml-2 bg-white;
-   min-height: 26px;
-}
-
 body {
 }

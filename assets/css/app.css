@@ -8,12 +8,21 @@
 
 
 @layer components {
-  input {
-    @apply border border-slate-300 rounded mb-2 p-0 p-1 outline-0;
+  input,select,textarea {
+    @apply border border-slate-300 rounded mb-2 p-0 p-1 outline-0 dark:bg-neutral-700 dark:border-neutral-700 dark:text-white;
   }
 
-  textarea {
-    @apply border rounded mb-2 p-0 p-1 outline-0;
+
+  input::placeholder {
+    @apply text-sm;
+  }
+
+  .page_title {
+    @apply dark:text-white;
+  }
+
+  .page_wrapper {
+    @apply container mx-auto p-4 w-full lg:w-3/5/
   }
 
   .th_small {
@@ -24,12 +33,13 @@
     min-height: 34px;
   }
 
-  input::placeholder {
-    @apply text-sm;
+  .heading {
+    @apply text-2xl mb-4 dark:text-neutral-50
   }
 
+
   .recipe-form-label {
-    @apply text-gray-700 text-sm;
+    @apply text-gray-700 text-sm dark:text-gray-200;
   }
 
 
