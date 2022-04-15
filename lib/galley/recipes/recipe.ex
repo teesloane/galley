@@ -17,7 +17,8 @@ defmodule Galley.Recipes.Recipe do
 
   @doc false
   def changeset(recipe, attrs) do
-    attrs = Map.merge(attrs, slug_map(attrs)) # add slug to the mix
+    # add slug to the mix
+    attrs = Map.merge(attrs, slug_map(attrs))
 
     recipe
     |> cast(attrs, [:title, :source, :yields, :slug])

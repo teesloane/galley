@@ -32,9 +32,13 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def handle_event("add-instruction", _val, socket) do
     sA = socket.assigns
     existing_steps = Map.get(sA.changeset.changes, :steps, sA.recipe.steps)
-    steps = existing_steps |> Enum.concat([
-      Recipes.change_step(%RecipeStep{id: GalleyUtils.get_temp_id()})
-    ])
+
+    steps =
+      existing_steps
+      |> Enum.concat([
+        Recipes.change_step(%RecipeStep{id: GalleyUtils.get_temp_id()})
+      ])
+
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:steps, steps)
     {:noreply, assign(socket, changeset: changeset)}
   end
@@ -43,21 +47,26 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     sA = socket.assigns
     existing_ingredients = Map.get(sA.changeset.changes, :ingredients, sA.recipe.ingredients)
 
-    ingredients = existing_ingredients |> Enum.concat([
-      Recipes.change_ingredient(%RecipeIngredient{id: GalleyUtils.get_temp_id()})
-    ])
+    ingredients =
+      existing_ingredients
+      |> Enum.concat([
+        Recipes.change_ingredient(%RecipeIngredient{id: GalleyUtils.get_temp_id()})
+      ])
+
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("remove-ingredient", %{"remove" => id_to_remove} , socket) do
+  def handle_event("remove-ingredient", %{"remove" => id_to_remove}, socket) do
     IO.inspect(socket, pretty: true)
+
     ingredients =
       socket.assigns.changeset.changes.ingredients
       |> Enum.reject(fn %{:data => ingredient} ->
         ingredient.id == id_to_remove
       end)
-      IO.inspect(ingredients, pretty: true)
+
+    IO.inspect(ingredients, pretty: true)
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
     {:noreply, assign(socket, changeset: changeset)}
   end

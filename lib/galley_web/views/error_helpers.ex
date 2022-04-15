@@ -23,6 +23,7 @@ defmodule GalleyWeb.ErrorHelpers do
   def error_class(form, field) do
     IO.inspect(form)
     IO.inspect(field)
+
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
       "invalid-item"
     end)

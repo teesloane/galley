@@ -3,8 +3,7 @@ defmodule Galley.Repo.Migrations.RecipeTableAddSlug do
 
   def change do
     alter table(:recipes) do
-     add :slug, :string
+      add :slug, :string
     end
-
   end
 end

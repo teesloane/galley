@@ -34,12 +34,27 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     #
     |> assign(:recipe, %Recipe{
       ingredients: [
-        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""},
-        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""},
-        %RecipeIngredient{id: GalleyUtils.get_temp_id(), quantity: "", measurement: "", ingredient: ""}
+        %RecipeIngredient{
+          id: GalleyUtils.get_temp_id(),
+          quantity: "",
+          measurement: "",
+          ingredient: ""
+        },
+        %RecipeIngredient{
+          id: GalleyUtils.get_temp_id(),
+          quantity: "",
+          measurement: "",
+          ingredient: ""
+        },
+        %RecipeIngredient{
+          id: GalleyUtils.get_temp_id(),
+          quantity: "",
+          measurement: "",
+          ingredient: ""
+        }
       ],
       steps: [
-        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil},
+        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
       ]
     })
   end
@@ -52,5 +67,4 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   def handle_event("form_move_backward", _val, socket) do
     {:noreply, update(socket, :formState, fn fS -> fS - 1 end)}
   end
-
 end

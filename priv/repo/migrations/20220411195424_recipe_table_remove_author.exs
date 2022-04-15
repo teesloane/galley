@@ -5,6 +5,5 @@ defmodule Galley.Repo.Migrations.RecipeTableRemoveAuthor do
     alter table(:recipes) do
       remove :author
     end
-
   end
 end

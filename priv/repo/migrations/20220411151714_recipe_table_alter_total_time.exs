@@ -6,6 +6,5 @@ defmodule Galley.Repo.Migrations.RecipeTableAlterTotalTime do
       remove :total_time
       add :time, :map
     end
-
   end
 end

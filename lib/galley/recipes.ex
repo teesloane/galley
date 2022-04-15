@@ -38,8 +38,7 @@ defmodule Galley.Recipes do
   """
   def get_recipe!(id), do: Repo.get!(Recipe, id)
 
-
-  def get_recipe_by_id_and_slug!(id, slug), do: Repo.get_by!(Recipe, [id: id, slug: slug])
+  def get_recipe_by_id_and_slug!(id, slug), do: Repo.get_by!(Recipe, id: id, slug: slug)
 
   @doc """
   Creates a recipe.
@@ -105,7 +104,6 @@ defmodule Galley.Recipes do
   def change_recipe(%Recipe{} = recipe, attrs \\ %{}) do
     Recipe.changeset(recipe, attrs)
   end
-
 
   def change_step(%Recipes.RecipeStep{} = recipe_step, attrs \\ %{}) do
     Recipes.RecipeStep.changeset(recipe_step, attrs)
