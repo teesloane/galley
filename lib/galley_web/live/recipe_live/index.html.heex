@@ -1,15 +1,16 @@
-<div id="recipes" class="container p-4 lg:px-24 mx-auto">
-  <h1 class="text-lg lg:text-2xl my-4 font-thin italic">Recipes</h1>
+<div id="recipes" class="container p-4 lg:px-24 mx-auto dark:text-white">
+  <h1 class="text-lg lg:text-2xl mt-8 my-4 font-thin italic">Recipes</h1>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <%=  for recipe <- @recipes do %>
       <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
-        <div class="flex flex-col bg-white border  hover:drop-shadow-sm mr-4 w-full ">
-          <div class="h-48 bg-gray-200" />
+        <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
+          <div class="h-48 bg-gray-200 dark:bg-gray-700" />
           <div class="font-bold p-2"><%= recipe.title %></div>
         </div>
       <% end %>
     <% end  %>
   </div>
+
+  <span class="mt-24"><%= live_patch "New Recipe", to: Routes.recipe_upsert_path(@socket, :new) %></span>
 </div>
 
-<span><%= live_patch "New Recipe", to: Routes.recipe_upsert_path(@socket, :new) %></span>

@@ -40,14 +40,17 @@ defmodule Galley.Recipes.RecipeStep do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Galley.Recipes, as: R
+
   embedded_schema do
-    field :timer
+    embeds_one :timer, R.RecipeTime, on_replace: :update
     field :instruction
   end
 
   def changeset(step, attrs) do
     step
-    |> cast(attrs, [:timer, :instruction])
+    |> cast(attrs, [:instruction])
+    |> cast_embed(:timer)
     |> validate_required([:instruction])
   end
 end
