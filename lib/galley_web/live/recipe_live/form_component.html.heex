@@ -71,14 +71,10 @@
         <td>vegetable broth</td>
       </tr>
 
-      <tr class="mt-2">
-        <td><br/></td>
-        <td><br/></td>
-        <td><br/></td>
-      </tr>
+
+      <tr><td><br/></td></tr>
       <%= inputs_for f, :ingredients, fn fp -> %>
         <div class="text-white" >
-        <%#=  inspect @changeset.changes %>
         </div>
         <tr class="mt-2">
           <td><%= text_input fp, :quantity, class: "w-16 md:w-32 mr-2" %> </td>
@@ -99,7 +95,6 @@
     </button>
   </section>
 
-
   <hr class="my-16"/>
 
   <section class="">
@@ -108,33 +103,36 @@
     <table class="table-fixed">
       <thead class="">
         <tr class="py-2 dark:text-neutral-50">
-          <th class="th_small w-32">Timer</th>
-          <th class="th_small w-full">Instruction</th>
+          <th class="th_small w-full italic">Instruction</th>
+          <th class="th_small w-32 italic"><span class="ml-8">Timer</span></th>
         </tr>
       </thead>
 
+      <tr><td><br/></td></tr>
+
       <%= inputs_for f, :steps, fn fp -> %>
         <tr class="mt-2 items-center">
-          <td class="flex mr-8">
+          <td><%= textarea fp, :instruction, [
+              id: fp.name,
+              rows: 1,
+              phx_hook: "MaintainAttrs",
+              data_attrs: "style, id",
+              class: "w-full mr-2"]
+              %>
+          </td>
+
+          <td class="flex ml-8">
             <%= inputs_for fp, :timer, fn fo -> %>
               <%=  select fo, :hour, 0..12, class: "w-16 mr-2 py-1" %>
               <span class="self-center dark:text-gray-100 -mt-2"> : </span>
               <%=  select fo, :minute, 0..59, class: "w-16 ml-2 py-1" %>
             <% end %>
           </td>
-          <td><%= textarea fp, :instruction, [
-              id: "#{fp.data.id}",
-              rows: 1,
-              phx_hook: "MaintainAttrs",
-              data_attrs: "style",
-              class: "w-full mr-2"]
-              %>
-          </td>
         </tr>
       <% end %>
     </table>
 
-    <button class="btn-clear mt-8" type="button" phx-click="add-instruction" phx-target={@myself} >
+    <button id="add-instruction-btn" class="btn-clear mt-8" type="button" phx-click="add-instruction" phx-target={@myself} >
       Add Instruction
     </button>
 

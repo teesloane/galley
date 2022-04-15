@@ -30,7 +30,7 @@
   </div>
 
   <section class="my-8 flex">
-    <div class="ingredients flex-1 p-4">
+    <div class="ingredients flex-1 p-4 w-1/2">
       <h3 class="heading text-2xl font-bold mb-8">Ingredients</h3>
 
       <%=  for item <- @recipe.ingredients do %>
@@ -41,10 +41,11 @@
         </p>
       <% end %>
     </div>
-    <div class="instructions flex-1 p-4">
+
+    <div class="instructions flex-1 p-4 w-1/2">
       <h3 class="heading text-2xl font-bold mb-8">Instructions</h3>
       <%=  for {item, index} <- Enum.with_index(@recipe.steps) do %>
-        <p><%= index + 1 %>. <%= item.instruction %></p>
+        <p class="break-words"><%= index + 1 %>. <%= item.instruction %></p>
       <% end %>
     </div>
   </section>

@@ -29,9 +29,21 @@ import topbar from "../vendor/topbar"
 //
 let hooks = {}
 hooks.MaintainAttrs = {
+  mounted() {
+    handleTextAreaResizing()
+    this.prevAttrs = this.attrs().map(name => [name, this.el.getAttribute(name)])
+  },
+
   attrs(){ return this.el.getAttribute("data-attrs").split(", ") },
-  beforeUpdate(){ this.prevAttrs = this.attrs().map(name => [name, this.el.getAttribute(name)]) },
-  updated(){ this.prevAttrs.forEach(([name, val]) => this.el.setAttribute(name, val)) }
+  beforeUpdate(){
+    console.log("hi!");
+    handleTextAreaResizing()
+    this.prevAttrs = this.attrs().map(name => [name, this.el.getAttribute(name)])
+    this.prevAttrs.forEach(([name, val]) => this.el.setAttribute(name, val))
+  },
+  updated(){
+    this.prevAttrs.forEach(([name, val]) => this.el.setAttribute(name, val))
+  }
 }
 
 
@@ -47,17 +59,23 @@ window.addEventListener("phx:page-loading-stop", info => topbar.hide())
 liveSocket.connect()
 
 
-
 // textarea hacking
-const tx = document.getElementsByTagName("textarea");
-for (let i = 0; i < tx.length; i++) {
-  tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-  tx[i].addEventListener("input", OnInput, false);
+function handleTextAreaResizing() {
+  const tx = document.getElementsByTagName("textarea");
+  for (let i = 0; i < tx.length; i++) {
+    tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+    tx[i].addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) +  "px";
+    }, false);
+  }
 }
 
-function OnInput() {
-  this.style.height = "auto";
-  this.style.height = (this.scrollHeight) + 2 + "px";
+const addInstructionBtn = document.getElementById("add-instruction-btn")
+if(addInstructionBtn) {
+  addInstructionBtn.addEventListener("click", () => {
+    handleTextAreaResizing()
+  })
 }
 
 
