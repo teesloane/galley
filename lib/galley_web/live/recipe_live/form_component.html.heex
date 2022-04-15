@@ -125,10 +125,6 @@
       Add Instruction
     </a>
 
-    <button class="btn-clear mt-4" type="button" phx-click="remove-ingredient" value="foo" phx-target={@myself} >
-      foo
-    </button>
-
   </section>
 
 
@@ -144,7 +140,7 @@
     <%=  if @action == :edit do %>
       <%= submit "Save changes",
       phx_disable_with: "Saving...",
-      class: "btn" %>
+      class: "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}" %>
     <% else %>
       <%= submit "Create recipe",  [
         phx_disable_with: "Saving...",
