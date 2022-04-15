@@ -8,4 +8,13 @@ defmodule GalleyUtils do
    def slug(s) do
    s |> String.downcase() |> String.replace(" ", "-")
    end
+
+   def pad_digit(d) do
+      d_as_str = to_string(d)
+      if String.length(d_as_str) == 1 do
+         "0#{d_as_str}"
+      else
+         d_as_str
+      end
+   end
 end

@@ -20,6 +20,13 @@
     <%= if @recipe.source do %>
       <a href={@recipe.source}>Source</a>
     <% end %>
+
+    <%= if @recipe.time do %>
+      <div>
+      <span> Time: </span>
+      <%=  @recipe.time.hour %>:<%=  GalleyUtils.pad_digit(@recipe.time.minute)%>
+      </div>
+    <% end %>
   </div>
 
   <section class="my-8 flex">
