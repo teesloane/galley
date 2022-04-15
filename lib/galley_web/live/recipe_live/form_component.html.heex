@@ -81,9 +81,9 @@
           <td><%= text_input fp, :measurement, class: "w-16 md:w-32 mr-2" %></td>
           <td><%= text_input fp, :ingredient, class: "w-full" %></td>
           <td>
-            <button class="btn-clear ml-2 mb-2" phx-value-remove={fp.data.id}
+            <button class="btn-icon ml-2 mb-2" phx-value-remove={fp.data.id}
                     type="button" phx-click="remove-ingredient" phx-target={@myself}>
-              X
+              ✕
             </button>
           </td>
         </tr>
@@ -104,7 +104,7 @@
       <thead class="">
         <tr class="py-2 dark:text-neutral-50">
           <th class="th_small w-full italic">Instruction</th>
-          <th class="th_small w-32 italic"><span class="ml-8">Timer</span></th>
+          <th class="th_small w-32 italic"><span class="ml-8">Timer (optional)</span></th>
         </tr>
       </thead>
 

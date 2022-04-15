@@ -1,5 +1,5 @@
-<div id="recipes" class="container p-4 lg:px-24 mx-auto dark:text-white">
-  <h1 class="text-lg lg:text-2xl mt-8 my-4 font-thin italic">Recipes</h1>
+<div id="recipes" class="page_wrapper">
+  <h2 class="heading">Recipes</h2>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <%=  for recipe <- @recipes do %>
       <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
