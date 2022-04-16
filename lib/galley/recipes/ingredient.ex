@@ -14,6 +14,6 @@ defmodule Galley.Recipes.Ingredient do
   def changeset(ingredient, attrs) do
     ingredient
     |> cast(attrs, [:name, :image, :style])
-    |> validate_required([:name, :image, :style])
+    |> validate_required([:name])
   end
 end

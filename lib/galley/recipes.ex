@@ -7,6 +7,7 @@ defmodule Galley.Recipes do
   alias Galley.Repo
 
   alias Galley.Recipes.Recipe
+  alias Galley.Recipes.Ingredient
   alias Galley.Recipes
 
   @doc """
@@ -53,9 +54,15 @@ defmodule Galley.Recipes do
 
   """
   def create_recipe(attrs \\ %{}) do
+    upsert_ingredient(attrs)
+
     %Recipe{}
     |> Recipe.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_ingredients(ingredients \\ [%{}]) do
+    Repo.insert_all(Ingredient, ingredients)
   end
 
   @doc """
@@ -71,6 +78,8 @@ defmodule Galley.Recipes do
 
   """
   def update_recipe(%Recipe{} = recipe, attrs) do
+    upsert_ingredient(attrs)
+
     recipe
     |> Recipe.changeset(attrs)
     |> Repo.update()
@@ -111,5 +120,13 @@ defmodule Galley.Recipes do
 
   def change_ingredient(%Recipes.RecipeIngredient{} = recipe_ingredient, attrs \\ %{}) do
     Recipes.RecipeIngredient.changeset(recipe_ingredient, attrs)
+  end
+
+  defp upsert_ingredient(attrs) do
+    attrs["ingredients"]
+    |> Map.values()
+    |> Enum.each(fn %{"ingredient" => x} ->
+      %Ingredient{} |> Ingredient.changeset(%{name: x}) |> Repo.insert(on_conflict: :nothing)
+    end)
   end
 end

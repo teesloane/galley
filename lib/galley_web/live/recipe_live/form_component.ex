@@ -66,7 +66,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         ingredient.id == id_to_remove
       end)
 
-    IO.inspect(ingredients, pretty: true)
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
     {:noreply, assign(socket, changeset: changeset)}
   end
@@ -80,7 +79,11 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
          |> push_redirect(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to update recipe.")
+         |> assign(:changeset, changeset)
+        }
     end
   end
 
