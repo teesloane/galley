@@ -17,14 +17,11 @@
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li class="pr-2"><%= link "Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
+            <%= render "_sidebar.html", assigns %>
             <%= render "_user_menu.html", assigns %>
           </ul>
         </nav>
     </header>
-
-    <div class="flex flex-1">
-      <%= render "_sidebar.html", assigns %>
       <div class="flex flex-1 flex-col"> <%= @inner_content %> </div>
-    </div>
   </body>
 </html>

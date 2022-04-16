@@ -1,8 +1,8 @@
-<aside class="w-48 bg-neutral-50 py-2 border-r">
-  <ul>
+<aside class="">
+  <ul class="flex">
     <%=  for l <- sidebar_links(@conn) do %>
-      <li class="border-b">
-        <div class="p-4"> <%= link l.name, to: l.link %> </div>
+      <li class="">
+        <div class="px-2"> <%= link l.name, to: l.link %> </div>
       </li>
     <% end  %>
   </ul>
