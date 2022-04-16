@@ -21,6 +21,7 @@ defmodule Galley.Recipes do
   """
   def list_recipes do
     Repo.all(Recipe)
+    |> Repo.preload(:user)
   end
 
   @doc """
@@ -37,10 +38,13 @@ defmodule Galley.Recipes do
       ** (Ecto.NoResultsError)
 
   """
-  def get_recipe!(id), do: Repo.get!(Recipe, id)
+  def get_recipe!(id) do
+    Repo.get!(Recipe, id) |> Repo.preload(:user)
+  end
 
-  def get_recipe_by_id_and_slug!(id, slug), do: Repo.get_by!(Recipe, id: id, slug: slug)
-
+  def get_recipe_by_id_and_slug!(id, slug) do
+    Repo.get_by!(Recipe, id: id, slug: slug)
+    end
   @doc """
   Creates a recipe.
 
@@ -53,10 +57,12 @@ defmodule Galley.Recipes do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_recipe(attrs \\ %{}) do
+  def create_recipe(user, attrs \\ %{}) do
+    # FIXME:  this should be in a transaction, I think.
     upsert_ingredient(attrs)
 
-    %Recipe{}
+    ## add the user id!
+    %Recipe{user_id: user.id}
     |> Recipe.changeset(attrs)
     |> Repo.insert()
   end

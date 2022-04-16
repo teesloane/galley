@@ -11,6 +11,7 @@ defmodule Galley.Recipes.Recipe do
     embeds_many :steps, R.RecipeStep, on_replace: :delete
     embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
     embeds_one :time, R.RecipeTime, on_replace: :update
+    belongs_to :user, Galley.Accounts.User
 
     timestamps()
   end
