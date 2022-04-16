@@ -10,6 +10,10 @@
   <% end %>
 
   <div class="flex flex-col bg-white border drop-shadow-lg rounded p-4 border-gray-500">
+    <%= label f, :username, class: "pb-2 text-sm" %>
+    <%= text_input f, :username, required: true, class: "border rounded mb-2 p-1 px-2" %>
+    <%= error_tag f, :username %>
+
     <%= label f, :email, class: "pb-2 text-sm" %>
     <%= email_input f, :email, required: true, class: "border rounded mb-2 p-1 px-2" %>
     <%= error_tag f, :email %>
