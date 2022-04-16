@@ -10,22 +10,21 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body class="min-h-screen flex flex-col bg-white dark:bg-neutral-800">
-    <header class="bg-blue-600 p-2 text-white text-sm">
+    <header class="bg-blue-600 py-2 px-4 text-white text-sm">
         <nav class="flex">
           <div class="flex flex-1">Galley</div>
           <ul class="flex">
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li class="pr-2"><%= link "Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
-
             <%= render "_user_menu.html", assigns %>
           </ul>
         </nav>
     </header>
 
-    <div class="flex flex-1 flex-col">
-      <%#= render "_sidebar.html", assigns %>
-      <%= @inner_content %>
+    <div class="flex flex-1">
+      <%= render "_sidebar.html", assigns %>
+      <div class="flex flex-1 flex-col"> <%= @inner_content %> </div>
     </div>
   </body>
 </html>
