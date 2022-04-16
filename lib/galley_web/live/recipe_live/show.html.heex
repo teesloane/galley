@@ -21,6 +21,7 @@
       <a href={@recipe.source}>Source</a>
     <% end %>
 
+    <%= @recipe.user.id %>
     <%= if @recipe.time do %>
       <div>
       <span> Time: </span>

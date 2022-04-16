@@ -44,6 +44,7 @@ defmodule Galley.Recipes do
 
   def get_recipe_by_id_and_slug!(id, slug) do
     Repo.get_by!(Recipe, id: id, slug: slug)
+    |> Repo.preload(:user)
     end
   @doc """
   Creates a recipe.
