@@ -41,12 +41,14 @@ defmodule Galley.Recipes do
       filter == "My Recipes" and query == "" ->
         from(r in Recipe, where: r.user_id == ^user_id)
         |>Repo.all()
+        |> Repo.preload(:user)
 
       filter == "My Recipes" and query != "" ->
         Recipe
         |> where([r], r.user_id == ^user_id)
         |> where([r], ilike(r.title, ^"%#{query}%"))
         |>Repo.all()
+        |> Repo.preload(:user)
 
       filter == "My Recipes" and query != "" ->
         from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))

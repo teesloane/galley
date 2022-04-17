@@ -10,15 +10,18 @@
     %>
   </form>
 
+  <!-- Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <%=  for recipe <- @recipes do %>
       <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
         <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
           <div class="h-48 bg-gray-200 dark:bg-gray-700" />
-          <div class="font-bold p-2"><%= recipe.title %></div>
+          <div class="flex justify-between align-center">
+            <div class="font-bold p-2"><%= recipe.title %></div>
+          </div>
         </div>
       <% end %>
-    <% end  %>
+    <% end %>
   </div>
 
   <span class="mt-24"><%= live_patch "New Recipe", to: Routes.recipe_upsert_path(@socket, :new) %></span>
