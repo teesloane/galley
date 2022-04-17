@@ -21,18 +21,8 @@ defmodule GalleyWeb.RecipeLive.Index do
   end
 
   @impl true
-  def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    recipes = list_recipes()
-
-    filtered_recipes =
-      Enum.filter(recipes, fn r ->
-        r.title
-        |> String.downcase()
-        |> String.contains?(String.downcase(query))
-      end)
-
-    recipes = if String.length(query) == 0, do: recipes, else: filtered_recipes
-    {:noreply, assign(socket, :recipes, recipes)}
+  def handle_event("search", %{"search" => search}, socket) do
+    {:noreply, assign(socket, :recipes, Recipes.search_recipes(search))}
   end
 
   defp apply_action(socket, :index, _params) do
@@ -44,12 +34,4 @@ defmodule GalleyWeb.RecipeLive.Index do
   defp list_recipes do
     Recipes.list_recipes()
   end
-
-  # defp search_filter(items, search) do
-  #   Enum.filter(items, fn i ->
-  #     i.name
-  #     |> String.downcase()
-  #     |> String.contains?(String.downcase(search))
-  #   end)
-  # end
 end

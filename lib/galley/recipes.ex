@@ -24,6 +24,18 @@ defmodule Galley.Recipes do
     |> Repo.preload(:user)
   end
 
+  def search_recipes(%{"filter" => filter, "query" => query, "tags" => _tags}) do
+    cond do
+      filter == "All" and query == "" ->
+        list_recipes()
+
+      filter == "All" and query != "" ->
+        from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))
+        |> Repo.all()
+        |> Repo.preload(:user)
+    end
+  end
+
   @doc """
   Gets a single recipe.
 
@@ -45,7 +57,8 @@ defmodule Galley.Recipes do
   def get_recipe_by_id_and_slug!(id, slug) do
     Repo.get_by!(Recipe, id: id, slug: slug)
     |> Repo.preload(:user)
-    end
+  end
+
   @doc """
   Creates a recipe.
 
