@@ -82,8 +82,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:error, "Failed to update recipe.")
-         |> assign(:changeset, changeset)
-        }
+         |> assign(:changeset, changeset)}
     end
   end
 

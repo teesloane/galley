@@ -23,9 +23,12 @@ defmodule GalleyWeb.RecipeLive.Index do
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
     user_id = socket.assigns.current_user.id
-    socket = socket
-    |> assign(:recipes, Recipes.search_recipes(search, user_id))
-    |> assign(:search_filter, search["filter"])
+
+    socket =
+      socket
+      |> assign(:recipes, Recipes.search_recipes(search, user_id))
+      |> assign(:search_filter, search["filter"])
+
     {:noreply, socket}
   end
 

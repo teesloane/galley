@@ -12,6 +12,7 @@ defmodule GalleyWeb.UserRegistrationController do
 
   def create(conn, %{"user" => user_params}) do
     IO.inspect(user_params, label: "user_params are:")
+
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         {:ok, _} =

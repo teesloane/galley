@@ -153,9 +153,11 @@ defmodule GalleyWeb.UserLiveAuth do
 
   def on_mount(:default, params, session, socket) do
     user_token = session["user_token"]
-    socket = assign_new(socket, :current_user, fn ->
-      Galley.Accounts.get_user_by_session_token(user_token)
-    end)
+
+    socket =
+      assign_new(socket, :current_user, fn ->
+        Galley.Accounts.get_user_by_session_token(user_token)
+      end)
 
     # FIXME: make it `if socket.assigns.current_user.confirmed_at` once that's built
     if socket.assigns.current_user do

@@ -48,7 +48,6 @@ defmodule GalleyWeb do
         layout: {GalleyWeb.LayoutView, "live.html"},
         container: {:div, class: "flex w-full"}
 
-
       # see: https://hexdocs.pm/phoenix_live_view/security-model.html#mounting-considerations
       on_mount GalleyWeb.UserLiveAuth
       unquote(view_helpers())
