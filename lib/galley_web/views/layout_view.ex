@@ -8,10 +8,11 @@ defmodule GalleyWeb.LayoutView do
 
   def sidebar_links(conn) do
     [
-      %{name: "Recipes", link: Routes.recipe_index_path(conn, :index)},
-      %{name: "Meal Planning", link: ""},
-      %{name: "The Pantry", link: ""},
-      %{name: "Support Galley", link: ""}
+      %{name: "Browse Recipes", link: Routes.recipe_index_path(conn, :index)},
+      %{name: "+ Add a Recipe", link: Routes.recipe_upsert_path(conn, :new)},
+      # %{name: "Meal Planning", link: ""},
+      # %{name: "The Pantry", link: ""},
+      # %{name: "Support Galley", link: ""}
     ]
   end
 end

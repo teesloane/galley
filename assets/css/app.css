@@ -31,7 +31,7 @@
   select {
     /* min-height: 30px; */
     padding: 5.5px !important;
-    @apply bg-white ;
+    @apply bg-white dark:bg-neutral-700;
   }
 
   .heading {
