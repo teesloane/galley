@@ -24,7 +24,11 @@ defmodule Galley.Recipes do
     |> Repo.preload(:user)
   end
 
-  def search_recipes(%{"filter" => filter, "query" => query, "tags" => _tags}) do
+  @doc """
+  Search recipes is a bit complex because there are multiple cases we need
+  to handle for when we dispatch the DB query.
+  """
+  def search_recipes(%{"filter" => filter, "query" => query, "tags" => _tags}, user_id) do
     cond do
       filter == "All" and query == "" ->
         list_recipes()
@@ -33,6 +37,24 @@ defmodule Galley.Recipes do
         from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))
         |> Repo.all()
         |> Repo.preload(:user)
+
+      filter == "My Recipes" and query == "" ->
+        from(r in Recipe, where: r.user_id == ^user_id)
+        |>Repo.all()
+
+      filter == "My Recipes" and query != "" ->
+        Recipe
+        |> where([r], r.user_id == ^user_id)
+        |> where([r], ilike(r.title, ^"%#{query}%"))
+        |>Repo.all()
+
+      filter == "My Recipes" and query != "" ->
+        from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))
+        |> Repo.all()
+        |> Repo.preload(:user)
+
+      true ->
+        list_recipes()
     end
   end
 

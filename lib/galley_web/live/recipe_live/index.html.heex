@@ -5,7 +5,7 @@
     <%= text_input :search, :query, placeholder: "Search Recipes", autofocus: true, "phx-debounce": "200", class: "flex-1 mr-4 py-2 px-4" %>
     <%= text_input :search, :tags, placeholder: "Tags", "phx-debounce": "200", class: "mr-4 px-4" %>
     <%= select :search, :filter, [
-      options: ["All", "My Recipes", "Recently Added"]
+      options: ["All", "My Recipes"]
     ]
     %>
   </form>

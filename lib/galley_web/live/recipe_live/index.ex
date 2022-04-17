@@ -2,7 +2,6 @@ defmodule GalleyWeb.RecipeLive.Index do
   use GalleyWeb, :live_view
 
   alias Galley.Recipes
-  alias Galley.Recipes.Recipe
 
   @impl true
   def mount(_params, _session, socket) do
@@ -22,7 +21,8 @@ defmodule GalleyWeb.RecipeLive.Index do
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    {:noreply, assign(socket, :recipes, Recipes.search_recipes(search))}
+    user_id = socket.assigns.current_user.id
+    {:noreply, assign(socket, :recipes, Recipes.search_recipes(search, user_id))}
   end
 
   defp apply_action(socket, :index, _params) do
