@@ -2,7 +2,7 @@
   <h2 class="heading text-center">Recipes</h2>
 
   <form phx-change="search" class="flex-col md:flex-row flex mb-8">
-    <%= text_input :search, :query, placeholder: "Search Recipes", autofocus: true, "phx-debounce": "200", class: "flex-1 md:mr-4 py-2 px-4" %>
+    <%= text_input :search, :query, placeholder: "Search Recipes", autofocus: true, "phx-debounce": "300", class: "flex-1 md:mr-4 py-2 px-4" %>
     <%= text_input :search, :tags, placeholder: "Tags", "phx-debounce": "200", class: "md:mr-4 px-4" %>
     <%= select :search, :filter, [
       options: ["All", "My Recipes"]
@@ -11,6 +11,7 @@
   </form>
 
   <!-- Cards -->
+  <%= if @recipes !== [] do %>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <%=  for recipe <- @recipes do %>
       <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
@@ -23,4 +24,10 @@
       <% end %>
     <% end %>
   </div>
+  <% else %>
+  <div class="flex flex-col flex-1 h-64 justify-center items-center text-center">
+    <div>No Recipes Found.</div>
+    <div class="mt-4">( ˘︹˘ )</div>
+    </div>
+  <% end %>
 </div>
