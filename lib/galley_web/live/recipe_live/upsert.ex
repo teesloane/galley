@@ -12,8 +12,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      socket
      |> assign(:formState, 0)
      |> assign(:uploaded_files, [])
-     |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
-    }
+     |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)}
   end
 
   @impl true

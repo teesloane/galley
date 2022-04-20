@@ -99,6 +99,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     end
   end
 
+  ## -- File Upload Stuff
+
   def render_file_upload(assigns) do
     ~H"""
       <section phx-drop-target={@uploads.recipe_img.ref} class="">
