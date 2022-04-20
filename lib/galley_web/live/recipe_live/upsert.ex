@@ -11,7 +11,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     {:ok,
      socket
      |> assign(:formState, 0)
-     |> assign(:uploaded_files, [])
+     |> assign(:uploaded_images, [])
      |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)}
   end
 
@@ -40,18 +40,6 @@ defmodule GalleyWeb.RecipeLive.Upsert do
           measurement: "",
           ingredient: ""
         },
-        %RecipeIngredient{
-          id: GalleyUtils.get_temp_id(),
-          quantity: "",
-          measurement: "",
-          ingredient: ""
-        },
-        %RecipeIngredient{
-          id: GalleyUtils.get_temp_id(),
-          quantity: "",
-          measurement: "",
-          ingredient: ""
-        }
       ],
       steps: [
         %RecipeStep{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}

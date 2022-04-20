@@ -144,7 +144,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   # FIXME: this should be set to be dev only as it uploads to local host,
   # maybe we can match on a get_env call.
   defp handle_upload(socket, form_params) do
-    uploaded_files =
+    uploaded_images =
       consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, _entry ->
         upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
         # make the upload directory if it doesn't exist
@@ -154,6 +154,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         File.cp!(path, dest)
         {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
       end)
-    Map.put(form_params, "uploaded_files", uploaded_files)
+    Map.put(form_params, "uploaded_images", uploaded_images)
   end
 end

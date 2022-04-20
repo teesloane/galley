@@ -8,11 +8,11 @@ defmodule Galley.Recipes.Recipe do
     field :title, :string
     field :slug, :string
     field :yields, :string
+    field :uploaded_images, {:array, :string}, default: []
+    belongs_to :user, Galley.Accounts.User
+    embeds_one :time, R.RecipeTime, on_replace: :update
     embeds_many :steps, R.RecipeStep, on_replace: :delete
     embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
-    embeds_one :time, R.RecipeTime, on_replace: :update
-    belongs_to :user, Galley.Accounts.User
-
     timestamps()
   end
 
@@ -22,11 +22,11 @@ defmodule Galley.Recipes.Recipe do
     attrs = Map.merge(attrs, slug_map(attrs))
 
     recipe
-    |> cast(attrs, [:title, :source, :yields, :slug])
+    |> cast(attrs, [:title, :source, :yields, :slug, :uploaded_images])
     |> cast_embed(:ingredients)
     |> cast_embed(:steps, with: &R.RecipeStep.changeset/2, required: true)
     |> cast_embed(:time)
-    |> validate_required([:title, :yields, :steps, :time])
+    |> validate_required([:title, :yields, :steps, :time, :uploaded_images])
   end
 
   defp slug_map(%{"title" => title}) do
@@ -34,6 +34,10 @@ defmodule Galley.Recipes.Recipe do
   end
 
   defp slug_map(_params), do: %{}
+
+  # defp uploaded_images_changeset(schema, params) do
+  #   schema |> cast(params, [:url])
+  # end
 end
 
 ## -----------------------------------------------------------------------------
