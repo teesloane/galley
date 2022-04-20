@@ -1,207 +1,209 @@
-<div class="page_wrapper pb-24 lg:w-3/5" >
+<div class="page_wrapper pb-24 lg:w-3/5">
   <h2 class="heading"><%= @title %></h2>
   <.form
-  let={f}
-  for={@changeset}
-  id="recipe-form"
-  class="flex flex-col"
-  phx-target={@myself}
-  phx-change="validate"
-  phx-submit="save">
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
-    <div class="flex flex-col w-full">
-      <span class="flex items-center pb-1 justify-between">
-        <%= label f, :title, class: "recipe-form-label" %>
-        <%= error_tag(f, :title) %>
-      </span>
-      <%= text_input f, :title %>
-    </div>
-
-    <div class="flex flex-col w-full">
-      <span class="flex items-center justify-between pb-1">
-        <%= label f, :source, "Source", class: "recipe-form-label"  %>
-        <%= error_tag f, :source %>
-      </span>
-      <%= text_input f, :source, placeholder: "Link to recipe (optional)" %>
-    </div>
-
-
-    <div class="flex flex-col w-full">
-      <span class="flex items-center justify-between pb-1">
-        <%= label f, :yields, class: "recipe-form-label" %>
-        <%= error_tag f, :yields %>
-      </span>
-      <%= text_input f, :yields, placeholder: "ex: 2 Servings; 12 Miffins; 4 Milkshakes, etc" %>
-    </div>
-
-    <div class="flex flex-col w-full">
-      <span class="flex items-center justify-between pb-1">
-        <%= label f, :time, "Total time (hh:mm)", class: "recipe-form-label" %>
-        <%= error_tag f, :time %>
-      </span>
-
-      <div class="flex">
-        <%= inputs_for f, :time, fn fp -> %>
-          <%=  select fp, :hour, 0..12, class: "w-16 mr-2 py-1" %>
-          <span class="self-center dark:text-gray-100 -mt-2"> : </span>
-          <%=  select fp, :minute, 0..59, class: "w-16 ml-2 py-1" %>
-        <% end %>
+    let={f}
+    for={@changeset}
+    id="recipe-form"
+    class="flex flex-col"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
+      <div class="flex flex-col w-full">
+        <span class="flex items-center pb-1 justify-between">
+          <%= label(f, :title, class: "recipe-form-label") %>
+          <%= error_tag(f, :title) %>
+        </span>
+        <%= text_input(f, :title) %>
       </div>
-    </div>
 
-  </div>
+      <div class="flex flex-col w-full">
+        <span class="flex items-center justify-between pb-1">
+          <%= label(f, :source, "Source", class: "recipe-form-label") %>
+          <%= error_tag(f, :source) %>
+        </span>
+        <%= text_input(f, :source, placeholder: "Link to recipe (optional)") %>
+      </div>
 
-  <hr class="my-16">
+      <div class="flex flex-col w-full">
+        <span class="flex items-center justify-between pb-1">
+          <%= label(f, :yields, class: "recipe-form-label") %>
+          <%= error_tag(f, :yields) %>
+        </span>
+        <%= text_input(f, :yields, placeholder: "ex: 2 Servings; 12 Miffins; 4 Milkshakes, etc") %>
+      </div>
 
-  <section>
-    <h2 class="heading">Ingredients</h2>
-    <table class="table-fixed">
-      <thead class="">
-        <tr class="py-2 dark:text-neutral-50">
-          <th class="th_small w-32">Quantity</th>
-          <th class="th_small w-32">Measurement</th>
-          <th class="th_small w-full">Ingredient</th>
-        </tr>
-      </thead>
+      <div class="flex flex-col w-full">
+        <span class="flex items-center justify-between pb-1">
+          <%= label(f, :time, "Total time (hh:mm)", class: "recipe-form-label") %>
+          <%= error_tag(f, :time) %>
+        </span>
 
-      <tr class="text-sm text-gray-300 dark:text-neutral-500 pb-2 dark:text-neutral-50">
-        <td>Ex: 1/3</td>
-        <td>cups</td>
-        <td>vegetable broth</td>
-      </tr>
-
-
-      <tr><td><br/></td></tr>
-      <%= inputs_for f, :ingredients, fn fp -> %>
-        <div class="text-white" >
+        <div class="flex">
+          <%= inputs_for f, :time, fn fp -> %>
+            <%= select(fp, :hour, 0..12, class: "w-16 mr-2 py-1") %>
+            <span class="self-center dark:text-gray-100 -mt-2">:</span>
+            <%= select(fp, :minute, 0..59, class: "w-16 ml-2 py-1") %>
+          <% end %>
         </div>
-        <tr class="mt-2">
-          <td><%= text_input fp, :quantity, class: "w-16 md:w-32 mr-2" %> </td>
-          <td><%= text_input fp, :measurement, class: "w-16 md:w-32 mr-2" %></td>
-          <td><%= text_input fp, :ingredient, class: "w-full" %></td>
+      </div>
+    </div>
+
+    <hr class="my-16" />
+
+    <section>
+      <h2 class="heading">Ingredients</h2>
+      <table class="table-fixed">
+        <thead class="">
+          <tr class="py-2 dark:text-neutral-50">
+            <th class="th_small w-32">Quantity</th>
+            <th class="th_small w-32">Measurement</th>
+            <th class="th_small w-full">Ingredient</th>
+          </tr>
+        </thead>
+
+        <tr class="text-sm text-gray-300 dark:text-neutral-500 pb-2 dark:text-neutral-50">
+          <td>Ex: 1/3</td>
+          <td>cups</td>
+          <td>vegetable broth</td>
+        </tr>
+
+        <tr>
           <td>
-            <button class="btn-icon ml-2 mb-2" phx-value-remove={fp.data.id}
-                    type="button" phx-click="remove-ingredient" phx-target={@myself}>
-              ✕
+            <br />
+          </td>
+        </tr>
+        <%= inputs_for f, :ingredients, fn fp -> %>
+          <div class="text-white"></div>
+          <tr class="mt-2">
+            <td><%= text_input(fp, :quantity, class: "w-16 md:w-32 mr-2") %></td>
+            <td><%= text_input(fp, :measurement, class: "w-16 md:w-32 mr-2") %></td>
+            <td><%= text_input(fp, :ingredient, class: "w-full") %></td>
+            <td>
+              <button
+                class="btn-icon ml-2 mb-2"
+                phx-value-remove={fp.data.id}
+                type="button"
+                phx-click="remove-ingredient"
+                phx-target={@myself}
+              >
+                ✕
+              </button>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+
+      <button class="btn-clear mt-8" type="button" phx-click="add-ingredient" phx-target={@myself}>
+        Add Ingredient
+      </button>
+    </section>
+
+    <hr class="my-16" />
+
+    <section class="">
+      <h2 class="heading">Instructions</h2>
+
+      <table class="table-fixed">
+        <thead class="">
+          <tr class="py-2 dark:text-neutral-50">
+            <th class="th_small w-full italic">Instruction</th>
+            <th class="th_small w-32 italic"><span class="ml-8">Timer (optional)</span></th>
+          </tr>
+        </thead>
+
+        <tr>
+          <td>
+            <br />
+          </td>
+        </tr>
+
+        <%= inputs_for f, :steps, fn fp -> %>
+          <tr class="mt-2 items-center">
+            <td>
+              <%= textarea(fp, :instruction,
+                id: fp.name,
+                rows: 1,
+                phx_hook: "MaintainAttrs",
+                data_attrs: "style, id",
+                class: "w-full mr-2"
+              ) %>
+            </td>
+
+            <td class="flex ml-8">
+              <%= inputs_for fp, :timer, fn fo -> %>
+                <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
+                <span class="self-center dark:text-gray-100 -mt-2">:</span>
+                <%= select(fo, :minute, 0..59, class: "w-16 ml-2 py-1") %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+
+      <button
+        id="add-instruction-btn"
+        class="btn-clear mt-8"
+        type="button"
+        phx-click="add-instruction"
+        phx-target={@myself}
+      >
+        Add Instruction
+      </button>
+    </section>
+
+    <hr class="my-16" />
+    <!-- Section: uploaded images -->
+    <section>
+      <h2 class="heading">Upload images</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+        <%= for entry <- @uploads.recipe_img.entries do %>
+          <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+            <figure>
+              <%= live_img_preview(entry,
+                class: "w-full sm:w-48 sm:h-48 rounded-sm border-neutral-200 object-cover"
+              ) %>
+            </figure>
+
+            <button
+              class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+              phx-click="cancel-upload"
+              type="button"
+              phx-value-ref={entry.ref}
+              aria-label="cancel"
+            >
+              &times;
             </button>
-          </td>
-        </tr>
-      <% end %>
-    </table>
 
-    <button class="btn-clear mt-8" type="button" phx-click="add-ingredient" phx-target={@myself} >
-      Add Ingredient
-    </button>
-  </section>
-
-  <hr class="my-16"/>
-
-  <section class="">
-    <h2 class="heading">Instructions</h2>
-
-    <table class="table-fixed">
-      <thead class="">
-        <tr class="py-2 dark:text-neutral-50">
-          <th class="th_small w-full italic">Instruction</th>
-          <th class="th_small w-32 italic"><span class="ml-8">Timer (optional)</span></th>
-        </tr>
-      </thead>
-
-      <tr><td><br/></td></tr>
-
-      <%= inputs_for f, :steps, fn fp -> %>
-        <tr class="mt-2 items-center">
-          <td><%= textarea fp, :instruction, [
-              id: fp.name,
-              rows: 1,
-              phx_hook: "MaintainAttrs",
-              data_attrs: "style, id",
-              class: "w-full mr-2"]
-              %>
-          </td>
-
-          <td class="flex ml-8">
-            <%= inputs_for fp, :timer, fn fo -> %>
-              <%=  select fo, :hour, 0..12, class: "w-16 mr-2 py-1" %>
-              <span class="self-center dark:text-gray-100 -mt-2"> : </span>
-              <%=  select fo, :minute, 0..59, class: "w-16 ml-2 py-1" %>
+            <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
+              <p class="alert alert-danger"><%= error_to_string(err) %></p>
             <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-
-    <button id="add-instruction-btn" class="btn-clear mt-8" type="button" phx-click="add-instruction" phx-target={@myself} >
-      Add Instruction
-    </button>
-
-  </section>
-
-  <div class="flex flex-1 justify-between mt-8">
-    <%=  if @formState do %>
-      <!-- <button class="btn" type="button" phx-click="form_move_forward">Next <%= @formState  %></button> -->
-      <!-- <button class="btn" type="button" phx-click="form_move_backward">Prev <%= @formState  %></button> -->
-    <% end %>
-  </div>
-
-
-  <hr class="my-16"/>
-
-
-
-
-  <!-- Section: uploaded images -->
-
-  <section>
-    <h2 class="heading">Upload images</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
-    <%= for entry <- @uploads.recipe_img.entries do %>
-      <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
-        <figure>
-          <%# Phoenix.LiveView.Helpers.live_img_preview/2 renders a client-side preview %>
-          <%= live_img_preview entry, class: "w-full sm:w-48 sm:h-48 rounded-sm border-neutral-200 object-cover" %>
-        </figure>
-
-        <%# entry.progress will update automatically for in-flight entries %>
-
-        <%# a regular click event whose handler will invoke Phoenix.LiveView.cancel_upload/3 %>
-        <button
-          class="absolute top-0 right-0 bg-black text-white py-1 px-3"
-          phx-click="cancel-upload"
-          phx-value-ref={entry.ref}
-          aria-label="cancel">
-          &times;</button>
-
-        <%# Phoenix.LiveView.Helpers.upload_errors/2 returns a list of error atoms %>
-        <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
-          <p class="alert alert-danger"><%= error_to_string(err) %></p>
+          </article>
         <% end %>
 
-      </article>
-    <% end %>
-
-    <.render_file_upload uploads={@uploads} />
+        <.render_file_upload uploads={@uploads} />
       </div>
 
-    <%# Phoenix.LiveView.Helpers.upload_errors/1 returns a list of error atoms %>
-    <%= for err <- upload_errors(@uploads.recipe_img) do %>
-      <p class="alert alert-danger"><%= error_to_string(err) %></p>
-    <% end %>
-  </section>
+      <%= for err <- upload_errors(@uploads.recipe_img) do %>
+        <p class="alert alert-danger"><%= error_to_string(err) %></p>
+      <% end %>
+    </section>
 
-
-  <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10">
-    <%=  if @action == :edit do %>
-      <%= submit "Save changes",
-      phx_disable_with: "Saving...",
-      class: "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}" %>
-    <% else %>
-      <%= submit "Create recipe",  [
-        phx_disable_with: "Saving...",
-        class: "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}"] %>
-    <% end %>
-  </div>
-
+    <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10">
+      <%= if @action == :edit do %>
+        <%= submit("Save changes",
+          phx_disable_with: "Saving...",
+          class:
+            "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}"
+        ) %>
+      <% else %>
+        <%= submit("Create recipe",
+          phx_disable_with: "Saving...",
+          class:
+            "btn #{unless @changeset.valid?, do: "bg-gray-500 hover:bg-gray-500 cursor-not-allowed"}"
+        ) %>
+      <% end %>
+    </div>
   </.form>
 </div>

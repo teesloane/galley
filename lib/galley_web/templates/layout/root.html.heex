@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%= csrf_meta_tag() %>
-    <%= live_title_tag assigns[:page_title] || "Galley", suffix: "" %>
-    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
-    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+    <%= live_title_tag(assigns[:page_title] || "Galley", suffix: "") %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={Routes.static_path(@conn, "/assets/app.js")}
+    >
+    </script>
   </head>
   <body class="min-h-screen flex flex-col bg-white dark:bg-neutral-800">
     <header class="bg-blue-500 py-2 px-4 text-white text-sm">
-        <nav class="flex">
-          <div class="flex flex-1">Galley</div>
-          <ul class="flex flex-col md:flex-row">
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li class="pr-2"><%= link "Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-            <%= render "_sidebar.html", assigns %>
-          </ul>
-        </nav>
+      <nav class="flex">
+        <div class="flex flex-1">Galley</div>
+        <ul class="flex flex-col md:flex-row">
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+            <li class="pr-2">
+              <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
+            </li>
+          <% end %>
+          <%= render("_sidebar.html", assigns) %>
+        </ul>
+      </nav>
     </header>
-      <div class="flex flex-1 flex-col"> <%= @inner_content %> </div>
+    <div class="flex flex-1 flex-col"><%= @inner_content %></div>
   </body>
 </html>

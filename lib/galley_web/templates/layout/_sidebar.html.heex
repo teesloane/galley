@@ -1,18 +1,22 @@
 <aside class="">
   <ul class="flex flex-col md:flex-row mr-2">
-    <%=  for l <- sidebar_links(@conn) do %>
+    <%= for l <- sidebar_links(@conn) do %>
       <li class="">
-        <div class="md:px-2"> <%= link l.name, to: l.link %> </div>
+        <div class="md:px-2"><%= link(l.name, to: l.link) %></div>
       </li>
-    <% end  %>
+    <% end %>
 
     <%= if @current_user do %>
       <!-- <li class="ml-2 pr-2"><%= @current_user.email %></li> -->
-      <li class="pr-2"><%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>
-      <li class="pr-2"><%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %></li>
+      <li class="pr-2"><%= link("Settings", to: Routes.user_settings_path(@conn, :edit)) %></li>
+      <li class="pr-2">
+        <%= link("Log out", to: Routes.user_session_path(@conn, :delete), method: :delete) %>
+      </li>
     <% else %>
-      <li class="pr-2"><%= link "Register", to: Routes.user_registration_path(@conn, :new) %></li>
-      <li class="pr-2"><%= link "Log in", to: Routes.user_session_path(@conn, :new) %></li>
-<% end %>
+      <li class="pr-2">
+        <%= link("Register", to: Routes.user_registration_path(@conn, :new)) %>
+      </li>
+      <li class="pr-2"><%= link("Log in", to: Routes.user_session_path(@conn, :new)) %></li>
+    <% end %>
   </ul>
 </aside>
