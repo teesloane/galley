@@ -54,7 +54,7 @@
 
   <hr class="my-16">
 
-  <section class="">
+  <section>
     <h2 class="heading">Ingredients</h2>
     <table class="table-fixed">
       <thead class="">
@@ -145,7 +145,53 @@
     <% end %>
   </div>
 
-  <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center">
+
+  <hr class="my-16"/>
+
+
+
+
+  <!-- Section: uploaded images -->
+
+  <section>
+    <h2 class="heading">Upload images</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+    <%= for entry <- @uploads.recipe_img.entries do %>
+      <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+        <figure>
+          <%# Phoenix.LiveView.Helpers.live_img_preview/2 renders a client-side preview %>
+          <%= live_img_preview entry, class: "w-full sm:w-48 sm:h-48 rounded-sm border-neutral-200 object-cover" %>
+        </figure>
+
+        <%# entry.progress will update automatically for in-flight entries %>
+
+        <%# a regular click event whose handler will invoke Phoenix.LiveView.cancel_upload/3 %>
+        <button
+          class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+          phx-click="cancel-upload"
+          phx-value-ref={entry.ref}
+          aria-label="cancel">
+          &times;</button>
+
+        <%# Phoenix.LiveView.Helpers.upload_errors/2 returns a list of error atoms %>
+        <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
+          <p class="alert alert-danger"><%= error_to_string(err) %></p>
+        <% end %>
+
+      </article>
+    <% end %>
+
+    <.render_file_upload uploads={@uploads} />
+      </div>
+
+    <%# Phoenix.LiveView.Helpers.upload_errors/1 returns a list of error atoms %>
+    <%= for err <- upload_errors(@uploads.recipe_img) do %>
+      <p class="alert alert-danger"><%= error_to_string(err) %></p>
+    <% end %>
+  </section>
+
+
+  <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10">
     <%=  if @action == :edit do %>
       <%= submit "Save changes",
       phx_disable_with: "Saving...",
@@ -157,76 +203,5 @@
     <% end %>
   </div>
 
-  <hr class="my-16"/>
-
-  <section>
-  </section>
-
-  <%# use phx-drop-target with the upload ref to enable file drag and drop %>
-  <section phx-drop-target={@uploads.recipe_img.ref}>
-    <div class="flex justify-center mt-8">
-      <div class="max-w-2xl rounded-lg shadow-xl bg-gray-50">
-        <div class="m-4">
-          <label class="inline-block mb-2 text-gray-500">File Upload</label>
-          <div class="flex items-center justify-center w-full">
-            <label
-              class="flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
-              <div class="flex flex-col items-center justify-center pt-7">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
-                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                  Attach a file</p>
-              </div>
-              <%= live_file_input @uploads.recipe_img, class: "opacity-0"%>
-            </label>
-          </div>
-        </div>
-        <div class="flex justify-center p-2">
-          <button class="w-full px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Create</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- Section: uploaded images -->
-
-  <%# render each avatar entry %>
-  <%= for entry <- @uploads.recipe_img.entries do %>
-    <article class="upload-entry">
-
-      <figure>
-        <%# Phoenix.LiveView.Helpers.live_img_preview/2 renders a client-side preview %>
-        <%= live_img_preview entry %>
-        <figcaption><%= entry.client_name %></figcaption>
-      </figure>
-
-      <%# entry.progress will update automatically for in-flight entries %>
-      <progress value={entry.progress} max="100"> <%= entry.progress %>% </progress>
-
-      <%# a regular click event whose handler will invoke Phoenix.LiveView.cancel_upload/3 %>
-      <button phx-click="cancel-upload" phx-value-ref={entry.ref} aria-label="cancel">&times;</button>
-
-      <%# Phoenix.LiveView.Helpers.upload_errors/2 returns a list of error atoms %>
-      <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
-        <p class="alert alert-danger"><%= error_to_string(err) %></p>
-      <% end %>
-
-    </article>
-  <% end %>
-
-  <%# Phoenix.LiveView.Helpers.upload_errors/1 returns a list of error atoms %>
-  <%= for err <- upload_errors(@uploads.recipe_img) do %>
-    <p class="alert alert-danger"><%= error_to_string(err) %></p>
-  <% end %>
-
-
   </.form>
-
-
-
-
 </div>

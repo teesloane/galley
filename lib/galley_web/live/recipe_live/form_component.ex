@@ -5,15 +5,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   alias Galley.Recipes.RecipeStep
   alias Galley.Recipes.RecipeIngredient
 
-  # @impl true
-  # def mount(_params, _session, socket) do
-  #   {:ok,
-  #    socket
-  #    |> assign(:uploaded_files, [])
-  #    |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
-  #   }
-  # end
-
   @impl true
   def update(%{recipe: recipe} = assigns, socket) do
     changeset = Recipes.change_recipe(recipe)
@@ -106,6 +97,34 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  def render_file_upload(assigns) do
+    ~H"""
+      <section phx-drop-target={@uploads.recipe_img.ref} class="">
+        <div class="">
+          <div class="sm:h-48 sm:w-48 flex flex-col justify-center rounded-sm bg-gray-50 border border-neutral-200">
+            <div class="m-4">
+              <div class="flex items-center justify-center w-full">
+                <label class="flex flex-col w-full  justify-center  border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                  <div class="flex flex-col items-center justify-center pt-7">
+                    <!-- upload icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                      Attach a file</p>
+                  </div>
+                  <%= live_file_input @uploads.recipe_img, class: "opacity-0"%>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    """
   end
 
   defp error_to_string(:too_large), do: "Too large"
