@@ -157,7 +157,15 @@
     <!-- Section: uploaded images -->
     <section>
       <h2 class="heading">Upload images</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+
+      <p>
+        Add some images of your process or the final result!
+      </p>
+      <p>
+        You can upload up to four photos and select one as a thumbnail / hero image for the recipe page.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for entry <- @uploads.recipe_img.entries do %>
           <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
             <figure>
@@ -172,6 +180,7 @@
               type="button"
               phx-value-ref={entry.ref}
               aria-label="cancel"
+              phx-target={@myself}
             >
               &times;
             </button>
@@ -182,7 +191,9 @@
           </article>
         <% end %>
 
-        <.render_file_upload uploads={@uploads} />
+        <div class={if length(@uploads.recipe_img.entries) == 4, do: "hidden"}>
+          <.render_file_upload uploads={@uploads} />
+        </div>
       </div>
 
       <%= for err <- upload_errors(@uploads.recipe_img) do %>

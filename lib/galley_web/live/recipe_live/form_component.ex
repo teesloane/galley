@@ -70,6 +70,10 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :recipe_img, ref)}
+  end
+
   defp save_recipe(socket, :edit, recipe_params) do
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
       {:ok, _recipe} ->
