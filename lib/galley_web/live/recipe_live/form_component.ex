@@ -75,6 +75,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :edit, recipe_params) do
+    recipe_params = handle_upload(socket, recipe_params)
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -91,6 +92,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :new, recipe_params) do
+    recipe_params = handle_upload(socket, recipe_params)
     case Recipes.create_recipe(socket.assigns.current_user, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -136,4 +138,22 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   defp error_to_string(:too_large), do: "Too large"
   defp error_to_string(:too_many_files), do: "You have selected too many files"
   defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+
+  # take the form_params and extract the uploaded entries
+  # then put them uploaded files into the form params to be inserted into the db.
+  # FIXME: this should be set to be dev only as it uploads to local host,
+  # maybe we can match on a get_env call.
+  defp handle_upload(socket, form_params) do
+    uploaded_files =
+      consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, _entry ->
+        upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
+        # make the upload directory if it doesn't exist
+        File.mkdir_p!(upload_folder)
+        dest = Path.join([upload_folder, Path.basename(path)])
+        # The `static/uploads` directory must exist for `File.cp!/2` to work.
+        File.cp!(path, dest)
+        {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
+      end)
+    Map.put(form_params, "uploaded_files", uploaded_files)
+  end
 end
