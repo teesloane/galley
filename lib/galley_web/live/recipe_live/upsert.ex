@@ -8,11 +8,12 @@ defmodule GalleyWeb.RecipeLive.Upsert do
 
   @impl true
   def mount(_params, _session, socket) do
-    state = %{
-      formState: 0
+    {:ok,
+     socket
+     |> assign(:formState, 0)
+     |> assign(:uploaded_files, [])
+     |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
     }
-
-    {:ok, assign(socket, state)}
   end
 
   @impl true

@@ -5,6 +5,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   alias Galley.Recipes.RecipeStep
   alias Galley.Recipes.RecipeIngredient
 
+  # @impl true
+  # def mount(_params, _session, socket) do
+  #   {:ok,
+  #    socket
+  #    |> assign(:uploaded_files, [])
+  #    |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
+  #   }
+  # end
+
   @impl true
   def update(%{recipe: recipe} = assigns, socket) do
     changeset = Recipes.change_recipe(recipe)
@@ -98,4 +107,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+  defp error_to_string(:too_large), do: "Too large"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
 end
