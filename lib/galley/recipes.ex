@@ -6,8 +6,8 @@ defmodule Galley.Recipes do
   import Ecto.Query, warn: false
   alias Galley.Repo
 
-  alias Galley.Recipes.Recipe
-  alias Galley.Recipes.Ingredient
+  alias Galley.Recipes.Recipe, as: Recipe
+  # alias Galley.Recipes.Ingredient
   alias Galley.Recipes
 
   @doc """
@@ -158,19 +158,19 @@ defmodule Galley.Recipes do
     Recipe.changeset(recipe, attrs)
   end
 
-  def change_step(%Recipes.RecipeStep{} = recipe_step, attrs \\ %{}) do
-    Recipes.RecipeStep.changeset(recipe_step, attrs)
+  def change_step(%Recipe.Step{} = recipe_step, attrs \\ %{}) do
+    Recipe.step_changeset(recipe_step, attrs)
   end
 
-  def change_ingredient(%Recipes.RecipeIngredient{} = recipe_ingredient, attrs \\ %{}) do
-    Recipes.RecipeIngredient.changeset(recipe_ingredient, attrs)
+  def change_ingredient(%Recipe.Ingredient{} = recipe_ingredient, attrs \\ %{}) do
+    Recipe.ingredient_changeset(recipe_ingredient, attrs)
   end
 
   defp upsert_ingredient(attrs) do
     attrs["ingredients"]
     |> Map.values()
     |> Enum.each(fn %{"ingredient" => x} ->
-      %Ingredient{} |> Ingredient.changeset(%{name: x}) |> Repo.insert(on_conflict: :nothing)
+      %Recipe.Ingredient{} |> Recipe.ingredient_changeset(%{name: x}) |> Repo.insert(on_conflict: :nothing)
     end)
   end
 end

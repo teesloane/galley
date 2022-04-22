@@ -2,9 +2,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   use GalleyWeb, :live_view
 
   alias Galley.Recipes
-  alias Galley.Recipes.Recipe
-  alias Galley.Recipes.RecipeStep
-  alias Galley.Recipes.RecipeIngredient
+  alias Galley.Recipes.Recipe, as: Recipe
 
   @impl true
   def mount(_params, _session, socket) do
@@ -34,7 +32,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     #
     |> assign(:recipe, %Recipe{
       ingredients: [
-        %RecipeIngredient{
+        %Recipe.Ingredient{
           id: GalleyUtils.get_temp_id(),
           quantity: "",
           measurement: "",
@@ -42,7 +40,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
         },
       ],
       steps: [
-        %RecipeStep{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
+        %Recipe.Step{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
       ]
     })
   end

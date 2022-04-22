@@ -53,7 +53,7 @@
 
   <section>
     <%=  for img <- @recipe.uploaded_images do %>
-      <img src={img} />
+      <img src={img.url} />
 
     <% end %>
   </section>
