@@ -154,6 +154,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         File.cp!(path, dest)
         {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
       end)
+    uploaded_images = Enum.map(uploaded_images, fn i -> %{"url" => i, "is_hero" => false} end)
     Map.put(form_params, "uploaded_images", uploaded_images)
   end
 end

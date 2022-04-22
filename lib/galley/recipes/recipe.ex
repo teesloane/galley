@@ -8,11 +8,15 @@ defmodule Galley.Recipes.Recipe do
     field :title, :string
     field :slug, :string
     field :yields, :string
-    field :uploaded_images, {:array, :string}, default: []
     belongs_to :user, Galley.Accounts.User
     embeds_one :time, R.RecipeTime, on_replace: :update
     embeds_many :steps, R.RecipeStep, on_replace: :delete
     embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
+
+    embeds_many :uploaded_images, Image do
+      field :url, :string
+      field :is_hero, :boolean, default: false
+    end
     timestamps()
   end
 
@@ -22,8 +26,9 @@ defmodule Galley.Recipes.Recipe do
     attrs = Map.merge(attrs, slug_map(attrs))
 
     recipe
-    |> cast(attrs, [:title, :source, :yields, :slug, :uploaded_images])
+    |> cast(attrs, [:title, :source, :yields, :slug, ])
     |> cast_embed(:ingredients)
+    |> cast_embed(:uploaded_images, with: &uploaded_images_changeset/2)
     |> cast_embed(:steps, with: &R.RecipeStep.changeset/2, required: true)
     |> cast_embed(:time)
     |> validate_required([:title, :yields, :steps, :time, :uploaded_images])
@@ -35,9 +40,9 @@ defmodule Galley.Recipes.Recipe do
 
   defp slug_map(_params), do: %{}
 
-  # defp uploaded_images_changeset(schema, params) do
-  #   schema |> cast(params, [:url])
-  # end
+  defp uploaded_images_changeset(schema, params) do
+    schema |> cast(params, [:url, :is_hero])
+  end
 end
 
 ## -----------------------------------------------------------------------------

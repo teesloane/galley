@@ -50,6 +50,14 @@
       <% end %>
     </div>
   </section>
+
+  <section>
+    <%=  for img <- @recipe.uploaded_images do %>
+      <img src={img} />
+
+    <% end %>
+  </section>
+
 </div>
 
 <%= if @recipe.user_id == @current_user.id  do %>
