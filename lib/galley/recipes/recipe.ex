@@ -12,7 +12,7 @@ defmodule Galley.Recipes.Recipe do
     embeds_one :time, R.RecipeTime, on_replace: :update
     # embeds_many :steps, R.RecipeStep, on_replace: :delete
     # embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
-    embeds_many :steps, Step do
+    embeds_many :steps, Step, on_replace: :delete do
       embeds_one :timer, R.RecipeTime, on_replace: :update
       field :instruction
     end
@@ -22,7 +22,7 @@ defmodule Galley.Recipes.Recipe do
       field :is_hero, :boolean, default: false
     end
 
-    embeds_many :ingredients, Ingredient do
+    embeds_many :ingredients, Ingredient, on_replace: :delete do
       field :ingredient, :string
       field :quantity, :string
       field :measurement, :string

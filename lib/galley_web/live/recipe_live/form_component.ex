@@ -25,6 +25,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   def handle_event("save", %{"recipe" => recipe_params}, socket) do
+    IO.inspect(recipe_params, label: "recipe params --------->")
     save_recipe(socket, socket.assigns.action, recipe_params)
   end
 
@@ -153,7 +154,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         File.cp!(path, dest)
         {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
       end)
-    uploaded_images = Enum.map(uploaded_images, fn i -> %{"url" => i, "is_hero" => false} end)
+    uploaded_images =
+      uploaded_images
+    |> Enum.with_index()
+    |> Enum.map(fn {v, i} ->
+      {parsed_int, _} = Integer.parse(form_params["hero_image"])
+      is_hero = if i == parsed_int, do: true, else: false
+      %{"url" => v, "is_hero" => is_hero}
+    end)
+
     Map.put(form_params, "uploaded_images", uploaded_images)
   end
 end

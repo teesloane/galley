@@ -7,8 +7,6 @@ defmodule Galley.Recipes do
   alias Galley.Repo
 
   alias Galley.Recipes.Recipe, as: Recipe
-  # alias Galley.Recipes.Ingredient
-  alias Galley.Recipes
 
   @doc """
   Returns the list of recipes.
