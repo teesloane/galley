@@ -6,6 +6,5 @@ defmodule GalleyWeb.RecipeController do
   end
 
   def create(conn, %{"ingredient" => ingredient_params}) do
-    IO.inspect("hi there from place")
   end
 end

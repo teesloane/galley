@@ -25,7 +25,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   def handle_event("save", %{"recipe" => recipe_params}, socket) do
-    IO.inspect(recipe_params, label: "recipe params --------->")
     save_recipe(socket, socket.assigns.action, recipe_params)
   end
 
@@ -58,8 +57,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   def handle_event("remove-ingredient", %{"remove" => id_to_remove}, socket) do
-    IO.inspect(socket, pretty: true)
-
     ingredients =
       socket.assigns.changeset.changes.ingredients
       |> Enum.reject(fn %{:data => ingredient} ->
@@ -107,6 +104,24 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   ## -- File Upload Stuff
 
+  def uploadType(upload) do
+    IO.inspect(upload, label: "upload is ->>>")
+    case upload do
+      %Galley.Recipes.Recipe.Image{} -> :existing_upload
+      %Phoenix.LiveView.UploadEntry{} -> :new_upload
+      _ -> :unknown
+    end
+  end
+
+  @doc """
+  gives us a returned list of items TO Be uploaded and already uploaded (in edit mode)
+  """
+  def get_uploads(uploads, recipe) do
+    IO.inspect(uploads.recipe_img.entries, label: "recipe img uploadsa")
+    IO.inspect(recipe.uploaded_images, label: "already uploaded iamges")
+    uploads.recipe_img.entries ++ recipe.uploaded_images
+  end
+
   def render_file_upload(assigns) do
     ~H"""
       <section phx-drop-target={@uploads.recipe_img.ref} class="">
@@ -135,6 +150,68 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     """
   end
 
+  @doc """
+  Renders icon of an image to be uploades, as well as the
+  ability to click on it and make it a "hero" image
+  """
+  def render_to_be_uploaded(assigns) do
+    ~H"""
+    <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+
+      <%= label do %>
+        <%= live_img_preview(@entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
+        <%= radio_button @f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref  %>
+        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500"/>
+      <% end %>
+
+      <button
+        class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+        phx-click="cancel-upload"
+        type="button"
+        style="margin: 4px"
+        phx-value-ref={@entry.ref}
+        aria-label="cancel"
+        phx-target={@myself}
+      >
+        &times;
+      </button>
+
+      <%= for err <- upload_errors(@uploads.recipe_img, @entry) do %>
+        <p class="alert alert-danger"><%= error_to_string(err) %></p>
+      <% end %>
+    </article>
+    """
+  end
+
+  @doc """
+  Render already uploaded images from the database.
+  """
+  def render_already_uploaded(assigns) do
+    IO.inspect(assigns, label: "<<<<<<<<<<<<")
+    ~H"""
+    <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+
+      <%= label do %>
+        <img src={@entry.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
+        <%= radio_button @f, :hero_image, @ref, class: "peer sr-only", value: @ref  %>
+        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500"/>
+      <% end %>
+
+      <button
+        class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+        phx-click="remove-existing-upload"
+        type="button"
+        style="margin: 4px"
+        phx-target={@myself}
+      >
+        &times;
+      </button>
+
+    </article>
+    """
+
+  end
+
   defp error_to_string(:too_large), do: "Too large"
   defp error_to_string(:too_many_files), do: "You have selected too many files"
   defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
@@ -158,11 +235,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       uploaded_images
     |> Enum.with_index()
     |> Enum.map(fn {v, i} ->
-      {parsed_int, _} = Integer.parse(form_params["hero_image"])
+      {parsed_int, _} = Integer.parse(Map.get(form_params, "hero_image", "0"))
       is_hero = if i == parsed_int, do: true, else: false
       %{"url" => v, "is_hero" => is_hero}
     end)
 
     Map.put(form_params, "uploaded_images", uploaded_images)
+  end
+
+  def handle_edit_upload() do
+
   end
 end

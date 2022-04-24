@@ -9,6 +9,7 @@
     phx-change="validate"
     phx-submit="save"
   >
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
       <div class="flex flex-col w-full">
         <span class="flex items-center pb-1 justify-between">
@@ -165,31 +166,15 @@
 
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
-        <%= for entry <- @uploads.recipe_img.entries do %>
-          <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+        <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
+          <% IO.inspect(uploadType(entry), label: "*****")%>
+          <%=  if uploadType(entry) == :new_upload do %>
+            <.render_to_be_uploaded entry={entry} f={f} uploads={@uploads} myself={@myself} />
+          <% end %>
 
-            <%= label do %>
-              <%= live_img_preview(entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
-              <%= radio_button f, :hero_image, entry.ref, class: "peer sr-only", value: entry.ref  %>
-              <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500"/>
-            <% end %>
-
-            <button
-              class="absolute top-0 right-0 bg-black text-white py-1 px-3"
-              phx-click="cancel-upload"
-              type="button"
-              style="margin: 4px"
-              phx-value-ref={entry.ref}
-              aria-label="cancel"
-              phx-target={@myself}
-            >
-              &times;
-            </button>
-
-            <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
-              <p class="alert alert-danger"><%= error_to_string(err) %></p>
-            <% end %>
-          </article>
+          <%=  if uploadType(entry) == :existing_upload do %>
+            <.render_already_uploaded entry={entry} ref={i} f={f} myself={@myself} />
+          <% end %>
         <% end %>
 
         <div class={if length(@uploads.recipe_img.entries) == 4, do: "hidden"}>
