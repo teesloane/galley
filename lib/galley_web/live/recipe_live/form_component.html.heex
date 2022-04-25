@@ -103,6 +103,8 @@
 
     <hr class="my-16" />
 
+    <!-- Section: Instructions ------------------------------------------------->
+
     <section class="">
       <h2 class="heading">Instructions</h2>
 
@@ -110,7 +112,8 @@
         <thead class="">
           <tr class="py-2 dark:text-neutral-50">
             <th class="th_small w-full italic">Instruction</th>
-            <th class="th_small w-32 italic"><span class="ml-8">Timer (optional)</span></th>
+            <th class="th_small w-32 italic"><span class="ml-4">Timer (optional)</span></th>
+            <th class="th_small w-32"><span class="ml-4"></span></th>
           </tr>
         </thead>
 
@@ -132,12 +135,24 @@
               ) %>
             </td>
 
-            <td class="flex ml-8">
+            <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
                 <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
                 <span class="self-center dark:text-gray-100 -mt-2">:</span>
                 <%= select(fo, :minute, 0..59, class: "w-16 ml-2 py-1") %>
               <% end %>
+            </td>
+
+            <td>
+              <button
+                class="btn-icon ml-2 mb-2"
+                phx-value-remove={fp.data.id}
+                type="button"
+                phx-click="remove-step"
+                phx-target={@myself}
+              >
+                ✕
+              </button>
             </td>
           </tr>
         <% end %>

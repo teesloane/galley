@@ -67,6 +67,17 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  def handle_event("remove-step", %{"remove" => id_to_remove}, socket) do
+    steps =
+      socket.assigns.changeset.changes.steps
+      |> Enum.reject(fn %{:data => step} ->
+        step.id == id_to_remove
+      end)
+
+    changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :recipe_img, ref)}
   end
