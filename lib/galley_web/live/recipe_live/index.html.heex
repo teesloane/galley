@@ -21,7 +21,10 @@
       <%= for recipe <- @recipes do %>
         <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
           <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
-            <img src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images)} class="h-48 object-cover">
+            <img
+              src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images)}
+              class="h-48 object-cover"
+            />
             <div class="flex justify-between align-center">
               <div class="font-bold p-2"><%= recipe.title %></div>
             </div>
