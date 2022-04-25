@@ -176,7 +176,7 @@
           <% end %>
         <% end %>
 
-        <div class={if length(@uploads.recipe_img.entries) == 4, do: "hidden"}>
+        <div class={if length(get_uploads(@uploads, @recipe)) == 4, do: "hidden"}>
           <.render_file_upload uploads={@uploads} />
         </div>
       </div>
