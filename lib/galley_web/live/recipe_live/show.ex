@@ -16,6 +16,22 @@ defmodule GalleyWeb.RecipeLive.Show do
      |> assign(:recipe, Recipes.get_recipe_by_id_and_slug!(id, slug))}
   end
 
+  def get_hero_img(recipe_images) do
+    [default | _other] = recipe_images
+    Enum.find(recipe_images, default, fn x -> x.is_hero == true end).url
+  end
+
+  def get_other_images(recipe_images) do
+    filtered = Enum.filter(recipe_images, fn x -> x.is_hero == false end)
+    if length(filtered) == length(recipe_images) do
+      # if no images are marked with is_hero: true...
+      [_hero | non_hero] = recipe_images
+      non_hero
+    else
+      filtered
+    end
+  end
+
   defp page_title(:show), do: "Show Recipe"
   defp page_title(:edit), do: "Edit Recipe"
 end

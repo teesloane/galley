@@ -1,21 +1,9 @@
-<%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.recipe_show_path(@socket, :show, @recipe, @recipe.slug)}>
-    <.live_component
-      module={GalleyWeb.RecipeLive.FormComponent}
-      id={@recipe.id}
-      title={@page_title}
-      action={@live_action}
-      recipe={@recipe}
-      return_to={Routes.recipe_show_path(@socket, :show, @recipe, @recipe.slug)}
-    />
-  </.modal>
-<% end %>
-
 <div class="page_wrapper">
-  <div class="bg-img bg-gray-300 h-96 w-full mb-8" />
-  <h1 class="heading"><%= @recipe.title %></h1>
+  <img src={get_hero_img(@recipe.uploaded_images)}
+       class="h-96 w-full mb-8 object-cover" />
+  <h1 class="heading text-4xl font-light capitalize mt-16"><%= @recipe.title %></h1>
 
-  <div id="info-row" class="flex justify-between pb-2 border-b-2 border-neutral-900 ">
+  <div id="info-row" class="flex justify-between pb-2 border-b-2 border-neutral-900 mb-32">
     <span>Yields: <%= @recipe.yields %></span>
     <%= if @recipe.source do %>
       <a href={@recipe.source}>Source</a>
@@ -51,9 +39,9 @@
     </div>
   </section>
 
-  <section>
-    <%= for img <- @recipe.uploaded_images do %>
-      <img src={img.url} />
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+    <%= for img <- get_other_images(@recipe.uploaded_images) do %>
+      <img class="object-cover h-64 md:h-48 w-full" src={img.url} />
     <% end %>
   </section>
 </div>

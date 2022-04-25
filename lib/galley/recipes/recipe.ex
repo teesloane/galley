@@ -17,7 +17,7 @@ defmodule Galley.Recipes.Recipe do
       field :instruction
     end
 
-    embeds_many :uploaded_images, Image do
+    embeds_many :uploaded_images, Image, on_replace: :delete do
       field :url, :string
       field :is_hero, :boolean, default: false
     end

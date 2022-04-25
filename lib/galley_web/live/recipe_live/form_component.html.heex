@@ -167,7 +167,6 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
-          <% IO.inspect(uploadType(entry), label: "*****")%>
           <%=  if uploadType(entry) == :new_upload do %>
             <.render_to_be_uploaded entry={entry} f={f} uploads={@uploads} myself={@myself} />
           <% end %>

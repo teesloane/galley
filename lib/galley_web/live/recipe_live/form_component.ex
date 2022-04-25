@@ -72,7 +72,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :edit, recipe_params) do
-    recipe_params = handle_upload(socket, recipe_params)
+    recipe_params = handle_upload(socket, socket.assigns.action, recipe_params)
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -89,7 +89,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :new, recipe_params) do
-    recipe_params = handle_upload(socket, recipe_params)
+    recipe_params = handle_upload(socket,  socket.assigns.action, recipe_params)
     case Recipes.create_recipe(socket.assigns.current_user, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -105,7 +105,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   ## -- File Upload Stuff
 
   def uploadType(upload) do
-    IO.inspect(upload, label: "upload is ->>>")
     case upload do
       %Galley.Recipes.Recipe.Image{} -> :existing_upload
       %Phoenix.LiveView.UploadEntry{} -> :new_upload
@@ -117,8 +116,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   gives us a returned list of items TO Be uploaded and already uploaded (in edit mode)
   """
   def get_uploads(uploads, recipe) do
-    IO.inspect(uploads.recipe_img.entries, label: "recipe img uploadsa")
-    IO.inspect(recipe.uploaded_images, label: "already uploaded iamges")
     uploads.recipe_img.entries ++ recipe.uploaded_images
   end
 
@@ -187,7 +184,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   Render already uploaded images from the database.
   """
   def render_already_uploaded(assigns) do
-    IO.inspect(assigns, label: "<<<<<<<<<<<<")
     ~H"""
     <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
 
@@ -220,30 +216,56 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   # then put them uploaded files into the form params to be inserted into the db.
   # FIXME: this should be set to be dev only as it uploads to local host,
   # maybe we can match on a get_env call.
-  defp handle_upload(socket, form_params) do
-    uploaded_images =
-      consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, _entry ->
-        upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
-        # make the upload directory if it doesn't exist
-        File.mkdir_p!(upload_folder)
-        dest = Path.join([upload_folder, Path.basename(path)])
-        # The `static/uploads` directory must exist for `File.cp!/2` to work.
-        File.cp!(path, dest)
-        {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
-      end)
-    uploaded_images =
-      uploaded_images
-    |> Enum.with_index()
-    |> Enum.map(fn {v, i} ->
-      {parsed_int, _} = Integer.parse(Map.get(form_params, "hero_image", "0"))
-      is_hero = if i == parsed_int, do: true, else: false
-      %{"url" => v, "is_hero" => is_hero}
-    end)
-
+  defp handle_upload(socket, :new, form_params) do
+    uploaded_images = consume_uploads(socket, form_params)
     Map.put(form_params, "uploaded_images", uploaded_images)
   end
 
-  def handle_edit_upload() do
-
+  defp handle_upload(socket, :edit, form_params) do
+    existing_uploads  = socket.assigns.recipe.uploaded_images
+    uploaded_images = consume_uploads(socket, form_params)
+    uploads =
+      (existing_uploads ++ uploaded_images)
+      |> attach_selected_hero_to_uploads(form_params)
+    Map.put(form_params, "uploaded_images", uploads)
   end
+
+  # takes uploaded images and transforms them to be db friendly.
+  defp consume_uploads(socket, form_params) do
+    uploaded_images = consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, _entry ->
+      upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
+      # make the upload directory if it doesn't exist
+      File.mkdir_p!(upload_folder)
+      dest = Path.join([upload_folder, Path.basename(path)])
+      # The `static/uploads` directory must exist for `File.cp!/2` to work.
+      File.cp!(path, dest)
+      {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
+    end)
+
+    attach_selected_hero_to_uploads(uploaded_images, form_params)
+  end
+
+
+  # iterates over images and attaches the selected integer of the image to be the hero
+  # and sets is_hero on that image.
+  defp attach_selected_hero_to_uploads(uploaded_images, form_params) do
+    uploaded_images
+      |> Enum.with_index()
+      |> Enum.map(fn {v, i} ->
+        {parsed_int, _} = Integer.parse(Map.get(form_params, "hero_image", "0"))
+        is_hero = if i == parsed_int, do: true, else: false
+        # we have to handle for existing struct images and new maps
+        # when setting the images that will be the hero.
+        case v do
+          %Galley.Recipes.Recipe.Image{} ->
+            Map.from_struct(%{v | is_hero: is_hero})
+          v when  is_binary(v) ->
+            %{"url" => v, "is_hero" => is_hero}
+          v when is_map(v) ->
+            Map.put(v, "is_hero", is_hero)
+        end
+    end)
+  end
+
 end
+
