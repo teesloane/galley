@@ -9,7 +9,6 @@
     phx-change="validate"
     phx-submit="save"
   >
-
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
       <div class="flex flex-col w-full">
         <span class="flex items-center pb-1 justify-between">
@@ -81,17 +80,20 @@
             <td><%= text_input(fp, :quantity, class: "w-16 md:w-32 mr-2") %></td>
             <td><%= text_input(fp, :measurement, class: "w-16 md:w-32 mr-2") %></td>
             <td><%= text_input(fp, :ingredient, class: "w-full") %></td>
-            <td>
-              <button
-                class="btn-icon ml-2 mb-2"
-                phx-value-remove={fp.data.id}
-                type="button"
-                phx-click="remove-ingredient"
-                phx-target={@myself}
-              >
-                ✕
-              </button>
-            </td>
+            <%= hidden_input fp, :temp_id %>
+
+            <td><%= fp.data.temp_id  %></td>
+              <td>
+                <button
+                  class="btn-icon ml-2 mb-2"
+                  phx-value-remove={fp.data.temp_id}
+                  type="button"
+                  phx-click="remove-ingredient"
+                  phx-target={@myself}
+                >
+                  ✕
+                </button>
+              </td>
           </tr>
         <% end %>
       </table>
@@ -102,9 +104,7 @@
     </section>
 
     <hr class="my-16" />
-
     <!-- Section: Instructions ------------------------------------------------->
-
     <section class="">
       <h2 class="heading">Instructions</h2>
 
@@ -170,23 +170,22 @@
     </section>
 
     <hr class="my-16" />
-
     <!-- Section: uploaded images ---------------------------------------------->
-
     <section>
       <h2 class="heading">Upload images</h2>
 
-      <p> Add some images of your process or the final result! You can upload up to four images. </p>
-      <p> Click an image below to set it as the display picture for this recipe. </p>
-
+      <p>
+        Add some images of your process or the final result! You can upload up to four images.
+      </p>
+      <p>Click an image below to set it as the display picture for this recipe.</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
-          <%=  if uploadType(entry) == :new_upload do %>
+          <%= if uploadType(entry) == :new_upload do %>
             <.render_to_be_uploaded entry={entry} f={f} uploads={@uploads} myself={@myself} />
           <% end %>
 
-          <%=  if uploadType(entry) == :existing_upload do %>
+          <%= if uploadType(entry) == :existing_upload do %>
             <.render_already_uploaded entry={entry} ref={i} f={f} myself={@myself} />
           <% end %>
         <% end %>

@@ -11,16 +11,18 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> assign(:num_ingredients, 1)
+     |> assign(:num_steps, 1)}
   end
 
   @impl true
   def handle_event("validate", %{"recipe" => recipe_params}, socket) do
+
     changeset =
       socket.assigns.recipe
       |> Recipes.change_recipe(recipe_params)
       |> Map.put(:action, :validate)
-
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
@@ -35,11 +37,11 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     steps =
       existing_steps
       |> Enum.concat([
-        Recipes.change_step(%Recipe.Step{id: GalleyUtils.get_temp_id()})
+        Recipes.change_step(%Recipe.Step{temp_id: GalleyUtils.get_temp_id()})
       ])
 
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:steps, steps)
-    {:noreply, assign(socket, changeset: changeset)}
+    {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
   end
 
   def handle_event("add-ingredient", _val, socket) do
@@ -49,33 +51,49 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     ingredients =
       existing_ingredients
       |> Enum.concat([
-        Recipes.change_ingredient(%Recipe.Ingredient{id: GalleyUtils.get_temp_id()})
+        Recipes.change_ingredient(%Recipe.Ingredient{temp_id: GalleyUtils.get_temp_id()})
       ])
 
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
-    {:noreply, assign(socket, changeset: changeset)}
+    {:noreply, assign(socket, changeset: changeset, num_ingredients: length(ingredients))}
   end
 
-  def handle_event("remove-ingredient", %{"remove" => id_to_remove}, socket) do
-    ingredients =
-      socket.assigns.changeset.changes.ingredients
-      |> Enum.reject(fn %{:data => ingredient} ->
-        ingredient.id == id_to_remove
-      end)
+  def handle_event("remove-ingredient", params, socket) do
+    id_to_remove = params["remove"]
+    if Map.has_key?(socket.assigns.changeset.changes, :ingredients) do
+      ingredients =
+        socket.assigns.changeset.changes.ingredients
+        |> Enum.reject(fn changeset ->
+          ingredient = changeset.data
+          ingredient.temp_id == id_to_remove && changeset.action == :insert
+        end)
 
-    changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
-    {:noreply, assign(socket, changeset: changeset)}
+      changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
+      {:noreply, assign(socket,
+          changeset: changeset,
+          num_ingredients: length(ingredients))}
+      else
+        {:noreply, socket}
+      end
+
   end
 
-  def handle_event("remove-step", %{"remove" => id_to_remove}, socket) do
+  def handle_event("remove-step", params, socket) do
+    IO.inspect(params, label: "params >>>>")
+    %{"remove" => id_to_remove} = params
+    # FIXME: if it's   #Ecto.Changeset<action: :update, changes: %{}, errors: [],
+    #                                  data: #Galley.Recipes.Recipe.Step<>, valid?: true>,
+    # then just don't remove it.
+    # FIXME: check "steps" exists first?
     steps =
       socket.assigns.changeset.changes.steps
-      |> Enum.reject(fn %{:data => step} ->
-        step.id == id_to_remove
+      |> Enum.reject(fn changeset ->
+        step = changeset.data
+        step.id == id_to_remove && changeset.action == :insert
       end)
 
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
-    {:noreply, assign(socket, changeset: changeset)}
+    {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do

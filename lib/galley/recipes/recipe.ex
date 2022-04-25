@@ -13,6 +13,7 @@ defmodule Galley.Recipes.Recipe do
     # embeds_many :steps, R.RecipeStep, on_replace: :delete
     # embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
     embeds_many :steps, Step, on_replace: :delete do
+      field :temp_id, :string, virtual: true
       embeds_one :timer, R.RecipeTime, on_replace: :update
       field :instruction
     end
@@ -23,6 +24,7 @@ defmodule Galley.Recipes.Recipe do
     end
 
     embeds_many :ingredients, Ingredient, on_replace: :delete do
+      field :temp_id, :string, virtual: true
       field :ingredient, :string
       field :quantity, :string
       field :measurement, :string
@@ -37,7 +39,7 @@ defmodule Galley.Recipes.Recipe do
     attrs = Map.merge(attrs, slug_map(attrs))
 
     recipe
-    |> cast(attrs, [:title, :source, :yields, :slug, ])
+    |> cast(attrs, [:title, :source, :yields, :slug])
     |> cast_embed(:ingredients, with: &ingredient_changeset/2, required: true)
     |> cast_embed(:uploaded_images, with: &uploaded_images_changeset/2)
     |> cast_embed(:steps, with: &step_changeset/2, required: true)
@@ -57,13 +59,14 @@ defmodule Galley.Recipes.Recipe do
 
   def ingredient_changeset(step, attrs) do
     step
+    |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
     |> cast(attrs, [:ingredient, :quantity, :measurement])
     |> validate_required([:ingredient, :quantity])
   end
 
-
   def step_changeset(step, attrs) do
     step
+    |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
     |> cast(attrs, [:instruction])
     |> cast_embed(:timer)
     |> validate_required([:instruction])

@@ -29,18 +29,17 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     socket
     |> assign(:page_title, "New Recipe")
     # we have to prefill the steps with the embedded schema
-    #
     |> assign(:recipe, %Recipe{
       ingredients: [
         %Recipe.Ingredient{
-          id: GalleyUtils.get_temp_id(),
+          temp_id: GalleyUtils.get_temp_id(),
           quantity: "",
           measurement: "",
           ingredient: ""
         },
       ],
       steps: [
-        %Recipe.Step{id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
+        %Recipe.Step{temp_id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
       ]
     })
   end
