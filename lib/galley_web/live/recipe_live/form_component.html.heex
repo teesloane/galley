@@ -82,9 +82,7 @@
             <td><%= text_input(fp, :ingredient, class: "w-full") %></td>
             <%= hidden_input fp, :temp_id %>
 
-            <td class="text-sm"><%= if !has_temp_id(fp.data.temp_id), do: fp.data.id, else: fp.data.temp_id %></td>
             <td>
-
               <%= if has_temp_id(fp.data.temp_id) do %>
                 <button
                   class="btn-icon ml-2 mb-2"
@@ -96,7 +94,7 @@
                   ✕
                 </button>
               <% else %>
-                <%= checkbox fp, :delete %>
+                <%= checkbox fp, :delete, class: "btn" %>
               <% end %>
             </td>
           </tr>
@@ -140,6 +138,8 @@
               ) %>
             </td>
 
+            <%= hidden_input fp, :temp_id %>
+
             <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
                 <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
@@ -148,16 +148,21 @@
               <% end %>
             </td>
 
+            <% IO.inspect(fp) %>
             <td>
-              <button
-                class="btn-icon ml-2 mb-2"
-                phx-value-remove={fp.data.id}
-                type="button"
-                phx-click="remove-step"
-                phx-target={@myself}
-              >
-                ✕
-              </button>
+              <%= if has_temp_id(fp.data.temp_id) do %>
+                <button
+                  class="btn-icon ml-2 mb-2"
+                  phx-value-remove={fp.data.temp_id}
+                  phx-click="remove-step"
+                  type="button"
+                  phx-target={@myself}
+                >
+                  ✕
+                </button>
+              <% else %>
+                <%= checkbox fp, :delete %>
+              <% end %>
             </td>
           </tr>
         <% end %>

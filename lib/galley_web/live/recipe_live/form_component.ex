@@ -75,25 +75,26 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       else
         {:noreply, socket}
       end
-
   end
 
+  # very similar to "remove-ingredient"
+  # don't think we can refactor because we can't dynamically access changeset.steps
   def handle_event("remove-step", params, socket) do
-    IO.inspect(params, label: "params >>>>")
-    %{"remove" => id_to_remove} = params
-    # FIXME: if it's   #Ecto.Changeset<action: :update, changes: %{}, errors: [],
-    #                                  data: #Galley.Recipes.Recipe.Step<>, valid?: true>,
-    # then just don't remove it.
-    # FIXME: check "steps" exists first?
-    steps =
-      socket.assigns.changeset.changes.steps
-      |> Enum.reject(fn changeset ->
-        step = changeset.data
-        step.id == id_to_remove && changeset.action == :insert
-      end)
+    id_to_remove = params["remove"]
+    if Map.has_key?(socket.assigns.changeset.changes, :steps) do
+      steps =
+        socket.assigns.changeset.changes.steps
+        |> Enum.reject(fn changeset ->
+          step = changeset.data
+          # only allow deleting of items that have been inserted.
+          step.temp_id == id_to_remove && changeset.action == :insert
+        end)
 
-    changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
-    {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
+      changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
+      {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
+      else
+        {:noreply, socket}
+      end
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do

@@ -10,11 +10,6 @@ defmodule Galley.Recipes.Recipe do
     field :yields, :string
     belongs_to :user, Galley.Accounts.User
     embeds_one :time, R.RecipeTime, on_replace: :update
-    embeds_many :steps, Step, on_replace: :delete do
-      field :temp_id, :string, virtual: true
-      embeds_one :timer, R.RecipeTime, on_replace: :update
-      field :instruction
-    end
 
     embeds_many :uploaded_images, Image, on_replace: :delete do
       field :url, :string
@@ -27,6 +22,13 @@ defmodule Galley.Recipes.Recipe do
       field :measurement, :string
       field :temp_id, :string, virtual: true
       field :delete, :boolean, virtual: true # for deleting dynamically form fields.
+    end
+
+    embeds_many :steps, Step, on_replace: :delete do
+      embeds_one :timer, R.RecipeTime, on_replace: :update
+      field :instruction
+      field :temp_id, :string, virtual: true
+      field :delete, :boolean, virtual: true
     end
 
     timestamps()
@@ -61,10 +63,12 @@ defmodule Galley.Recipes.Recipe do
     |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
     |> cast(attrs, [:ingredient, :quantity, :measurement, :delete])
     |> validate_required([:ingredient, :quantity])
-    |> ingredient_mark_for_delete()
+    |> mark_for_delete()
   end
 
-  defp ingredient_mark_for_delete(changeset) do
+  # use this so that fields with a :delete virutal field
+  # can be removed (only for embeds_many - photos, steps, ingredients etc)
+  defp mark_for_delete(changeset) do
     if get_change(changeset, :delete) do
       %{changeset | action: :delete}
     else
@@ -75,9 +79,10 @@ defmodule Galley.Recipes.Recipe do
   def step_changeset(step, attrs) do
     step
     |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
-    |> cast(attrs, [:instruction])
+    |> cast(attrs, [:instruction, :delete])
     |> cast_embed(:timer)
     |> validate_required([:instruction])
+    |> mark_for_delete()
   end
 end
 
