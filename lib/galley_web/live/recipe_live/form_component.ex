@@ -296,5 +296,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     end)
   end
 
+  defp has_temp_id(temp_id) do
+    if is_binary(temp_id) do
+      if String.length(temp_id) > 0 do
+        true
+      else
+        false
+      end
+    else
+      !is_nil(temp_id)
+    end
+  end
 end
-

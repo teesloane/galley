@@ -82,18 +82,23 @@
             <td><%= text_input(fp, :ingredient, class: "w-full") %></td>
             <%= hidden_input fp, :temp_id %>
 
-            <td><%= fp.data.temp_id  %></td>
-              <td>
+            <td class="text-sm"><%= if !has_temp_id(fp.data.temp_id), do: fp.data.id, else: fp.data.temp_id %></td>
+            <td>
+
+              <%= if has_temp_id(fp.data.temp_id) do %>
                 <button
                   class="btn-icon ml-2 mb-2"
                   phx-value-remove={fp.data.temp_id}
-                  type="button"
                   phx-click="remove-ingredient"
+                  type="button"
                   phx-target={@myself}
                 >
                   ✕
                 </button>
-              </td>
+              <% else %>
+                <%= checkbox fp, :delete %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </table>

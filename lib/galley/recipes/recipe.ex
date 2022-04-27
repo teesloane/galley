@@ -10,8 +10,6 @@ defmodule Galley.Recipes.Recipe do
     field :yields, :string
     belongs_to :user, Galley.Accounts.User
     embeds_one :time, R.RecipeTime, on_replace: :update
-    # embeds_many :steps, R.RecipeStep, on_replace: :delete
-    # embeds_many :ingredients, R.RecipeIngredient, on_replace: :delete
     embeds_many :steps, Step, on_replace: :delete do
       field :temp_id, :string, virtual: true
       embeds_one :timer, R.RecipeTime, on_replace: :update
@@ -24,10 +22,11 @@ defmodule Galley.Recipes.Recipe do
     end
 
     embeds_many :ingredients, Ingredient, on_replace: :delete do
-      field :temp_id, :string, virtual: true
       field :ingredient, :string
       field :quantity, :string
       field :measurement, :string
+      field :temp_id, :string, virtual: true
+      field :delete, :boolean, virtual: true # for deleting dynamically form fields.
     end
 
     timestamps()
@@ -60,8 +59,17 @@ defmodule Galley.Recipes.Recipe do
   def ingredient_changeset(step, attrs) do
     step
     |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
-    |> cast(attrs, [:ingredient, :quantity, :measurement])
+    |> cast(attrs, [:ingredient, :quantity, :measurement, :delete])
     |> validate_required([:ingredient, :quantity])
+    |> ingredient_mark_for_delete()
+  end
+
+  defp ingredient_mark_for_delete(changeset) do
+    if get_change(changeset, :delete) do
+      %{changeset | action: :delete}
+    else
+      changeset
+    end
   end
 
   def step_changeset(step, attrs) do
