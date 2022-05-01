@@ -147,8 +147,6 @@
                 <%= select(fo, :minute, 0..59, class: "w-16 ml-2 py-1") %>
               <% end %>
             </td>
-
-            <% IO.inspect(fp) %>
             <td>
               <%= if has_temp_id(fp.data.temp_id) do %>
                 <button
@@ -161,7 +159,16 @@
                   ✕
                 </button>
               <% else %>
-                <%= checkbox fp, :delete %>
+
+                <button
+                  class="btn-icon ml-2 mb-2"
+                  phx-value-remove={fp.data.id}
+                  phx-click="remove-persisted-step"
+                  type="button"
+                  phx-target={@myself}
+                >
+                  ✕
+                </button>
               <% end %>
             </td>
           </tr>
