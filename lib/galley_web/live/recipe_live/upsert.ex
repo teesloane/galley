@@ -46,11 +46,14 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   end
 
   @impl true
-  def handle_event("form_move_forward", _val, socket) do
-    {:noreply, update(socket, :formState, fn fS -> fS + 1 end)}
-  end
+  def handle_event("delete", %{"id" => id}, socket) do
+    recipe = Recipes.get_recipe!(id)
+    {:ok, _} = Recipes.delete_recipe(recipe)
 
-  def handle_event("form_move_backward", _val, socket) do
-    {:noreply, update(socket, :formState, fn fS -> fS - 1 end)}
+    {:noreply,
+     socket
+     |> put_flash(:info, "Recipe deleted!")
+     |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
+
   end
 end

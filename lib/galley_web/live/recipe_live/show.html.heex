@@ -5,7 +5,15 @@
   <div id="info-row" class="flex flex-col md:flex-row justify-between p-2 bg-neutral-100 dark:bg-neutral-700 ">
     <span>Yields: <%= @recipe.yields %></span>
     <%= if @recipe.source do %>
-      <a href={@recipe.source}>Source</a>
+      <%= if String.starts_with?(@recipe.source, "http") do %>
+        <a href={@recipe.source}>Source</a>
+      <% else %>
+        <%= if String.length(@recipe.source) > 25 do  %>
+          <span>Source: <%= "#{String.slice(@recipe.source, 0..25)}..." %></span>
+        <% else %>
+          <span>Source: <%= @recipe.source %></span>
+        <% end %>
+      <% end %>
     <% end %>
 
     <span>Submitted by: <%= @recipe.user.username %></span>
@@ -19,7 +27,7 @@
 
   <section class="my-8 flex flex-col sm:flex-row">
     <div class="ingredients p-4 pl-0 w-full md:w-2/4 lg:w-1/4">
-      <h3 class="heading-with-lines"><span>Ingredients</span></h3>
+      <h3 class="heading-with-lines md:mt-0"><span>Ingredients</span></h3>
       <div class="border dark:border-neutral-900">
       <%= for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
         <div class={if rem(index, 2) == 0, do: "bg-neutral-100 dark:bg-neutral-700 p-2", else: "p-2"}>
@@ -36,7 +44,7 @@
     </div>
 
     <div class="instructions p-4 lg:px-16 pr-0 w-full md:w-2/4 lg:w-3/4">
-      <h3 class="heading-with-lines"><span>Instructions</span></h3>
+      <h3 class="heading-with-lines md:mt-0"><span>Instructions</span></h3>
       <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
         <p class="break-words p-2 mb-4"><%= index + 1 %>. <%= item.instruction %></p>
       <% end %>

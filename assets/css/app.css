@@ -38,7 +38,7 @@
   }
 
   .heading-with-lines {
-    @apply text-xl md:text-2xl my-8 mb-16 md:my-24 md:mb-24 w-full dark:text-neutral-50 border-b border-neutral-400 dark:border-white text-center;
+    @apply text-xl md:text-2xl my-8 mb-16 md:my-24 w-full dark:text-neutral-50 border-b border-neutral-400 dark:border-white text-center;
     line-height: 0.1em !important;
   }
 
@@ -51,9 +51,13 @@
     @apply text-gray-700 text-sm dark:text-gray-200;
   }
 
-
   .btn {
     @apply bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded self-start text-sm;
+  }
+
+  .btn-alert {
+    @apply btn;
+    @apply bg-red-500 hover:bg-red-600 active:bg-red-700;
   }
 
   .btn-clear {

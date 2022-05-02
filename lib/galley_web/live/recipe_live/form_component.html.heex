@@ -155,7 +155,7 @@
                 <%= select(fo, :minute, 0..59, class: "w-16 ml-2 py-1") %>
               <% end %>
             </td>
-            <td>
+            <td class="align-top">
               <%= if has_temp_id(fp.data.temp_id) do %>
                 <button
                   class="btn-icon ml-2 mb-2"
@@ -227,7 +227,7 @@
     <!-- Section: additional notes -->
 
     <hr class="my-16" />
-    <section>
+    <section class="pb-8">
       <h2 class="heading">Additional notes</h2>
       <p>Add whatever else you want below. Keep it brief - you've only got 400 characters 🙃.</p>
 
@@ -238,7 +238,7 @@
         phx_hook: "ShowTextAreaCount",
         data_attrs: "style, id, rows",
         maxlength: 400,
-        class: "w-full mt-8"
+        class: "w-full my-8"
       ) %>
       <div class="text-sm flex justify-end">
         <div id="notes-count" class="">0</div>
@@ -247,7 +247,16 @@
       </div>
     </section>
 
-    <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10">
+    <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10 flex justify-between">
+      <span class="btn-alert">
+        <%= link "Delete", [
+          to: "#",
+          phx_click: "delete",
+          phx_value_id: @recipe.id,
+          data: [confirm: "Are you sure you want to delete your recipe?"]]
+        %>
+      </span>
+
       <%= if @action == :edit do %>
         <%= submit("Save changes",
           phx_disable_with: "Saving...",
