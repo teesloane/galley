@@ -38,7 +38,7 @@
   }
 
   .heading-with-lines {
-    @apply text-2xl my-24 w-full dark:text-neutral-50 border-b border-neutral-400 dark:border-white text-center;
+    @apply text-xl md:text-2xl my-8 mb-16 md:my-24 md:mb-24 w-full dark:text-neutral-50 border-b border-neutral-400 dark:border-white text-center;
     line-height: 0.1em !important;
   }
 
