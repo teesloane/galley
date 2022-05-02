@@ -20,16 +20,20 @@
   <section class="my-8 flex">
     <div class="ingredients p-4 pl-0 w-1/4">
       <h3 class="heading-with-lines mt-0"><span>Ingredients</span></h3>
-      <%= for item <- @recipe.ingredients do %>
-        <p class="mb-4">
-          <span><%= item.quantity %></span>
-          <span><%= item.measurement %></span>
+      <%= for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
+        <div class={if rem(index, 2) == 0, do: "bg-neutral-100 dark:bg-neutral-700 p-2", else: "p-2"}>
+        <p class="flex justify-between">
           <span><%= item.ingredient %></span>
+          <span>
+            <span><%= item.quantity %></span>
+            <span><%= item.measurement %></span>
+          </span>
         </p>
+        </div>
       <% end %>
     </div>
 
-    <div class="instructions p-4 pr-0 w-3/4">
+    <div class="instructions p-4 px-16 pr-0 w-3/4">
       <h3 class="heading-with-lines mt-0"><span>Instructions</span></h3>
       <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
         <p class="break-words mb-6"><%= index + 1 %>. <%= item.instruction %></p>
