@@ -20,9 +20,10 @@ defmodule GalleyWeb.RecipeLive.Upsert do
 
   # This is how we set the form to work for either :edit or :new
   defp apply_action(socket, :edit, %{"id" => id}) do
+    recipe = Recipes.get_recipe!(id)
     socket
-    |> assign(:page_title, "Edit Recipe")
-    |> assign(:recipe, Recipes.get_recipe!(id))
+    |> assign(:page_title, "Edit - #{recipe.title}")
+    |> assign(:recipe, recipe)
   end
 
   defp apply_action(socket, :new, _params) do

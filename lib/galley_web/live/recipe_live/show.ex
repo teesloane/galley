@@ -10,10 +10,11 @@ defmodule GalleyWeb.RecipeLive.Show do
 
   @impl true
   def handle_params(%{"id" => id, "slug" => slug}, _, socket) do
+    recipe = Recipes.get_recipe_by_id_and_slug!(id, slug)
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:recipe, Recipes.get_recipe_by_id_and_slug!(id, slug))}
+     |> assign(:page_title, "Galley - #{recipe.title}")
+     |> assign(:recipe, recipe)}
   end
 
   def get_hero_img(recipe_images) do
@@ -32,6 +33,4 @@ defmodule GalleyWeb.RecipeLive.Show do
     end
   end
 
-  defp page_title(:show), do: "Show Recipe"
-  defp page_title(:edit), do: "Edit Recipe"
 end

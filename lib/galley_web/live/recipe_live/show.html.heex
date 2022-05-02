@@ -20,6 +20,7 @@
   <section class="my-8 flex">
     <div class="ingredients p-4 pl-0 w-1/4">
       <h3 class="heading-with-lines mt-0"><span>Ingredients</span></h3>
+      <div class="border dark:border-neutral-900">
       <%= for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
         <div class={if rem(index, 2) == 0, do: "bg-neutral-100 dark:bg-neutral-700 p-2", else: "p-2"}>
         <p class="flex justify-between">
@@ -31,12 +32,13 @@
         </p>
         </div>
       <% end %>
+      </div>
     </div>
 
     <div class="instructions p-4 px-16 pr-0 w-3/4">
       <h3 class="heading-with-lines mt-0"><span>Instructions</span></h3>
       <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
-        <p class="break-words mb-6"><%= index + 1 %>. <%= item.instruction %></p>
+        <p class="break-words p-2 mb-4"><%= index + 1 %>. <%= item.instruction %></p>
       <% end %>
     </div>
   </section>
@@ -53,7 +55,7 @@
   <%= if @recipe.notes do %>
     <section class="mb-8">
       <h3 class="heading-with-lines "><span>Additional Notes</span></h3>
-      <div class="w-full md:w-4/5 lg:w-3/5 mx-auto whitespace-pre-wrap">
+      <div class="w-full md:w-4/5 lg:w-3/5 mx-auto whitespace-pre-wrap text-center">
         <%=  @recipe.notes %>
       </div>
     </section>
