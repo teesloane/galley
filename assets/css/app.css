@@ -29,7 +29,6 @@
   }
 
   select {
-    /* min-height: 30px; */
     padding: 5.5px !important;
     @apply bg-white dark:bg-neutral-700;
   }
@@ -38,6 +37,15 @@
     @apply text-2xl mb-8 dark:text-neutral-50 font-bold;
   }
 
+  .heading-with-lines {
+    @apply text-2xl my-24 w-full dark:text-neutral-50 border-b border-neutral-400 dark:border-white text-center;
+    line-height: 0.1em !important;
+  }
+
+  .heading-with-lines span {
+    @apply bg-white dark:bg-neutral-800;
+    padding: 0 10px;
+  }
 
   .recipe-form-label {
     @apply text-gray-700 text-sm dark:text-gray-200;

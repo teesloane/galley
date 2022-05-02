@@ -49,7 +49,6 @@ hooks.MaintainAttrs = {
 
 hooks.ShowTextAreaCount = {
   mounted() {
-    console.log("hi there!");
     let ta = document.getElementById(this.el.id)
     let charCountEl = document.getElementById("notes-count")
     ta.addEventListener("input", (event) => {
