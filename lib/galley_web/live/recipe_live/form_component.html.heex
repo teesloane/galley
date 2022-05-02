@@ -94,7 +94,16 @@
                   ✕
                 </button>
               <% else %>
-                <%= checkbox fp, :delete, class: "btn" %>
+
+                <button
+                  class="btn-icon ml-2 mb-2"
+                  phx-value-remove={fp.data.id}
+                  phx-click="remove-persisted-ingredient"
+                  type="button"
+                  phx-target={@myself}
+                >
+                  ✕
+                </button>
               <% end %>
             </td>
           </tr>

@@ -21,14 +21,12 @@ defmodule Galley.Recipes.Recipe do
       field :quantity, :string
       field :measurement, :string
       field :temp_id, :string, virtual: true
-      field :delete, :boolean, virtual: true # for deleting dynamically form fields.
     end
 
     embeds_many :steps, Step, on_replace: :delete do
       embeds_one :timer, R.RecipeTime, on_replace: :update
       field :instruction
       field :temp_id, :string, virtual: true
-      field :delete, :boolean, virtual: true
     end
 
     timestamps()
@@ -61,7 +59,7 @@ defmodule Galley.Recipes.Recipe do
   def ingredient_changeset(step, attrs) do
     step
     |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
-    |> cast(attrs, [:ingredient, :quantity, :measurement, :delete])
+    |> cast(attrs, [:ingredient, :quantity, :measurement])
     |> validate_required([:ingredient, :quantity])
     |> mark_for_delete()
   end
@@ -79,7 +77,7 @@ defmodule Galley.Recipes.Recipe do
   def step_changeset(step, attrs) do
     step
     |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
-    |> cast(attrs, [:instruction, :delete])
+    |> cast(attrs, [:instruction])
     |> cast_embed(:timer)
     |> validate_required([:instruction])
     |> mark_for_delete()

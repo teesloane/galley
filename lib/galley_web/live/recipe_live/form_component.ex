@@ -79,8 +79,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   # how to remove existing single item in a DB and reload the stuff
   # https://discord.com/channels/269508806759809042/269509152387104771/968996144623534130
-
-
+  #
   # very similar to "remove-ingredient"
   # don't think we can refactor because we can't dynamically access changeset.steps
   def handle_event("remove-step", params, socket) do
@@ -117,6 +116,22 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
      |> assign(:changeset, changeset)
      |> assign(:recipe, updatedRecipe)
     }
+  end
+
+  def handle_event("remove-persisted-ingredient", %{"remove" => ingr_id}, socket) do
+    Recipes.delete_ingredient_step(socket.assigns.changeset.data, ingr_id)
+    updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
+    changeset =
+      socket.assigns.changeset
+        |> Ecto.Changeset.put_embed(:ingredients, updatedRecipe.ingredients)
+        |> Ecto.Changeset.apply_changes()
+        |> Recipes.change_recipe()
+
+    {:noreply, socket
+     |> assign(:changeset, changeset)
+     |> assign(:recipe, updatedRecipe)
+    }
+
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do

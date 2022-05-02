@@ -152,6 +152,17 @@ defmodule Galley.Recipes do
     |> Repo.update()
   end
 
+  def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
+    filtered_ingredient =
+      recipe.ingredients
+        |> Enum.filter(fn ingr -> ingr.id != ingredient_id end)
+
+    recipe
+      |> change_recipe()
+      |> Ecto.Changeset.put_embed(:ingredients, filtered_ingredient)
+      |> Repo.update()
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking recipe changes.
 
