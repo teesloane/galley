@@ -8,6 +8,7 @@ defmodule Galley.Recipes.Recipe do
     field :title, :string
     field :slug, :string
     field :yields, :string
+    field :notes, :string
     belongs_to :user, Galley.Accounts.User
     embeds_one :time, R.RecipeTime, on_replace: :update
 
@@ -38,12 +39,13 @@ defmodule Galley.Recipes.Recipe do
     attrs = Map.merge(attrs, slug_map(attrs))
 
     recipe
-    |> cast(attrs, [:title, :source, :yields, :slug])
+    |> cast(attrs, [:title, :source, :yields, :slug, :notes])
     |> cast_embed(:ingredients, with: &ingredient_changeset/2, required: true)
     |> cast_embed(:uploaded_images, with: &uploaded_images_changeset/2)
     |> cast_embed(:steps, with: &step_changeset/2, required: true)
     |> cast_embed(:time)
     |> validate_required([:title, :yields, :steps, :time, :uploaded_images])
+    |> validate_length(:notes, min: 0, max: 400)
   end
 
   defp slug_map(%{"title" => title}) do

@@ -28,6 +28,8 @@ import topbar from "../vendor/topbar"
 // hooks
 //
 let hooks = {}
+
+// This hooks is responsible for making text areas look the same as you type.
 hooks.MaintainAttrs = {
   mounted() {
     handleTextAreaResizing()
@@ -36,7 +38,6 @@ hooks.MaintainAttrs = {
 
   attrs(){ return this.el.getAttribute("data-attrs").split(", ") },
   beforeUpdate(){
-    console.log("hi!");
     handleTextAreaResizing()
     this.prevAttrs = this.attrs().map(name => [name, this.el.getAttribute(name)])
     this.prevAttrs.forEach(([name, val]) => this.el.setAttribute(name, val))
@@ -44,6 +45,25 @@ hooks.MaintainAttrs = {
   updated(){
     this.prevAttrs.forEach(([name, val]) => this.el.setAttribute(name, val))
   }
+}
+
+hooks.ShowTextAreaCount = {
+  mounted() {
+    console.log("hi there!");
+    let ta = document.getElementById(this.el.id)
+    let charCountEl = document.getElementById("notes-count")
+    ta.addEventListener("input", (event) => {
+      const target = event.currentTarget;
+      const maxLength = target.getAttribute("maxlength");
+      const currentLength = target.value.length;
+
+      if (currentLength >= maxLength) {
+        charCountEl.textContent = maxLength
+        return
+      }
+      charCountEl.textContent = currentLength
+    })
+  },
 }
 
 

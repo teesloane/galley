@@ -224,6 +224,29 @@
       <% end %>
     </section>
 
+    <!-- Section: additional notes -->
+
+    <hr class="my-16" />
+    <section>
+      <h2 class="heading">Additional notes</h2>
+      <p>Add whatever else you want below. Keep it brief - you've only got 400 characters 🙃.</p>
+
+      <%= textarea(f, :notes,
+        id: "recipe-notes",
+        rows: 8,
+        phx_debounce: "2000",
+        phx_hook: "ShowTextAreaCount",
+        data_attrs: "style, id, rows",
+        maxlength: 400,
+        class: "w-full mt-8"
+      ) %>
+      <div class="text-sm flex justify-end">
+        <div id="notes-count" class="">0</div>
+        <span class="w-4 text-center">/</span>
+        <div class="">400</div>
+      </div>
+    </section>
+
     <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10">
       <%= if @action == :edit do %>
         <%= submit("Save changes",
