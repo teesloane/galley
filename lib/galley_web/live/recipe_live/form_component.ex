@@ -100,10 +100,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       end
   end
 
+  # A bit hacky but:
+  # Delete the recipe steps  and refetch the recipe
+  # Loop over the old changeset's `changes` field, and keep the previous changes (save for the deleted one)
+  # Reassign the data from the db to the socket changeset, and put the changeset changes back in.
   def handle_event("remove-persisted-step", %{"remove" => step_id_to_remove}, socket) do
+    IO.inspect(socket.assigns.changeset, label: "changeset is before anything....")
     Recipes.delete_recipe_step(socket.assigns.changeset.data, step_id_to_remove)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
-
+    old_changes = socket.assigns.changeset.changes
     # we need to bake the changeset and recreate it in order to avoid
     # conflicts with unsaved changes with dynamically added form fields
     changeset =
@@ -111,6 +116,18 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         |> Ecto.Changeset.put_embed(:steps, updatedRecipe.steps)
         |> Ecto.Changeset.apply_changes()
         |> Recipes.change_recipe()
+        # HACK: for now, we have to reference previous changeset changes via old_changes inside update
+        |> Map.update(:changes, %{}, fn changes ->
+            steps = Map.get(socket.assigns.changeset.changes, :steps, [])
+            if length(steps) > 0 do
+              existing_changed_steps = Enum.filter(steps, fn change ->
+                  change.action == :insert || change.data.id != step_id_to_remove
+              end)
+              %{old_changes | steps: existing_changed_steps}
+            else
+              changes
+            end
+        end)
 
     {:noreply, socket
      |> assign(:changeset, changeset)
@@ -121,11 +138,23 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def handle_event("remove-persisted-ingredient", %{"remove" => ingr_id}, socket) do
     Recipes.delete_ingredient_step(socket.assigns.changeset.data, ingr_id)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
+    old_changeset = socket.assigns.changeset.changes
     changeset =
       socket.assigns.changeset
         |> Ecto.Changeset.put_embed(:ingredients, updatedRecipe.ingredients)
         |> Ecto.Changeset.apply_changes()
         |> Recipes.change_recipe()
+        # HACK: referencing old variables inside of update.
+        |> Map.update(:changes, %{}, fn changes ->
+            ingredients = Map.get(old_changeset, :ingredients, [])
+            if length(ingredients) > 0 do
+              %{old_changeset | ingredients: Enum.filter(old_changeset.ingredients, fn change ->
+                   change.action == :insert || change.data.id != ingr_id
+                 end)}
+            else
+              changes
+            end
+        end)
 
     {:noreply, socket
      |> assign(:changeset, changeset)
@@ -344,5 +373,9 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     else
       !is_nil(temp_id)
     end
+  end
+
+  defp get_existing_changes() do
+
   end
 end

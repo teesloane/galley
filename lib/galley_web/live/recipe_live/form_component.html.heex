@@ -80,7 +80,7 @@
             <td><%= text_input(fp, :quantity, class: "w-16 md:w-32 mr-2") %></td>
             <td><%= text_input(fp, :measurement, class: "w-16 md:w-32 mr-2") %></td>
             <td><%= text_input(fp, :ingredient, class: "w-full") %></td>
-            <%= hidden_input fp, :temp_id %>
+            <%= hidden_input(fp, :temp_id) %>
 
             <td>
               <%= if has_temp_id(fp.data.temp_id) do %>
@@ -94,7 +94,6 @@
                   ✕
                 </button>
               <% else %>
-
                 <button
                   class="btn-icon ml-2 mb-2"
                   phx-value-remove={fp.data.id}
@@ -147,7 +146,7 @@
               ) %>
             </td>
 
-            <%= hidden_input fp, :temp_id %>
+            <%= hidden_input(fp, :temp_id) %>
 
             <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
@@ -168,7 +167,6 @@
                   ✕
                 </button>
               <% else %>
-
                 <button
                   class="btn-icon ml-2 mb-2"
                   phx-value-remove={fp.data.id}
