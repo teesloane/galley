@@ -152,6 +152,18 @@ defmodule Galley.Recipes do
     |> Repo.update()
   end
 
+  def delete_ingredient_photo(%Recipe{} = recipe, photo_id) do
+    filtered_photos =
+      recipe.uploaded_images
+        |> Enum.filter(fn image -> image.id != photo_id end)
+
+    # TODO: figure out how to delete the image in storage.
+    recipe
+      |> change_recipe()
+      |> Ecto.Changeset.put_embed(:uploaded_images, filtered_photos)
+      |> Repo.update()
+  end
+
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
     filtered_ingredient =
       recipe.ingredients

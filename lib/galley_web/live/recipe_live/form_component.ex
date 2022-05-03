@@ -160,7 +160,20 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
      |> assign(:changeset, changeset)
      |> assign(:recipe, updatedRecipe)
     }
+  end
 
+  def handle_event("remove-persisted-upload", %{"remove" => photo_id}, socket) do
+    Recipes.delete_ingredient_photo(socket.assigns.changeset.data, photo_id)
+    updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
+    IO.inspect(photo_id)
+    changeset =
+      socket.assigns.changeset
+        |> Ecto.Changeset.put_embed(:uploaded_images, updatedRecipe.uploaded_photos)
+
+    {:noreply, socket
+     |> assign(:changeset, changeset)
+     |> assign(:recipe, updatedRecipe)
+    }
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -291,7 +304,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
       <button
         class="absolute top-0 right-0 bg-black text-white py-1 px-3"
-        phx-click="remove-existing-upload"
+        phx-click="remove-persisted-upload"
+        phx-value-remove={@entry.id}
         type="button"
         style="margin: 4px"
         phx-target={@myself}
