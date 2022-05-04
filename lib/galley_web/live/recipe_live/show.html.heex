@@ -1,5 +1,7 @@
 <div class="page_wrapper">
-  <img src={get_hero_img(@recipe.uploaded_images)} class="h-96 w-full mb-8 object-cover" />
+  <%= if length(@recipe.uploaded_images) > 0 do  %>
+    <img src={get_hero_img(@recipe.uploaded_images)} class="h-96 w-full mb-8 object-cover" />
+  <% end %>
   <h1 class="heading text-4xl font-light capitalize mt-16 mb-4"><%= @recipe.title %></h1>
 
   <div id="info-row" class="flex flex-col md:flex-row justify-between p-2 bg-neutral-100 dark:bg-neutral-700 ">
