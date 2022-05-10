@@ -41,7 +41,8 @@ defmodule GalleyWeb.RecipeLive.Upsert do
       ],
       steps: [
         %Recipe.Step{temp_id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
-      ]
+      ],
+      tags: []
     })
   end
 

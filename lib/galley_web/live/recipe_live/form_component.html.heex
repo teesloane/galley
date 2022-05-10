@@ -9,8 +9,8 @@
     phx-change="validate"
     phx-submit="save"
   >
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
-      <div class="flex flex-col w-full">
+    <div class="flex flex-col md:flex-row">
+      <div class="flex flex-col w-full md:w-1/2 md:mr-3">
         <span class="flex items-center pb-1 justify-between">
           <%= label(f, :title, class: "recipe-form-label") %>
           <%= error_tag(f, :title) %>
@@ -18,7 +18,7 @@
         <%= text_input(f, :title) %>
       </div>
 
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-full md:w-1/2 ">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :source, "Source", class: "recipe-form-label") %>
           <%= error_tag(f, :source) %>
@@ -26,15 +26,26 @@
         <%= text_input(f, :source, placeholder: "Link to recipe (optional)") %>
       </div>
 
-      <div class="flex flex-col w-full">
+    </div>
+    <div class="flex flex-col md:flex-row">
+
+      <div class="flex flex-col w-full md:w-1/2 md:mr-3">
+        <span class="flex items-center justify-between pb-1">
+          <%= label(f, :tags, class: "recipe-form-label") %>
+          <%= error_tag(f, :tags) %>
+        </span>
+        <%= text_input(f, :tags, placeholder: "ex: spicy, bbq, mealprep") %>
+      </div>
+
+      <div class="flex flex-col w-full md:w-1/4 ">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :yields, class: "recipe-form-label") %>
           <%= error_tag(f, :yields) %>
         </span>
-        <%= text_input(f, :yields, placeholder: "ex: 2 Servings; 12 Miffins; 4 Milkshakes, etc") %>
+        <%= text_input(f, :yields, placeholder: "ex: 2 Servings; 12 Muffins") %>
       </div>
 
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-full md:w-1/4">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :time, "Total time (hh:mm)", class: "recipe-form-label") %>
           <%= error_tag(f, :time) %>
@@ -42,13 +53,14 @@
 
         <div class="flex">
           <%= inputs_for f, :time, fn fp -> %>
-            <%= select(fp, :hour, 0..12, class: "w-16 mr-2 py-1") %>
+            <%= select(fp, :hour, 0..12, class: "w-full mr-2 py-1") %>
             <span class="self-center dark:text-gray-100 -mt-2">:</span>
-            <%= select(fp, :minute, 0..59, class: "w-16 ml-2 py-1") %>
+            <%= select(fp, :minute, 0..59, class: "w-full ml-2 py-1") %>
           <% end %>
         </div>
       </div>
     </div>
+
 
     <hr class="my-16" />
 
