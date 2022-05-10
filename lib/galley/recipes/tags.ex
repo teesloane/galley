@@ -1,4 +1,4 @@
-defmodule Galley.Recipes.Tags do
+defmodule Galley.Recipes.Tag do
   use Ecto.Schema
   import Ecto.Changeset
 

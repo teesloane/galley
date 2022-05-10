@@ -5,8 +5,9 @@ defmodule Galley.Recipes do
 
   import Ecto.Query, warn: false
   alias Galley.Repo
+  alias Ecto.Multi
 
-  alias Galley.Recipes.Recipe, as: Recipe
+  alias Galley.Recipes.{Recipe, Tag, RecipeTag}
 
   @doc """
   Returns the list of recipes.
@@ -73,7 +74,7 @@ defmodule Galley.Recipes do
 
   """
   def get_recipe!(id) do
-    Repo.get!(Recipe, id) |> Repo.preload(:user)
+    Repo.get!(Recipe, id) |> Repo.preload(:user) |> Repo.preload(:tags)
   end
 
   def get_recipe_by_id_and_slug!(id, slug) do
@@ -83,6 +84,9 @@ defmodule Galley.Recipes do
 
   @doc """
   Creates a recipe.
+  First, this will upsert any ingredients on the recipe that might not exist.
+  Then, we attach the tag values from the tag.
+  Finally, we insert the actual recipe.
 
   ## Examples
 
@@ -93,14 +97,58 @@ defmodule Galley.Recipes do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_recipe(user, attrs \\ %{}) do
-    # FIXME:  this should be in a transaction, I think.
-    upsert_ingredient(attrs)
 
-    ## add the user id!
-    %Recipe{user_id: user.id}
-    |> Recipe.changeset(attrs)
-    |> Repo.insert()
+  # def create_recipe(user, attrs \\ %{}) do
+  #   # FIXME:  this should be in a transaction, I think.
+  #   upsert_ingredient(attrs)
+
+  #   ## add the user id!
+  #   %Recipe{user_id: user.id}
+  #   |> Recipe.changeset(attrs)
+  #   |> Ecto.Changeset.put_assoc(:tags, get_tags(attrs))
+  #   |> Repo.insert()
+  # end
+
+  def create_recipe(user, attrs \\ %{}) do
+    multi_result =
+      Multi.new()
+      # start off with inserting and getting all tags
+      |> insert_and_get_tags(attrs)
+      |> Multi.insert(:recipe, fn %{tags: tags} ->
+        %Recipe{user_id: user.id}
+        |> Recipe.changeset(attrs)
+        |> Ecto.Changeset.put_assoc(:tags, tags)
+      end)
+      |> Repo.transaction()
+
+    case multi_result do
+      {:ok, %{recipe: recipe}} -> {:ok, recipe}
+      {:error, :recipe, changeset, _} -> {:error, changeset}
+    end
+  end
+
+  defp parse_tags(nil), do: []
+
+  defp parse_tags(tags) do
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
+    for tag <- String.split(tags, ","),
+        tag = tag |> String.trim() |> String.downcase(),
+        tag != "",
+        do: %{name: tag, inserted_at: now, updated_at: now}
+  end
+
+  # fetches tags from form and makes them into maps.
+  # then upserts them,
+  defp insert_and_get_tags(multi, attrs) do
+    tags = parse_tags(attrs["tags"])
+
+    multi
+    |> Multi.insert_all(:insert_tags, Tag, tags, on_conflict: :nothing)
+    |> Multi.run(:tags, fn repo, _changes ->
+      tag_names = for t <- tags, do: t.name
+      {:ok, repo.all(from t in Tag, where: t.name in ^tag_names)}
+    end)
   end
 
   def create_ingredients(ingredients \\ [%{}]) do
@@ -155,24 +203,24 @@ defmodule Galley.Recipes do
   def delete_ingredient_photo(%Recipe{} = recipe, photo_id) do
     filtered_photos =
       recipe.uploaded_images
-        |> Enum.filter(fn image -> image.id != photo_id end)
+      |> Enum.filter(fn image -> image.id != photo_id end)
 
     # TODO: figure out how to delete the image in storage.
     recipe
-      |> change_recipe()
-      |> Ecto.Changeset.put_embed(:uploaded_images, filtered_photos)
-      |> Repo.update()
+    |> change_recipe()
+    |> Ecto.Changeset.put_embed(:uploaded_images, filtered_photos)
+    |> Repo.update()
   end
 
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
     filtered_ingredient =
       recipe.ingredients
-        |> Enum.filter(fn ingr -> ingr.id != ingredient_id end)
+      |> Enum.filter(fn ingr -> ingr.id != ingredient_id end)
 
     recipe
-      |> change_recipe()
-      |> Ecto.Changeset.put_embed(:ingredients, filtered_ingredient)
-      |> Repo.update()
+    |> change_recipe()
+    |> Ecto.Changeset.put_embed(:ingredients, filtered_ingredient)
+    |> Repo.update()
   end
 
   @doc """
@@ -200,7 +248,9 @@ defmodule Galley.Recipes do
     attrs["ingredients"]
     |> Map.values()
     |> Enum.each(fn %{"ingredient" => x} ->
-      %Recipe.Ingredient{} |> Recipe.ingredient_changeset(%{name: x}) |> Repo.insert(on_conflict: :nothing)
+      %Recipe.Ingredient{}
+      |> Recipe.ingredient_changeset(%{name: x})
+      |> Repo.insert(on_conflict: :nothing)
     end)
   end
 end

@@ -3,7 +3,7 @@ defmodule Galley.Repo.Migrations.CreateRecipesTags do
 
   def change do
     create table(:recipes_tags, primary_key: false) do
-      add :recipe_id, references(:recipes, on_delete: :nothing), primary_key: true
+      add :recipe_id, references(:recipes, on_delete: :delete_all), primary_key: true
       add :tag_id, references(:tags, on_delete: :nothing), primary_key: true
     end
 

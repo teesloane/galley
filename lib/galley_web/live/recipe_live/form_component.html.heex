@@ -10,7 +10,7 @@
     phx-submit="save"
   >
     <div class="flex flex-col md:flex-row">
-      <div class="flex flex-col w-full md:w-1/2 md:mr-3">
+      <div class="flex flex-col w-full md:w-1/2 md:pr-3">
         <span class="flex items-center pb-1 justify-between">
           <%= label(f, :title, class: "recipe-form-label") %>
           <%= error_tag(f, :title) %>
@@ -29,15 +29,15 @@
     </div>
     <div class="flex flex-col md:flex-row">
 
-      <div class="flex flex-col w-full md:w-1/2 md:mr-3">
+      <div class="flex flex-col w-full md:w-1/2 md:pr-3">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :tags, class: "recipe-form-label") %>
           <%= error_tag(f, :tags) %>
         </span>
-        <%= text_input(f, :tags, placeholder: "ex: spicy, bbq, mealprep") %>
+        <%#= text_input(f, :tags, placeholder: "ex: spicy, bbq, mealprep") %>
       </div>
 
-      <div class="flex flex-col w-full md:w-1/4 ">
+      <div class="flex flex-col w-full md:w-1/4 md:pr-3">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :yields, class: "recipe-form-label") %>
           <%= error_tag(f, :yields) %>

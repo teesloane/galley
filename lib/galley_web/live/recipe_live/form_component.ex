@@ -105,7 +105,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   # Loop over the old changeset's `changes` field, and keep the previous changes (save for the deleted one)
   # Reassign the data from the db to the socket changeset, and put the changeset changes back in.
   def handle_event("remove-persisted-step", %{"remove" => step_id_to_remove}, socket) do
-    IO.inspect(socket.assigns.changeset, label: "changeset is before anything....")
     Recipes.delete_recipe_step(socket.assigns.changeset.data, step_id_to_remove)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
     old_changes = socket.assigns.changeset.changes
@@ -209,6 +208,19 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  # FIXME this will be removed soon enough.
+  def tag_input(form, field, opts \\ []) do
+    # get the input tags collection
+    tags =
+      Phoenix.HTML.Form.input_value(form, field)
+      |> IO.inspect(label: "!!!!!!!!!!!!!!!!")
+      |> Enum.map(fn t -> t.name end)
+      |> Enum.join(", ")
+    # render text using the text_input after converting tags to text
+    kwrds = Keyword.merge([value: tags], opts)
+    Phoenix.HTML.Form.text_input(form, field, kwrds)
   end
 
   ## -- File Upload Stuff
