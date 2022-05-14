@@ -82,44 +82,31 @@ defmodule Galley.Recipes do
     |> Repo.preload(:user)
   end
 
-  @doc """
-  Creates a recipe.
-  First, this will upsert any ingredients on the recipe that might not exist.
-  Then, we attach the tag values from the tag.
-  Finally, we insert the actual recipe.
-
-  ## Examples
-
-      iex> create_recipe(%{field: value})
-      {:ok, %Recipe{}}
-
-      iex> create_recipe(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-
-  # def create_recipe(user, attrs \\ %{}) do
-  #   # FIXME:  this should be in a transaction, I think.
-  #   upsert_ingredient(attrs)
-
-  #   ## add the user id!
-  #   %Recipe{user_id: user.id}
-  #   |> Recipe.changeset(attrs)
-  #   |> Ecto.Changeset.put_assoc(:tags, get_tags(attrs))
-  #   |> Repo.insert()
-  # end
-
-  def create_recipe(user, attrs \\ %{}) do
-
-    # IO.inspect(attrs)
-    # upsert_ingredient(attrs)
+  def insert_recipe(user, attrs \\ %{}) do
     multi_result =
       Multi.new()
-      # start off with inserting and getting all tags
       |> insert_and_get_tags(attrs)
       |> upsert_ingredient(attrs)
       |> Multi.insert(:recipe, fn %{tags: tags} ->
         %Recipe{user_id: user.id}
+        |> Recipe.changeset(attrs)
+        |> Ecto.Changeset.put_assoc(:tags, tags)
+      end)
+      |> Repo.transaction()
+
+    case multi_result do
+      {:ok, %{recipe: recipe}} -> {:ok, recipe}
+      {:error, :recipe, changeset, _} -> {:error, changeset}
+    end
+  end
+
+  def update_recipe(%Recipe{} = recipe, attrs \\ %{}) do
+    multi_result =
+      Multi.new()
+      |> insert_and_get_tags(attrs)
+      |> upsert_ingredient(attrs)
+      |> Multi.update(:recipe, fn %{tags: tags} ->
+        recipe
         |> Recipe.changeset(attrs)
         |> Ecto.Changeset.put_assoc(:tags, tags)
       end)
@@ -186,13 +173,13 @@ defmodule Galley.Recipes do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_recipe(%Recipe{} = recipe, attrs) do
-    # upsert_ingredient(attrs)
+  # def update_recipe(%Recipe{} = recipe, attrs) do
+  #   # upsert_ingredient(attrs)
 
-    recipe
-    |> Recipe.changeset(attrs)
-    |> Repo.update()
-  end
+  #   recipe
+  #   |> Recipe.changeset(attrs)
+  #   |> Repo.update()
+  # end
 
   @doc """
   Deletes a recipe.

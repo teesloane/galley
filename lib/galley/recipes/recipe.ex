@@ -30,7 +30,7 @@ defmodule Galley.Recipes.Recipe do
       field :temp_id, :string, virtual: true
     end
 
-    many_to_many :tags, Galley.Recipes.Tag, join_through: "recipes_tags"
+    many_to_many :tags, Galley.Recipes.Tag, join_through: "recipes_tags", on_replace: :delete
 
     timestamps()
   end

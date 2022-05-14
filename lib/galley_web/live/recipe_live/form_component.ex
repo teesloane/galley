@@ -197,8 +197,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp save_recipe(socket, :new, recipe_params) do
-    recipe_params = handle_upload(socket,  socket.assigns.action, recipe_params)
-    case Recipes.create_recipe(socket.assigns.current_user, recipe_params) do
+    recipe_params = handle_upload(socket, socket.assigns.action, recipe_params)
+    case Recipes.insert_recipe(socket.assigns.current_user, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
          socket
