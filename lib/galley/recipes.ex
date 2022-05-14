@@ -7,7 +7,7 @@ defmodule Galley.Recipes do
   alias Galley.Repo
   alias Ecto.Multi
 
-  alias Galley.Recipes.{Recipe, Tag, RecipeTag}
+  alias Galley.Recipes.{Recipe, Tag, RecipeTag, Ingredient}
 
   @doc """
   Returns the list of recipes.
@@ -110,10 +110,14 @@ defmodule Galley.Recipes do
   # end
 
   def create_recipe(user, attrs \\ %{}) do
+
+    # IO.inspect(attrs)
+    # upsert_ingredient(attrs)
     multi_result =
       Multi.new()
       # start off with inserting and getting all tags
       |> insert_and_get_tags(attrs)
+      |> upsert_ingredient(attrs)
       |> Multi.insert(:recipe, fn %{tags: tags} ->
         %Recipe{user_id: user.id}
         |> Recipe.changeset(attrs)
@@ -151,9 +155,24 @@ defmodule Galley.Recipes do
     end)
   end
 
-  def create_ingredients(ingredients \\ [%{}]) do
-    Repo.insert_all(Ingredient, ingredients)
+
+  defp upsert_ingredient(multi, attrs) do
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    # NOTE: the difference between Ingrdient here (Recipes.Ingredient) and
+    # Recipe.Ingredient (which is generated automatically as an embedded_schema)
+    ingrs = attrs["ingredients"]
+    |> Map.values()
+    |> Enum.map(fn ingrMap ->
+      %{name: ingrMap["ingredient"],
+        inserted_at: now,
+        updated_at: now
+       }
+    end)
+
+    multi
+    |> Multi.insert_all(:insert_ingredients, Ingredient, ingrs, on_conflict: :nothing)
   end
+
 
   @doc """
   Updates a recipe.
@@ -168,7 +187,7 @@ defmodule Galley.Recipes do
 
   """
   def update_recipe(%Recipe{} = recipe, attrs) do
-    upsert_ingredient(attrs)
+    # upsert_ingredient(attrs)
 
     recipe
     |> Recipe.changeset(attrs)
@@ -244,13 +263,13 @@ defmodule Galley.Recipes do
     Recipe.ingredient_changeset(recipe_ingredient, attrs)
   end
 
-  defp upsert_ingredient(attrs) do
-    attrs["ingredients"]
-    |> Map.values()
-    |> Enum.each(fn %{"ingredient" => x} ->
-      %Recipe.Ingredient{}
-      |> Recipe.ingredient_changeset(%{name: x})
-      |> Repo.insert(on_conflict: :nothing)
-    end)
-  end
+  # defp upsert_ingredient(attrs) do
+  #   attrs["ingredients"]
+  #   |> Map.values()
+  #   |> Enum.each(fn %{"ingredient" => x} ->
+  #     %Recipe.Ingredient{}
+  #     |> Recipe.ingredient_changeset(%{name: x})
+  #     |> Repo.insert(on_conflict: :nothing)
+  #   end)
+  # end
 end

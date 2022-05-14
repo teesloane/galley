@@ -60,23 +60,13 @@ defmodule Galley.Recipes.Recipe do
     schema |> cast(params, [:url, :is_hero])
   end
 
-  def ingredient_changeset(step, attrs) do
-    step
-    |> Map.put(:temp_id, (step.temp_id || attrs["temp_id"]))
+  def ingredient_changeset(ingredient, attrs) do
+    ingredient
+    |> Map.put(:temp_id, (ingredient.temp_id || attrs["temp_id"]))
     |> cast(attrs, [:ingredient, :quantity, :measurement])
     |> validate_required([:ingredient, :quantity])
-    |> mark_for_delete()
   end
 
-  # use this so that fields with a :delete virutal field
-  # can be removed (only for embeds_many - photos, steps, ingredients etc)
-  defp mark_for_delete(changeset) do
-    if get_change(changeset, :delete) do
-      %{changeset | action: :delete}
-    else
-      changeset
-    end
-  end
 
   def step_changeset(step, attrs) do
     step
@@ -84,7 +74,6 @@ defmodule Galley.Recipes.Recipe do
     |> cast(attrs, [:instruction])
     |> cast_embed(:timer)
     |> validate_required([:instruction])
-    |> mark_for_delete()
   end
 end
 

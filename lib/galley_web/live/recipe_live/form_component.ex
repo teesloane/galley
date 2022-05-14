@@ -210,14 +210,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     end
   end
 
-  # FIXME this will be removed soon enough.
   def tag_input(form, field, opts \\ []) do
-    # get the input tags collection
-    tags =
-      Phoenix.HTML.Form.input_value(form, field)
-      |> IO.inspect(label: "!!!!!!!!!!!!!!!!")
+    incoming_val = Phoenix.HTML.Form.input_value(form, field)
+    tags =  if is_binary(incoming_val) do
+      incoming_val
+      else
+      incoming_val
       |> Enum.map(fn t -> t.name end)
       |> Enum.join(", ")
+    end
     # render text using the text_input after converting tags to text
     kwrds = Keyword.merge([value: tags], opts)
     Phoenix.HTML.Form.text_input(form, field, kwrds)
@@ -401,7 +402,4 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     end
   end
 
-  defp get_existing_changes() do
-
-  end
 end
