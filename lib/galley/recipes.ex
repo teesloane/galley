@@ -251,13 +251,4 @@ defmodule Galley.Recipes do
     Recipe.ingredient_changeset(recipe_ingredient, attrs)
   end
 
-  # defp upsert_ingredient(attrs) do
-  #   attrs["ingredients"]
-  #   |> Map.values()
-  #   |> Enum.each(fn %{"ingredient" => x} ->
-  #     %Recipe.Ingredient{}
-  #     |> Recipe.ingredient_changeset(%{name: x})
-  #     |> Repo.insert(on_conflict: :nothing)
-  #   end)
-  # end
 end
