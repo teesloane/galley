@@ -28,34 +28,30 @@ defmodule Galley.Recipes do
   to handle for when we dispatch the DB query.
   """
   def search_recipes(%{"filter" => filter, "query" => query, "tags" => _tags}, user_id) do
+    from(r in Recipe)
+    |> maybe_filter_recipes(filter, user_id)
+    |> maybe_where_by_search(query)
+    |> Repo.all
+  end
+
+  defp maybe_where_by_search(ecto_query, search_query) do
+    if search_query !== "" do
+      where(ecto_query, [schema], ilike(schema.title, ^"%#{search_query}%"))
+    else
+      ecto_query
+    end
+  end
+
+  defp maybe_filter_recipes(ecto_query, filter_query, user_id) do
     cond do
-      filter == "All" and query == "" ->
-        list_recipes()
+	    filter_query === "All" ->
+        ecto_query
 
-      filter == "All" and query != "" ->
-        from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))
-        |> Repo.all()
-        |> Repo.preload(:user)
-
-      filter == "My Recipes" and query == "" ->
-        from(r in Recipe, where: r.user_id == ^user_id)
-        |> Repo.all()
-        |> Repo.preload(:user)
-
-      filter == "My Recipes" and query != "" ->
-        Recipe
-        |> where([r], r.user_id == ^user_id)
-        |> where([r], ilike(r.title, ^"%#{query}%"))
-        |> Repo.all()
-        |> Repo.preload(:user)
-
-      filter == "My Recipes" and query != "" ->
-        from(r in Recipe, where: ilike(r.title, ^"%#{query}%"))
-        |> Repo.all()
-        |> Repo.preload(:user)
+      filter_query === "My Recipes" ->
+        where(ecto_query, [schema], schema.user_id == ^user_id)
 
       true ->
-        list_recipes()
+        ecto_query
     end
   end
 
@@ -143,44 +139,20 @@ defmodule Galley.Recipes do
     end)
   end
 
-
   defp upsert_ingredient(multi, attrs) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     # NOTE: the difference between Ingrdient here (Recipes.Ingredient) and
     # Recipe.Ingredient (which is generated automatically as an embedded_schema)
-    ingrs = attrs["ingredients"]
-    |> Map.values()
-    |> Enum.map(fn ingrMap ->
-      %{name: ingrMap["ingredient"],
-        inserted_at: now,
-        updated_at: now
-       }
-    end)
+    ingrs =
+      attrs["ingredients"]
+      |> Map.values()
+      |> Enum.map(fn ingrMap ->
+        %{name: ingrMap["ingredient"], inserted_at: now, updated_at: now}
+      end)
 
     multi
     |> Multi.insert_all(:insert_ingredients, Ingredient, ingrs, on_conflict: :nothing)
   end
-
-
-  @doc """
-  Updates a recipe.
-
-  ## Examples
-
-      iex> update_recipe(recipe, %{field: new_value})
-      {:ok, %Recipe{}}
-
-      iex> update_recipe(recipe, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  # def update_recipe(%Recipe{} = recipe, attrs) do
-  #   # upsert_ingredient(attrs)
-
-  #   recipe
-  #   |> Recipe.changeset(attrs)
-  #   |> Repo.update()
-  # end
 
   @doc """
   Deletes a recipe.
@@ -231,6 +203,24 @@ defmodule Galley.Recipes do
   end
 
   @doc """
+  Recieves a list of tags and queries recipes that have that tag.
+  """
+  def get_by_tags(tag_list) do
+    q =
+      from tags in Tag,
+        join: recipe_tags in Galley.Recipes.RecipeTag,
+        on: recipe_tags.tag_id == tags.id,
+        # tag must be in the tag_list
+        where: tags.name in ^tag_list,
+        # get just recipe ids
+        select: recipe_tags.recipe_id,
+        # remove duplicate ids
+        group_by: recipe_tags.recipe_id
+
+    Repo.all(q)
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking recipe changes.
 
   ## Examples
@@ -250,5 +240,4 @@ defmodule Galley.Recipes do
   def change_ingredient(%Recipe.Ingredient{} = recipe_ingredient, attrs \\ %{}) do
     Recipe.ingredient_changeset(recipe_ingredient, attrs)
   end
-
 end

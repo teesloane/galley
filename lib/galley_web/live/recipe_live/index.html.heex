@@ -4,7 +4,6 @@
   <form phx-change="search" class="flex-col md:flex-row flex mb-8">
     <%= text_input(:search, :query,
       placeholder: "Search Recipes",
-      autofocus: true,
       "phx-debounce": "300",
       class: "flex-1 md:mr-4 py-2 px-4"
     ) %>
