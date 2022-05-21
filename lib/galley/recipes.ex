@@ -23,14 +23,37 @@ defmodule Galley.Recipes do
     |> Repo.preload(:user)
   end
 
-  def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => _tags}, user_id) do
+  @doc """
+  Determine the query we are going to make.
+  """
+  def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => tags}, user_id) do
     s_conditions =
-      if search_query !== "", do: dynamic([r], ilike(r.title, ^"%#{search_query}%")), else: true
+      if search_query !== "",
+        do: dynamic([r], ilike(r.title, ^"%#{search_query}%")),
+        else: true
 
-    f_conditions = if filter === "My Recipes", do: dynamic([r], r.user_id == ^user_id), else: true
+    f_conditions =
+      if filter === "My Recipes",
+        do: dynamic([r], r.user_id == ^user_id),
+        else: true
+
     and_condition = dynamic([s], ^s_conditions and ^f_conditions)
 
-    from(r in Recipe) |> where([s], ^and_condition) |> Repo.all()
+    if String.length(tags) === 0 do
+      from(r in Recipe) |> where([s], ^and_condition) |> Repo.all()
+    else
+      split_tags =
+        for tag <- String.split(tags, ","),
+            tag = tag |> String.trim() |> String.downcase(),
+            tag != "",
+            do: tag
+
+      tagged_recipe_ids = get_by_tags(split_tags)
+      from(r in Recipe)
+        |> where([s], ^and_condition)
+        |> where([r], r.id in ^tagged_recipe_ids)
+        |> Repo.all()
+    end
   end
 
   @doc """
@@ -132,18 +155,6 @@ defmodule Galley.Recipes do
     |> Multi.insert_all(:insert_ingredients, Ingredient, ingrs, on_conflict: :nothing)
   end
 
-  @doc """
-  Deletes a recipe.
-
-  ## Examples
-
-      iex> delete_recipe(recipe)
-      {:ok, %Recipe{}}
-
-      iex> delete_recipe(recipe)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_recipe(%Recipe{} = recipe) do
     Repo.delete(recipe)
   end
@@ -193,7 +204,7 @@ defmodule Galley.Recipes do
         # get just recipe ids
         select: recipe_tags.recipe_id,
         # remove duplicate ids
-        group_by: recipe_tags.recipe_id
+        distinct: recipe_tags.recipe_id
 
     Repo.all(q)
   end

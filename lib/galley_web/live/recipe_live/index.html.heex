@@ -5,12 +5,14 @@
     <%= text_input(:search, :query,
       placeholder: "Search Recipes",
       "phx-debounce": "300",
-      class: "flex-1 md:mr-4 py-2 px-4"
+      class: "flex-1 md:mr-4 py-2 px-4",
+      value: @search_query
     ) %>
     <%= text_input(:search, :tags,
       placeholder: "Tags",
       "phx-debounce": "200",
-      class: "md:mr-4 px-4"
+      class: "md:mr-4 px-4",
+      value: @search_tags
     ) %>
     <%= select(:search, :filter, ["All", "My Recipes"], selected: @search_filter) %>
   </form>

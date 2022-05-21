@@ -7,8 +7,9 @@ defmodule GalleyWeb.RecipeLive.Index do
   def mount(_params, _session, socket) do
     state = %{
       recipes: list_recipes(),
-      search_phrase: "",
-      search_filter: "All"
+      search_query: "",
+      search_filter: "All",
+      search_tags: ""
     }
 
     {:ok, assign(socket, state)}
@@ -27,6 +28,8 @@ defmodule GalleyWeb.RecipeLive.Index do
       socket
       |> assign(:recipes, Recipes.search_recipes(search, user_id))
       |> assign(:search_filter, search["filter"])
+      |> assign(:search_query, search["query"])
+      |> assign(:search_tags, search["tags"])
 
     {:noreply, socket}
   end
