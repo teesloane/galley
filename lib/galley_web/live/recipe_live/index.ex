@@ -8,8 +8,7 @@ defmodule GalleyWeb.RecipeLive.Index do
     state = %{
       recipes: list_recipes(),
       search_phrase: "",
-      search_filter: "All",
-      formState: 0
+      search_filter: "All"
     }
 
     {:ok, assign(socket, state)}

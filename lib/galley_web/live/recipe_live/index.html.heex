@@ -12,7 +12,7 @@
       "phx-debounce": "200",
       class: "md:mr-4 px-4"
     ) %>
-    <%= select(:search, :filter, options: ["All", "My Recipes"]) %>
+    <%= select(:search, :filter, ["All", "My Recipes"], selected: @search_filter) %>
   </form>
   <!-- Cards -->
   <%= if @recipes !== [] do %>
