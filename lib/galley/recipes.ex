@@ -23,36 +23,14 @@ defmodule Galley.Recipes do
     |> Repo.preload(:user)
   end
 
-  @doc """
-  Search recipes is a bit complex because there are multiple cases we need
-  to handle for when we dispatch the DB query.
-  """
-  def search_recipes(%{"filter" => filter, "query" => query, "tags" => _tags}, user_id) do
-    from(r in Recipe)
-    |> maybe_filter_recipes(filter, user_id)
-    |> maybe_where_by_search(query)
-    |> Repo.all
-  end
+  def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => _tags}, user_id) do
+    s_conditions =
+      if search_query !== "", do: dynamic([r], ilike(r.title, ^"%#{search_query}%")), else: true
 
-  defp maybe_where_by_search(ecto_query, search_query) do
-    if search_query !== "" do
-      where(ecto_query, [schema], ilike(schema.title, ^"%#{search_query}%"))
-    else
-      ecto_query
-    end
-  end
+    f_conditions = if filter === "My Recipes", do: dynamic([r], r.user_id == ^user_id), else: true
+    and_condition = dynamic([s], ^s_conditions and ^f_conditions)
 
-  defp maybe_filter_recipes(ecto_query, filter_query, user_id) do
-    cond do
-	    filter_query === "All" ->
-        ecto_query
-
-      filter_query === "My Recipes" ->
-        where(ecto_query, [schema], schema.user_id == ^user_id)
-
-      true ->
-        ecto_query
-    end
+    from(r in Recipe) |> where([s], ^and_condition) |> Repo.all()
   end
 
   @doc """
