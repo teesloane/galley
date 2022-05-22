@@ -1,4 +1,4 @@
-<div class="w-full bg-gray-200 flex justify-center items-center flex-1 flex-col lg:pb-24">
+<div class="w-full bg-neutral-50 dark:bg-neutral-900 flex justify-center items-center flex-1 flex-col lg:pb-24 dark:text-neutral-50">
   <div class="w-full md:w-3/5 lg:w-2/5 px-4 ">
     <h1 class="text-xl mb-4 flex-start font-bold">Log in to Galley</h1>
     <.form
@@ -13,7 +13,7 @@
           <p><%= @error_message %></p>
         </div>
       <% end %>
-      <div class="flex flex-col bg-white border drop-shadow-lg rounded p-4 border-gray-500">
+      <div class="flex flex-col bg-white dark:bg-neutral-800 border drop-shadow-lg rounded p-4 border-gray-500 bg:border-neutral-800 dark:text-white">
         <%= label(f, :email, class: "pb-2 text-sm") %>
         <%= email_input(f, :email, required: true, class: "border rounded mb-2 p-1 px-2") %>
 
