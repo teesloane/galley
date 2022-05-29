@@ -5,6 +5,5 @@ defmodule Galley.Repo.Migrations.AddNotesToRecipe do
     alter table(:recipes) do
       add :notes, :text
     end
-
   end
 end

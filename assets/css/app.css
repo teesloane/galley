@@ -47,6 +47,10 @@
     padding: 0 10px;
   }
 
+  .card {
+    @apply flex flex-col bg-white dark:bg-neutral-800 border drop-shadow-lg rounded p-4 border-neutral-200;
+  }
+
   .recipe-form-label {
     @apply text-gray-700 text-sm dark:text-gray-200;
   }

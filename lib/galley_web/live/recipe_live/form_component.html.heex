@@ -25,10 +25,8 @@
         </span>
         <%= text_input(f, :source, placeholder: "Link to recipe (optional)") %>
       </div>
-
     </div>
     <div class="flex flex-col md:flex-row">
-
       <div class="flex flex-col w-full md:w-1/2 md:pr-3">
         <span class="flex items-center justify-between pb-1">
           <%= label(f, :tags, class: "recipe-form-label") %>
@@ -60,7 +58,6 @@
         </div>
       </div>
     </div>
-
 
     <hr class="my-16" />
 
@@ -235,9 +232,7 @@
         <p class="alert alert-danger"><%= error_to_string(err) %></p>
       <% end %>
     </section>
-
     <!-- Section: additional notes -->
-
     <hr class="my-16" />
     <section class="pb-8">
       <h2 class="heading">Additional notes</h2>
@@ -261,12 +256,12 @@
 
     <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10 flex justify-between">
       <span class="btn-alert">
-        <%= link "Delete", [
+        <%= link("Delete",
           to: "#",
           phx_click: "delete",
           phx_value_id: @recipe.id,
-          data: [confirm: "Are you sure you want to delete your recipe?"]]
-        %>
+          data: [confirm: "Are you sure you want to delete your recipe?"]
+        ) %>
       </span>
 
       <%= if @action == :edit do %>
