@@ -18,4 +18,8 @@ defmodule GalleyUtils do
       d_as_str
     end
   end
+
+  def is_dev?() do
+    Application.fetch_env!(:galley, :env) == :dev
+  end
 end
