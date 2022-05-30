@@ -3,7 +3,7 @@ defmodule Galley.Repo.Migrations.AddUploadedImagesToRecipes do
 
   def change do
     alter table(:recipes) do
-      add :uploaded_images, {:array, :string}, default: []
+      add :uploaded_images, {:array, :map}, default: []
     end
   end
 end

@@ -35,3 +35,6 @@ npm-debug.log
 
 /priv/static/uploads/
 **/*.DS_STORE
+
+*.db
+*.db-*

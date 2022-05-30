@@ -7,7 +7,7 @@ defmodule Galley.Recipes do
   alias Galley.Repo
   alias Ecto.Multi
 
-  alias Galley.Recipes.{Recipe, Tag, RecipeTag, Ingredient}
+  alias Galley.Recipes.{Recipe, Tag, Ingredient}
 
   @doc """
   Returns the list of recipes.
@@ -29,7 +29,7 @@ defmodule Galley.Recipes do
   def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => tags}, user_id) do
     s_conditions =
       if search_query !== "",
-        do: dynamic([r], ilike(r.title, ^"%#{search_query}%")),
+        do: dynamic([r], like(r.title, ^"%#{search_query}%")),
         else: true
 
     f_conditions =
@@ -204,7 +204,7 @@ defmodule Galley.Recipes do
         # get just recipe ids
         select: recipe_tags.recipe_id,
         # remove duplicate ids
-        distinct: recipe_tags.recipe_id
+        group_by: recipe_tags.recipe_id
 
     Repo.all(q)
   end

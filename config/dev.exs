@@ -2,12 +2,9 @@ import Config
 
 # Configure your database
 config :galley, Galley.Repo,
-  username: "tees",
-  password: "postgres",
-  hostname: "localhost",
-  database: "galley_dev",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  database: Path.expand("../galleydata_dev.db", Path.dirname(__ENV__.file)),
+  pool_size: 5,
+  show_sensitive_data_on_connection_error: true
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
