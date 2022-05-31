@@ -336,7 +336,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
 
   # take the form_params and extract the uploaded entries
-  # then put them uploaded files into the form params to be inserted into the db.
+  # then put the uploaded files into the form params to be inserted into the db.
   # FIXME: this should be set to be dev only as it uploads to local host,
   # maybe we can match on a get_env call.
   defp handle_upload(socket, :new, form_params) do
@@ -355,17 +355,28 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   # takes uploaded images and transforms them to be db friendly.
   defp consume_uploads(socket, form_params) do
-    uploaded_images = consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, _entry ->
-      upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
-      # make the upload directory if it doesn't exist
-      File.mkdir_p!(upload_folder)
-      dest = Path.join([upload_folder, Path.basename(path)])
-      # The `static/uploads` directory must exist for `File.cp!/2` to work.
-      File.cp!(path, dest)
-      {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
+    uploaded_images = consume_uploaded_entries(socket, :recipe_img, fn params, entry ->
+      consume_uploaded_entries_helper(socket, params, entry)
     end)
 
     attach_selected_hero_to_uploads(uploaded_images, form_params)
+  end
+
+  # This is the local version (dev only)
+  defp consume_uploaded_entries_helper(socket, %{path: path}, _entry) do
+    upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
+    # make the upload directory if it doesn't exist
+    File.mkdir_p!(upload_folder)
+    dest = Path.join([upload_folder, Path.basename(path)])
+    # The `static/uploads` directory must exist for `File.cp!/2` to work.
+    File.cp!(path, dest)
+    {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
+  end
+
+  # (this uploads to s3)
+  defp consume_uploaded_entries_helper(socket, %{key: key, url: url}, _entry) do
+    img_url = "#{url}/#{key}"
+    {:ok, img_url}
   end
 
 

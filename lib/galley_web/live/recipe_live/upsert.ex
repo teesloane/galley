@@ -10,7 +10,19 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      socket
      |> assign(:formState, 0)
      |> assign(:uploaded_images, [])
-     |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)}
+     |> (fn socket ->
+           if !GalleyUtils.is_dev?() do
+             allow_upload(socket, :recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
+           else
+             allow_upload(socket, :recipe_img,
+               accept: ~w(.jpg .jpeg .png),
+               max_entries: 4,
+               external: &SimpleS3Upload.presign_upload/2
+             )
+           end
+         end).()}
+
+    # |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)}
   end
 
   @impl true
@@ -21,6 +33,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   # This is how we set the form to work for either :edit or :new
   defp apply_action(socket, :edit, %{"id" => id}) do
     recipe = Recipes.get_recipe!(id)
+
     socket
     |> assign(:page_title, "Edit - #{recipe.title}")
     |> assign(:recipe, recipe)
@@ -37,7 +50,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
           quantity: "",
           measurement: "",
           ingredient: ""
-        },
+        }
       ],
       steps: [
         %Recipe.Step{temp_id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
@@ -55,6 +68,5 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      socket
      |> put_flash(:info, "Recipe deleted!")
      |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
-
   end
 end
