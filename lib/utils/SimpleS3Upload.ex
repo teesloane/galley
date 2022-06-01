@@ -87,10 +87,9 @@ defmodule SimpleS3Upload do
   end
 
   def presign_upload(entry, socket) do
-    IO.inspect(entry, label: "entryyyyyyyyyy ")
     uploads = socket.assigns.uploads
     bucket = "theiceshelf-galley"
-    key = "public/#{entry.client_name}"
+    key = "public/#{entry.uuid}-#{entry.client_name}"
 
     config = %{
       region: "ca-central-1",
