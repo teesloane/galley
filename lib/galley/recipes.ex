@@ -169,15 +169,33 @@ defmodule Galley.Recipes do
   end
 
   def delete_ingredient_photo(%Recipe{} = recipe, photo_id) do
+
     filtered_photos =
       recipe.uploaded_images
-      |> Enum.filter(fn image -> image.id != photo_id end)
+      |> Enum.filter(fn image ->
+          # NOTE: side effect - let's delete the image in s3 (optimistically)
+          # THIS DOES NOT WORK BECAUSE I DONT KNOW HOW TO GET HTTPOISON TO DO IT AND THE URL IS  WRONG?
+        if image.id == photo_id do
+          delete_image_on_s3(image)
+        end
+
+
+        image.id != photo_id end)
 
     # TODO: figure out how to delete the image in storage.
     recipe
     |> change_recipe()
     |> Ecto.Changeset.put_embed(:uploaded_images, filtered_photos)
     |> Repo.update()
+  end
+
+    # https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
+  defp delete_image_on_s3(image) do
+    IO.puts ("hiiiiiiiiiiiiiiiiiiiiiii")
+    bucket_url = "http://theiceshelf-galley.s3-ca-central-1.amazonaws.com/#{image.key_s3}"
+    IO.puts("about to request delete to #{bucket_url}")
+    x = HTTPoison.delete!(bucket_url, [{"x-amz-expected-bucket-owner", "632278979716"}])
+    IO.inspect(x, label: "..................")
   end
 
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
