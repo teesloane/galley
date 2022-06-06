@@ -18,11 +18,11 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"recipe" => recipe_params}, socket) do
-
     changeset =
       socket.assigns.recipe
       |> Recipes.change_recipe(recipe_params)
       |> Map.put(:action, :validate)
+
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
@@ -60,6 +60,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   def handle_event("remove-ingredient", params, socket) do
     id_to_remove = params["remove"]
+
     if Map.has_key?(socket.assigns.changeset.changes, :ingredients) do
       ingredients =
         socket.assigns.changeset.changes.ingredients
@@ -69,12 +70,15 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         end)
 
       changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
-      {:noreply, assign(socket,
-          changeset: changeset,
-          num_ingredients: length(ingredients))}
-      else
-        {:noreply, socket}
-      end
+
+      {:noreply,
+       assign(socket,
+         changeset: changeset,
+         num_ingredients: length(ingredients)
+       )}
+    else
+      {:noreply, socket}
+    end
   end
 
   # how to remove existing single item in a DB and reload the stuff
@@ -84,6 +88,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   # don't think we can refactor because we can't dynamically access changeset.steps
   def handle_event("remove-step", params, socket) do
     id_to_remove = params["remove"]
+
     if Map.has_key?(socket.assigns.changeset.changes, :steps) do
       steps =
         socket.assigns.changeset.changes.steps
@@ -95,9 +100,9 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
       changeset = socket.assigns.changeset |> Ecto.Changeset.put_embed(:steps, steps)
       {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
-      else
-        {:noreply, socket}
-      end
+    else
+      {:noreply, socket}
+    end
   end
 
   # A bit hacky but:
@@ -112,67 +117,77 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     # conflicts with unsaved changes with dynamically added form fields
     changeset =
       socket.assigns.changeset
-        |> Ecto.Changeset.put_embed(:steps, updatedRecipe.steps)
-        |> Ecto.Changeset.apply_changes()
-        |> Recipes.change_recipe()
-        # HACK: for now, we have to reference previous changeset changes via old_changes inside update
-        |> Map.update(:changes, %{}, fn changes ->
-            steps = Map.get(socket.assigns.changeset.changes, :steps, [])
-            if length(steps) > 0 do
-              existing_changed_steps = Enum.filter(steps, fn change ->
-                  change.action == :insert || change.data.id != step_id_to_remove
-              end)
-              %{old_changes | steps: existing_changed_steps}
-            else
-              changes
-            end
-        end)
+      |> Ecto.Changeset.put_embed(:steps, updatedRecipe.steps)
+      |> Ecto.Changeset.apply_changes()
+      |> Recipes.change_recipe()
+      # HACK: for now, we have to reference previous changeset changes via old_changes inside update
+      |> Map.update(:changes, %{}, fn changes ->
+        steps = Map.get(socket.assigns.changeset.changes, :steps, [])
 
-    {:noreply, socket
+        if length(steps) > 0 do
+          existing_changed_steps =
+            Enum.filter(steps, fn change ->
+              change.action == :insert || change.data.id != step_id_to_remove
+            end)
+
+          %{old_changes | steps: existing_changed_steps}
+        else
+          changes
+        end
+      end)
+
+    {:noreply,
+     socket
      |> assign(:changeset, changeset)
-     |> assign(:recipe, updatedRecipe)
-    }
+     |> assign(:recipe, updatedRecipe)}
   end
 
   def handle_event("remove-persisted-ingredient", %{"remove" => ingr_id}, socket) do
     Recipes.delete_ingredient_step(socket.assigns.changeset.data, ingr_id)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
     old_changeset = socket.assigns.changeset.changes
+
     changeset =
       socket.assigns.changeset
-        |> Ecto.Changeset.put_embed(:ingredients, updatedRecipe.ingredients)
-        |> Ecto.Changeset.apply_changes()
-        |> Recipes.change_recipe()
-        # HACK: referencing old variables inside of update.
-        |> Map.update(:changes, %{}, fn changes ->
-            ingredients = Map.get(old_changeset, :ingredients, [])
-            if length(ingredients) > 0 do
-              %{old_changeset | ingredients: Enum.filter(old_changeset.ingredients, fn change ->
-                   change.action == :insert || change.data.id != ingr_id
-                 end)}
-            else
-              changes
-            end
-        end)
+      |> Ecto.Changeset.put_embed(:ingredients, updatedRecipe.ingredients)
+      |> Ecto.Changeset.apply_changes()
+      |> Recipes.change_recipe()
+      # HACK: referencing old variables inside of update.
+      |> Map.update(:changes, %{}, fn changes ->
+        ingredients = Map.get(old_changeset, :ingredients, [])
 
-    {:noreply, socket
+        if length(ingredients) > 0 do
+          %{
+            old_changeset
+            | ingredients:
+                Enum.filter(old_changeset.ingredients, fn change ->
+                  change.action == :insert || change.data.id != ingr_id
+                end)
+          }
+        else
+          changes
+        end
+      end)
+
+    {:noreply,
+     socket
      |> assign(:changeset, changeset)
-     |> assign(:recipe, updatedRecipe)
-    }
+     |> assign(:recipe, updatedRecipe)}
   end
 
   def handle_event("remove-persisted-upload", %{"remove" => photo_id}, socket) do
     Recipes.delete_ingredient_photo(socket.assigns.changeset.data, photo_id)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
     IO.inspect(photo_id)
+
     changeset =
       socket.assigns.changeset
-        |> Ecto.Changeset.put_embed(:uploaded_images, updatedRecipe.uploaded_photos)
+      |> Ecto.Changeset.put_embed(:uploaded_images, updatedRecipe.uploaded_photos)
 
-    {:noreply, socket
+    {:noreply,
+     socket
      |> assign(:changeset, changeset)
-     |> assign(:recipe, updatedRecipe)
-    }
+     |> assign(:recipe, updatedRecipe)}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -181,6 +196,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   defp save_recipe(socket, :edit, recipe_params) do
     recipe_params = handle_upload(socket, socket.assigns.action, recipe_params)
+
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -198,6 +214,7 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   defp save_recipe(socket, :new, recipe_params) do
     recipe_params = handle_upload(socket, socket.assigns.action, recipe_params)
+
     case Recipes.insert_recipe(socket.assigns.current_user, recipe_params) do
       {:ok, _recipe} ->
         {:noreply,
@@ -212,13 +229,16 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   def tag_input(form, field, opts \\ []) do
     incoming_val = Phoenix.HTML.Form.input_value(form, field)
-    tags =  if is_binary(incoming_val) do
-      incoming_val
+
+    tags =
+      if is_binary(incoming_val) do
+        incoming_val
       else
-      incoming_val
-      |> Enum.map(fn t -> t.name end)
-      |> Enum.join(", ")
-    end
+        incoming_val
+        |> Enum.map(fn t -> t.name end)
+        |> Enum.join(", ")
+      end
+
     # render text using the text_input after converting tags to text
     kwrds = Keyword.merge([value: tags], opts)
     Phoenix.HTML.Form.text_input(form, field, kwrds)
@@ -243,29 +263,39 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   def render_file_upload(assigns) do
     ~H"""
-      <section phx-drop-target={@uploads.recipe_img.ref} class="">
-        <div class="">
-          <div class="sm:h-48 sm:w-48 flex flex-col justify-center rounded-sm bg-gray-50 border border-neutral-200">
-            <div class="m-4">
-              <div class="flex items-center justify-center w-full">
-                <label class="flex flex-col w-full  justify-center  border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
-                  <div class="flex flex-col items-center justify-center pt-7">
-                    <!-- upload icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                      Attach a file</p>
-                  </div>
-                  <%= live_file_input @uploads.recipe_img, class: "opacity-0"%>
-                </label>
-              </div>
+    <section phx-drop-target={@uploads.recipe_img.ref} class="">
+      <div class="">
+        <div class="sm:h-48 sm:w-48 flex flex-col justify-center rounded-sm bg-gray-50 border border-neutral-200">
+          <div class="m-4">
+            <div class="flex items-center justify-center w-full">
+              <label class="flex flex-col w-full  justify-center  border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                <div class="flex flex-col items-center justify-center pt-7">
+                  <!-- upload icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                    Attach a file
+                  </p>
+                </div>
+                <%= live_file_input(@uploads.recipe_img, class: "opacity-0") %>
+              </label>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
     """
   end
 
@@ -276,11 +306,10 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def render_to_be_uploaded(assigns) do
     ~H"""
     <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
-
       <%= label do %>
         <%= live_img_preview(@entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
-        <%= radio_button @f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref  %>
-        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500"/>
+        <%= radio_button(@f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref) %>
+        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
       <% end %>
 
       <button
@@ -308,11 +337,10 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def render_already_uploaded(assigns) do
     ~H"""
     <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
-
       <%= label do %>
         <img src={@entry.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
-        <%= radio_button @f, :hero_image, @ref, class: "peer sr-only", value: @ref  %>
-        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500"/>
+        <%= radio_button(@f, :hero_image, @ref, class: "peer sr-only", value: @ref) %>
+        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
       <% end %>
 
       <button
@@ -325,10 +353,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       >
         &times;
       </button>
-
     </article>
     """
-
   end
 
   defp error_to_string(:too_large), do: "Too large"
@@ -345,19 +371,22 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   end
 
   defp handle_upload(socket, :edit, form_params) do
-    existing_uploads  = socket.assigns.recipe.uploaded_images
+    existing_uploads = socket.assigns.recipe.uploaded_images
     uploaded_images = consume_uploads(socket, form_params)
+    # FIXME: I wonder if this should be existing_uploads at the end?
     uploads =
       (existing_uploads ++ uploaded_images)
       |> attach_selected_hero_to_uploads(form_params)
+
     Map.put(form_params, "uploaded_images", uploads)
   end
 
   # takes uploaded images and transforms them to be db friendly.
   defp consume_uploads(socket, form_params) do
-    uploaded_images = consume_uploaded_entries(socket, :recipe_img, fn params, entry ->
-      consume_uploaded_entries_helper(socket, params, entry)
-    end)
+    uploaded_images =
+      consume_uploaded_entries(socket, :recipe_img, fn params, entry ->
+        consume_uploaded_entries_helper(socket, params, entry)
+      end)
 
     attach_selected_hero_to_uploads(uploaded_images, form_params)
   end
@@ -373,31 +402,32 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
   end
 
-  # (this uploads to s3)
-  defp consume_uploaded_entries_helper(socket, %{key: key, url: url}, _entry) do
+  # this pulls the url from s3 out of the uploaded entry.
+  defp consume_uploaded_entries_helper(socket, %{key: key, url: url} = params, _entry) do
     img_url = "#{url}/#{key}"
-    {:ok, img_url}
+    {:ok, %{"url" => img_url, "key_s3" => key}}
   end
-
 
   # iterates over images and attaches the selected integer of the image to be the hero
   # and sets is_hero on that image.
   defp attach_selected_hero_to_uploads(uploaded_images, form_params) do
     uploaded_images
-      |> Enum.with_index()
-      |> Enum.map(fn {v, i} ->
-        {parsed_int, _} = Integer.parse(Map.get(form_params, "hero_image", "0"))
-        is_hero = if i == parsed_int, do: true, else: false
-        # we have to handle for existing struct images and new maps
-        # when setting the images that will be the hero.
-        case v do
-          %Galley.Recipes.Recipe.Image{} ->
-            Map.from_struct(%{v | is_hero: is_hero})
-          v when  is_binary(v) ->
-            %{"url" => v, "is_hero" => is_hero}
-          v when is_map(v) ->
-            Map.put(v, "is_hero", is_hero)
-        end
+    |> Enum.with_index()
+    |> Enum.map(fn {image_data, i} ->
+      {parsed_int, _} = Integer.parse(Map.get(form_params, "hero_image", "0"))
+      # FIXME: this only half works because what the user clicks on the front end doesn't
+      # always correspond to the order of the list that the images are in.
+      is_hero = if i == parsed_int, do: true, else: false
+
+      case image_data do
+        # the image is already in the DB, and thus has schema
+        %Galley.Recipes.Recipe.Image{} ->
+          Map.from_struct(%{image_data | is_hero: is_hero})
+
+        # the image has just been uploaded and is t hus just a bunch of data
+        image_data when is_map(image_data) ->
+          Map.put(image_data, "is_hero", is_hero)
+      end
     end)
   end
 
@@ -412,5 +442,4 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
       !is_nil(temp_id)
     end
   end
-
 end

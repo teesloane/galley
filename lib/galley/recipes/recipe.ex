@@ -15,6 +15,7 @@ defmodule Galley.Recipes.Recipe do
     embeds_many :uploaded_images, Image, on_replace: :delete do
       field :url, :string
       field :is_hero, :boolean, default: false
+      field :key_s3, :string
     end
 
     embeds_many :ingredients, Ingredient, on_replace: :delete do
@@ -57,7 +58,7 @@ defmodule Galley.Recipes.Recipe do
   defp slug_map(_params), do: %{}
 
   defp uploaded_images_changeset(schema, params) do
-    schema |> cast(params, [:url, :is_hero])
+    schema |> cast(params, [:url, :is_hero, :key_s3])
   end
 
   def ingredient_changeset(ingredient, attrs) do
