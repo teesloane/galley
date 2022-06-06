@@ -178,15 +178,10 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   def handle_event("remove-persisted-upload", %{"remove" => photo_id}, socket) do
     Recipes.delete_ingredient_photo(socket.assigns.changeset.data, photo_id)
     updatedRecipe = Recipes.get_recipe!(socket.assigns.changeset.data.id)
-    IO.inspect(photo_id)
-
-    changeset =
-      socket.assigns.changeset
-      |> Ecto.Changeset.put_embed(:uploaded_images, updatedRecipe.uploaded_photos)
 
     {:noreply,
      socket
-     |> assign(:changeset, changeset)
+     |> assign(:changeset, Recipes.change_recipe(updatedRecipe))
      |> assign(:recipe, updatedRecipe)}
   end
 
