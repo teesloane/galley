@@ -305,6 +305,8 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         <%= live_img_preview(@entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
         <%= radio_button(@f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref) %>
         <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
+        <progress class="flex h-2 text-white w-full" value={@entry.progress} max="100"> <%= @entry.progress %>% </progress>
+
       <% end %>
 
       <button

@@ -3,7 +3,7 @@ defmodule SimpleS3Upload do
   Dependency-free S3 Form Upload using HTTP POST sigv4
 
   https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-post-example.html
-  Came froim: https://gist.githubusercontent.com/chrismccord/37862f1f8b1f5148644b75d20d1cb073/raw/fc184a7085aab95f5bfa37e79d8fd7492c9deef7/simple_s3_upload.ex
+  Came from: https://gist.githubusercontent.com/chrismccord/37862f1f8b1f5148644b75d20d1cb073/raw/fc184a7085aab95f5bfa37e79d8fd7492c9deef7/simple_s3_upload.ex
   """
 
   @doc """
@@ -60,7 +60,6 @@ defmodule SimpleS3Upload do
         "conditions": [
           {"bucket":  "#{bucket}"},
           ["eq", "$key", "#{key}"],
-          {"acl": "public-read"},
           ["eq", "$Content-Type", "#{content_type}"],
           ["content-length-range", 0, #{max_file_size}],
           {"x-amz-server-side-encryption": "AES256"},
@@ -73,7 +72,6 @@ defmodule SimpleS3Upload do
 
     fields = %{
       "key" => key,
-      "acl" => "public-read",
       "content-type" => content_type,
       "x-amz-server-side-encryption" => "AES256",
       "x-amz-credential" => credential,

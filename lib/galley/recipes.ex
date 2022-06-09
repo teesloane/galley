@@ -191,11 +191,8 @@ defmodule Galley.Recipes do
 
     # https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
   defp delete_image_on_s3(image) do
-    IO.puts ("hiiiiiiiiiiiiiiiiiiiiiii")
     bucket_url = "http://theiceshelf-galley.s3-ca-central-1.amazonaws.com/#{image.key_s3}"
-    IO.puts("about to request delete to #{bucket_url}")
     x = HTTPoison.delete!(bucket_url, [{"x-amz-expected-bucket-owner", "632278979716"}])
-    IO.inspect(x, label: "..................")
   end
 
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
