@@ -59,17 +59,18 @@ defmodule GalleyWeb.Router do
 
   ## Authentication routes
 
-  scope "/", GalleyWeb do
+  # if user logged in and visit this scope of routes -> just send them to `/`
+  scope "/users", GalleyWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/users/register", UserRegistrationController, :new
-    post "/users/register", UserRegistrationController, :create
-    get "/users/log_in", UserSessionController, :new
-    post "/users/log_in", UserSessionController, :create
-    get "/users/reset_password", UserResetPasswordController, :new
-    post "/users/reset_password", UserResetPasswordController, :create
-    get "/users/reset_password/:token", UserResetPasswordController, :edit
-    put "/users/reset_password/:token", UserResetPasswordController, :update
+    get  "/register", UserRegistrationController, :new
+    post "/register", UserRegistrationController, :create
+    get  "/log_in", UserSessionController, :new
+    post "/log_in", UserSessionController, :create
+    get  "/reset_password", UserResetPasswordController, :new
+    post "/reset_password", UserResetPasswordController, :create
+    get  "/reset_password/:token", UserResetPasswordController, :edit
+    put  "/reset_password/:token", UserResetPasswordController, :update
   end
 
   scope "/", GalleyWeb do
@@ -80,13 +81,11 @@ defmodule GalleyWeb.Router do
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
     # recipes
-    # get "/recipe/new", RecipeController, :new
     live "/recipes", RecipeLive.Index, :index
     live "/recipes/new", RecipeLive.Upsert, :new
     live "/recipes/:id/edit", RecipeLive.Upsert, :edit
 
     live "/recipes/:id/:slug", RecipeLive.Show, :show
-    # live "/recipes/:id/show/edit", RecipeLive.Show, :edit
   end
 
   scope "/", GalleyWeb do
