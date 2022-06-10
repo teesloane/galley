@@ -8,7 +8,7 @@ defmodule Galley.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"MyApp", "contact@example.com"})
+      |> from({"Galley", "tyler@theiceshelf.com"})
       |> subject(subject)
       |> text_body(body)
 
@@ -21,9 +21,7 @@ defmodule Galley.Accounts.UserNotifier do
   Deliver instructions to confirm account.
   """
   def deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
-
-    ==============================
+    deliver(user.email, "Galley - Confirmation instructions", """
 
     Hi #{user.email},
 
@@ -33,7 +31,6 @@ defmodule Galley.Accounts.UserNotifier do
 
     If you didn't create an account with us, please ignore this.
 
-    ==============================
     """)
   end
 
@@ -41,7 +38,7 @@ defmodule Galley.Accounts.UserNotifier do
   Deliver instructions to reset a user password.
   """
   def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset password instructions", """
+    deliver(user.email, "Galley - Reset password instructions", """
 
     ==============================
 
@@ -61,7 +58,7 @@ defmodule Galley.Accounts.UserNotifier do
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+    deliver(user.email, "Galley - Update email instructions", """
 
     ==============================
 

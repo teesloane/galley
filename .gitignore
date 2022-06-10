@@ -38,3 +38,6 @@ npm-debug.log
 
 *.db
 *.db-*
+
+.env.*
+!.env.example

@@ -23,11 +23,16 @@ config :galley, GalleyWeb.Endpoint,
 # locally. You can see the emails in your browser, at "/dev/mailbox".
 #
 # For production it's recommended to configure a different adapter
-# at the `config/runtime.exs`.
-config :galley, Galley.Mailer, adapter: Swoosh.Adapters.Local
+# TODO: re-enable this once sendgrid works in prod:
+## at the `config/runtime.exs`.
+# config :galley, Galley.Mailer, adapter: Swoosh.Adapters.Local
+## Swoosh API client is needed for adapters other than SMTP.
+# config :swoosh, :api_client, false
 
-# Swoosh API client is needed for adapters other than SMTP.
-config :swoosh, :api_client, false
+## TODO: move this to runtime.exs eventually.
+config :galley, Galley.Mailer,
+  adapter: Swoosh.Adapters.Sendgrid,
+  api_key: System.fetch_env!("SENDGRID_API")
 
 # Configure esbuild (the version is required)
 config :esbuild,
