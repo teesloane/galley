@@ -82,4 +82,7 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+  config :galley, Galley.Mailer,
+    adapter: Swoosh.Adapters.Sendgrid,
+    api_key: System.fetch_env!("SENDGRID_API")
 end
