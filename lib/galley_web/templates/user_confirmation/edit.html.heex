@@ -1,12 +1,11 @@
-<h1>Confirm account</h1>
-
-<.form let={_f} for={:user} action={Routes.user_confirmation_path(@conn, :update, @token)}>
-  <div>
-    <%= submit("Confirm my account") %>
+<div class="w-full bg-neutral-50 dark:bg-neutral-900 dark:text-neutral-50 flex justify-center items-center flex-1 flex-col lg:pb-24 text-center">
+  <div class="w-full md:w-3/5 lg:w-1/5 px-4 ">
+    <div class="card p-8">
+    <div class="text-2xl mb-2 flex-start font-bold">Welcome to Galley!</div>
+    <div class="text-md mb-8">Please confirm your account below:</div>
+    <.form let={_f} for={:user} action={Routes.user_confirmation_path(@conn, :update, @token)}>
+        <%= submit("Confirm my account", class: "btn text-lg") %>
+    </.form>
+    </div>
   </div>
-</.form>
-
-<p>
-  <%= link("Register", to: Routes.user_registration_path(@conn, :new)) %> |
-  <%= link("Log in", to: Routes.user_session_path(@conn, :new)) %>
-</p>
+</div>
