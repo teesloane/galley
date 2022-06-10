@@ -79,3 +79,8 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :ex_aws,
+  access_key_id: [{:system, "GALLEY_AWS_ACCESS_KEY_ID"}, :instance_role],
+  secret_access_key: [{:system, "GALLEY_AWS_SECRET_ACCESS_KEY"}, :instance_role],
+  region: "ca-central-1"

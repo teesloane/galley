@@ -37,8 +37,12 @@ defmodule Galley.MixProject do
       {:phoenix, "~> 1.6.6"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
-      # {:postgrex, ">= 0.0.0"},
-      {:httpoison, "~> 1.8"},
+      # AWS stuff
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:sweet_xml, "~> 0.6"},
+      {:hackney, "~> 1.9"},
+      # end aws stuff
       {:ecto_sqlite3, ">= 0.0.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
