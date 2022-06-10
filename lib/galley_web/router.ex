@@ -17,11 +17,11 @@ defmodule GalleyWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", GalleyWeb do
-    pipe_through :browser
+  # scope "/", GalleyWeb do
+  #   pipe_through :browser
 
-    get "/", PageController, :index
-  end
+  #   get "/", PageController, :index
+  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", GalleyWeb do
@@ -81,6 +81,7 @@ defmodule GalleyWeb.Router do
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
     # recipes
+    live "/", RecipeLive.Index, :index
     live "/recipes", RecipeLive.Index, :index
     live "/recipes/new", RecipeLive.Upsert, :new
     live "/recipes/:id/edit", RecipeLive.Upsert, :edit

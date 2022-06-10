@@ -164,7 +164,7 @@ defmodule GalleyWeb.UserLiveAuth do
       {:cont, socket}
     else
       {:cont, socket}
-      {:halt, redirect(socket, to: "/login")}
+      {:halt, redirect(socket, to: "/users/log_in")}
     end
   end
 end
