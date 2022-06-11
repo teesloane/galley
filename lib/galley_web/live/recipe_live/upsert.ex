@@ -11,7 +11,8 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      |> assign(:formState, 0)
      |> assign(:uploaded_images, [])
      |> (fn socket ->
-           if !GalleyUtils.is_dev?() do
+       # TODO: get local development working again.
+           if GalleyUtils.is_dev?() do
              allow_upload(socket, :recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
            else
              allow_upload(socket, :recipe_img,
