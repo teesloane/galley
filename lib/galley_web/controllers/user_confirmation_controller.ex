@@ -34,7 +34,7 @@ defmodule GalleyWeb.UserConfirmationController do
     case Accounts.confirm_user(token) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "User confirmed successfully.")
+        |> put_flash(:info, "Account confirmed (☞ﾟ∀ﾟ)☞")
         |> redirect(to: "/")
 
       :error ->
