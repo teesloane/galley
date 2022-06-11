@@ -7,6 +7,8 @@ defmodule Galley.Application do
 
   @impl true
   def start(_type, _args) do
+    # we do this here because fly.io can'd do release script with migrations and sqlite.
+    Galley.Release.migrate()
     children = [
       # Start the Ecto repository
       Galley.Repo,

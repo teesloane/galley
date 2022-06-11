@@ -1,0 +1,3 @@
+#!/bin/sh
+cd -P -- "$(dirname -- "$0")"
+exec ./galley eval Galley.Release.migrate

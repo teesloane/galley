@@ -34,7 +34,7 @@ defmodule Galley.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 2.0"},
-      {:phoenix, "~> 1.6.6"},
+      {:phoenix, "~> 1.6.10"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       # AWS stuff
@@ -73,7 +73,7 @@ defmodule Galley.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
-        "cmd --cd assets npm run deploy",
+        # "cmd --cd assets npm run deploy",
         "esbuild default --minify",
         "phx.digest"
       ]
