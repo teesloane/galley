@@ -58,6 +58,11 @@ config :tailwind,
   ]
 
 
+config :ex_aws,
+  access_key_id: [{:system, "GALLEY_AWS_ACCESS_KEY_ID"}, :instance_role],
+  secret_access_key: [{:system, "GALLEY_AWS_SECRET_ACCESS_KEY"}, :instance_role],
+  region: "ca-central-1"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
