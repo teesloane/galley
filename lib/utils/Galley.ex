@@ -27,4 +27,8 @@ defmodule GalleyUtils do
   def is_dev?() do
     Application.fetch_env!(:galley, :env) == :dev
   end
+
+  def is_prod?() do
+    Application.fetch_env!(:galley, :env) == :prod
+  end
 end

@@ -1,4 +1,4 @@
-<div class="w-full bg-neutral-50 dark:bg-neutral-900 flex justify-center items-center flex-1 flex-col lg:pb-24 dark:text-neutral-50">
+<div class="comp-full-page-with-center-item">
   <div class="w-full md:w-3/5 lg:w-2/5 px-4 ">
     <h1 class="text-xl mb-4 flex-start font-bold">Log in to Galley</h1>
     <.form
@@ -13,7 +13,7 @@
           <p><%= @error_message %></p>
         </div>
       <% end %>
-      <div class="flex flex-col bg-white dark:bg-neutral-800 border drop-shadow-lg rounded p-4 border-gray-500 bg:border-neutral-800 dark:text-white">
+      <div class="card">
         <%= label(f, :email, class: "pb-2 text-sm") %>
         <%= email_input(f, :email, required: true, class: "border rounded mb-2 p-1 px-2") %>
 
@@ -21,8 +21,8 @@
         <%= password_input(f, :password, required: true, class: "border rounded p-1 px-2") %>
 
         <div class="flex items-center py-4">
-          <%= label(f, :remember_me, "Keep me logged in for 60 days", class: "text-sm") %>
-          <%= checkbox(f, :remember_me, class: "ml-4 my-0") %>
+          <%= checkbox(f, :remember_me) %>
+          <%= label(f, :remember_me, "Keep me logged in for 60 days", style: "margin-top: -2px", class: "ml-2 text-sm") %>
         </div>
 
         <%= submit("Log in", class: "btn") %>
