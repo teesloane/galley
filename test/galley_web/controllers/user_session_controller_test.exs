@@ -7,7 +7,7 @@ defmodule GalleyWeb.UserSessionControllerTest do
     %{user: user_fixture()}
   end
 
-  describe "GET /users/log_in" do
+  describe "GET /users/login" do
     test "renders log in page", %{conn: conn} do
       conn = get(conn, Routes.user_session_path(conn, :new))
       response = html_response(conn, 200)
@@ -22,7 +22,7 @@ defmodule GalleyWeb.UserSessionControllerTest do
     end
   end
 
-  describe "POST /users/log_in" do
+  describe "POST /users/login" do
     test "logs the user in", %{conn: conn, user: user} do
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
