@@ -25,8 +25,6 @@ defmodule GalleyUtils do
   end
 
   def is_dev?() do
-    is_dev = Application.fetch_env!(:galley, :env) == :dev
-    IO.inspect(is_dev, label: ">>>>>>>>>>>>>>>>>>>")
-    is_dev
+    Application.fetch_env!(:galley, :env) == :dev
   end
 end

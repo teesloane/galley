@@ -13,8 +13,10 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      |> (fn socket ->
        # TODO: get local development working again.
            if GalleyUtils.is_dev?() do
+             IO.puts(">>> About to try uploading image to LOCALLY")
              allow_upload(socket, :recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
            else
+             IO.puts(">>> About to try uploading image to S3")
              allow_upload(socket, :recipe_img,
                accept: ~w(.jpg .jpeg .png),
                max_entries: 4,
