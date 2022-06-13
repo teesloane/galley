@@ -1,7 +1,5 @@
 /* This file is for your main application CSS */
 
-@import './recipe_form';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

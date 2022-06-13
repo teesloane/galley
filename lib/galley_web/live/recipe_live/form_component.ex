@@ -305,8 +305,9 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
         <%= live_img_preview(@entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
         <%= radio_button(@f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref) %>
         <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
-        <progress class="flex h-2 text-white w-full" value={@entry.progress} max="100"> <%= @entry.progress %>% </progress>
-
+        <progress class="flex h-2 text-white w-full" value={@entry.progress} max="100">
+          <%= @entry.progress %>%
+        </progress>
       <% end %>
 
       <button
@@ -360,8 +361,6 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
 
   # take the form_params and extract the uploaded entries
   # then put the uploaded files into the form params to be inserted into the db.
-  # FIXME: this should be set to be dev only as it uploads to local host,
-  # maybe we can match on a get_env call.
   defp handle_upload(socket, :new, form_params) do
     uploaded_images = consume_uploads(socket, form_params)
     Map.put(form_params, "uploaded_images", uploaded_images)
@@ -396,7 +395,12 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     dest = Path.join([upload_folder, Path.basename(path)])
     # The `static/uploads` directory must exist for `File.cp!/2` to work.
     File.cp!(path, dest)
-    {:ok, Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")}
+
+    {:ok,
+     %{
+       "url" => Routes.static_path(socket, "/uploads/#{Path.basename(dest)}"),
+       "key_s3" => "<local_file>"
+     }}
   end
 
   # this pulls the url from s3 out of the uploaded entry.

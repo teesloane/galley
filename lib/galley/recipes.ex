@@ -156,7 +156,18 @@ defmodule Galley.Recipes do
   end
 
   def delete_recipe(%Recipe{} = recipe) do
-    Repo.delete(recipe)
+    case Repo.delete(recipe) do
+      {:ok, deleted_recipe} ->
+        if GalleyUtils.is_prod?() do
+          Enum.each(deleted_recipe.uploaded_images, fn image  ->
+            delete_image_on_s3(image)
+          end)
+        end
+
+        {:ok, deleted_recipe}
+      {:error, changeset } ->
+        {:error, changeset }
+    end
   end
 
   def delete_recipe_step(%Recipe{} = recipe, step_id) do
@@ -169,16 +180,13 @@ defmodule Galley.Recipes do
   end
 
   def delete_ingredient_photo(%Recipe{} = recipe, photo_id) do
-
     filtered_photos =
       recipe.uploaded_images
       |> Enum.filter(fn image ->
           # NOTE: side effect - let's delete the image in s3 (optimistically)
-          # THIS DOES NOT WORK BECAUSE I DONT KNOW HOW TO GET HTTPOISON TO DO IT AND THE URL IS  WRONG?
         if image.id == photo_id do
           delete_image_on_s3(image)
         end
-
 
         image.id != photo_id end)
 
@@ -188,7 +196,6 @@ defmodule Galley.Recipes do
     |> Repo.update()
   end
 
-    # https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
   defp delete_image_on_s3(image) do
     ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
   end

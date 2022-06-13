@@ -255,14 +255,18 @@
     </section>
 
     <div class="fixed bottom-0 left-0 right-0 w-full p-3 bg-white dark:bg-neutral-900 border-t border-gray-300 dark:border-neutral-700 flex justify-end items-center z-10 flex justify-between">
-      <span class="btn-alert">
-        <%= link("Delete",
-          to: "#",
-          phx_click: "delete",
-          phx_value_id: @recipe.id,
-          data: [confirm: "Are you sure you want to delete your recipe?"]
-        ) %>
-      </span>
+      <%= if @action == :edit do %>
+        <span class="btn-alert">
+          <%= link("Delete",
+            to: "#",
+            phx_click: "delete",
+            phx_value_id: @recipe.id,
+            data: [confirm: "Are you sure you want to delete your recipe?"]
+          ) %>
+        </span>
+      <% else %>
+        <span></span>
+        <% end %>
 
       <%= if @action == :edit do %>
         <%= submit("Save changes",
