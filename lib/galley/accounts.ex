@@ -350,4 +350,19 @@ defmodule Galley.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+
+  ## -- Permissions ------------------------------------------------------------
+
+  def is_admin?(user) do
+    user.roles |> Enum.member?("admin")
+  end
+
+  def promote_user_to_admin(user) do
+    if is_admin?(user) === false do
+      user
+        |> Galley.Accounts.User.user_promotion_changeset(%{roles: ["admin" | user.roles]})
+        |> Repo.update!(user)
+    end
+  end
 end

@@ -73,6 +73,12 @@ defmodule GalleyWeb.Router do
     put  "/reset_password/:token", UserResetPasswordController, :update
   end
 
+  scope "/admin", GalleyWeb do
+    pipe_through [:browser, :require_admin_user]
+
+    live "/", AdminLive.Index, :index
+  end
+
   scope "/", GalleyWeb do
     pipe_through [:browser, :require_authenticated_user]
 

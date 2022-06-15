@@ -2,6 +2,8 @@ defmodule Galley.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @permitted_keys [:email, :password, :username, :roles]
+
   schema "users" do
     field :email, :string
     field :username, :string
@@ -31,13 +33,20 @@ defmodule Galley.Accounts.User do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
+
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :username, :roles])
+    |> cast(attrs, @permitted_keys)
     |> validate_inclusion(:roles, ~w(contributor read-only admin))
     |> validate_email()
     |> validate_username()
     |> validate_password(opts)
+  end
+
+  def user_promotion_changeset(user, attrs) do
+    user
+    |> cast(attrs, @permitted_keys)
+    |> validate_inclusion(:roles, ~w(contributor read-only admin))
   end
 
   defp validate_username(changeset) do
