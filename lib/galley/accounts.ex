@@ -351,6 +351,12 @@ defmodule Galley.Accounts do
     end
   end
 
+  ## -- CRUD ------------------------------------------------------------------
+
+  def list_users() do
+    Repo.all(User)
+  end
+
   ## -- Permissions ------------------------------------------------------------
 
   def is_admin?(user) do
