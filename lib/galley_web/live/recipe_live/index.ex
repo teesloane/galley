@@ -36,7 +36,7 @@ defmodule GalleyWeb.RecipeLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Recipes")
+    |> assign(:page_title, "Galley - Recipes")
     |> assign(:recipe, nil)
   end
 
