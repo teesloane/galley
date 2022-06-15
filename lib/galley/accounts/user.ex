@@ -8,6 +8,7 @@ defmodule Galley.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :roles, {:array, :string}, default: ["contributor"]
     has_many :recipes, Galley.Recipes.Recipe
 
     timestamps()
@@ -32,7 +33,8 @@ defmodule Galley.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :username])
+    |> cast(attrs, [:email, :password, :username, :roles])
+    |> validate_inclusion(:roles, ~w(contributor read-only admin))
     |> validate_email()
     |> validate_username()
     |> validate_password(opts)
