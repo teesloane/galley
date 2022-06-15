@@ -80,6 +80,13 @@ defmodule Galley.Accounts do
     |> Repo.insert()
   end
 
+  def register_user_cli() do
+    email = IO.gets "gimme an email: "
+    username = IO.gets "gimme a username:"
+    password = IO.gets "gimme a password:"
+    register_user(%{email: String.trim(email), username: String.trim(username), password: String.trim(password)})
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
