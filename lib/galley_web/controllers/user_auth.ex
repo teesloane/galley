@@ -141,12 +141,12 @@ defmodule GalleyWeb.UserAuth do
 
 
   def require_admin_user(conn, _opts) do
-    if conn.assigns[:current_user] do
+    currentUser = conn.assigns[:current_user]
+    if currentUser && Accounts.is_admin?(currentUser) do
       conn
-      #TODO - check the actual user!
     else
       conn
-      # |> put_flash(:error, "You must log in to access this page.")
+      |> put_flash(:error, "You can't access this page! ᵔᴥᵔ")
       |> maybe_store_return_to()
       |> redirect(to: Routes.user_session_path(conn, :new))
       |> halt()
