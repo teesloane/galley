@@ -7,7 +7,6 @@ defmodule GalleyWeb.AdminLive.TopBar do
       %{name: "Home", link: Routes.admin_index_path(assigns.socket, :index)},
       %{name: "Users", link: Routes.admin_users_path(assigns.socket, :show)},
       %{name: "Recipes", link: Routes.admin_recipes_path(assigns.socket, :show)},
-      %{name: "Settings", link: Routes.admin_settings_path(assigns.socket, :show)}
     ]
 
     ~H"""

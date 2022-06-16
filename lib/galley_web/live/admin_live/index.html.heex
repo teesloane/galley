@@ -2,4 +2,8 @@
 
 <div id="admin-index" class="page_wrapper">
   <h2 class="heading text-center mb-24">Welcome my good admin!</h2>
+
+  <div class="flex w-full justify-center">
+    <%= link("Export the database", to: Routes.admin_settings_download_path(@socket, :download_db), class: "tile px-2") %>
+  </div>
 </div>

@@ -78,9 +78,9 @@ defmodule GalleyWeb.Router do
     live "/", AdminLive.Index, :index
     live "/users", AdminLive.Users, :show
     live "/users/:id/edit", AdminLive.Users, :edit
-    live "/settings", AdminLive.Settings, :show
     live "/recipes", AdminLive.Recipes, :show
     live "/recipes/:id/edit", AdminLive.Recipes, :edit
+    get  "/download-data", AdminSettingsDownloadController, :download_db
   end
 
   scope "/", GalleyWeb do
