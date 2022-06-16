@@ -80,6 +80,7 @@ defmodule GalleyWeb.Router do
     live "/users/:id/edit", AdminLive.Users, :edit
     live "/settings", AdminLive.Settings, :show
     live "/recipes", AdminLive.Recipes, :show
+    live "/recipes/:id/edit", AdminLive.Recipes, :edit
   end
 
   scope "/", GalleyWeb do

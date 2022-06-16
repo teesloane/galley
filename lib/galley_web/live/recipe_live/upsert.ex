@@ -11,7 +11,6 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      |> assign(:formState, 0)
      |> assign(:uploaded_images, [])
      |> (fn socket ->
-       # TODO: get local development working again.
            if GalleyUtils.is_dev?() do
              allow_upload(socket, :recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
            else
@@ -28,7 +27,21 @@ defmodule GalleyWeb.RecipeLive.Upsert do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    action = socket.assigns.live_action
+    u = socket.assigns.current_user
+    u_id = u.id |> to_string()
+    recipe_id = params["id"]
+
+    cond do
+      action == :new ->
+        {:noreply, apply_action(socket, action, params)}
+
+      action == :edit && Galley.Accounts.is_admin?(u) ->
+        {:noreply, apply_action(socket, action, params)}
+
+      action == :edit && u_id !== recipe_id ->
+        {:noreply, socket |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
+    end
   end
 
   # This is how we set the form to work for either :edit or :new
