@@ -3,29 +3,53 @@
 <div id="admin-users" class="page_wrapper mb-32">
   <h2 class="heading text-center">Users</h2>
 
-  <table class="min-w-full shadow-md rounded">
-    <thead class="bg-gray-50">
+  <%= if @live_action == :edit do %>
+    <.modal return_to={Routes.admin_users_path(@socket, :show)}>
+    <div class="p-8">
+      <h1 class="heading mb-4 border-b-2"><%= @user.username %></h1>
+      <div class="flex flex-row justify-between mb-8">
+        <span><%=  @user.email %></span>
+        <span><span class="font-bold">Created:</span><%=  @user.inserted_at %></span>
+        <span><span class="font-bold">Confirmed:</span> <%=  @user.confirmed_at || "no" %></span>
+        <span><span class="font-bold">Roles:</span> <%=  @user.roles |> Enum.join(", ") %></span>
+      </div>
+      <div>
+        <span class="font-bold pr-8"> Actions: </span>
+        <button class="btn-clear p-2 mr-4" phx-click="promote_user">promote user</button>
+        <button class="btn-clear p-2" phx-click="demote_user">demote user</button>
+      </div>
+    </div>
+    </.modal>
+  <% end %>
+
+  <table class="min-w-full shadow-md rounded border dark:border-neutral-900">
+
+    <thead class="bg-gray-50 dark:bg-neutral-700">
     <tr>
+      <th class="text-left p-2">username</th>
       <th class="text-left p-2">Email</th>
       <th class="text-left p-2">Confirmed at?</th>
-      <th class="text-left p-2">username</th>
       <th class="text-left p-2">roles</th>
       <th class="text-left p-2">actions</th>
     </tr>
   </thead>
-  <tbody class="divide-y divide-neutral-100">
+  <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
     <%= for user <- @users do %>
       <tr>
+      <td class="p-2"><%= user.username %></td>
       <td class="p-2"><%= user.email %></td>
       <td class="p-2"><%= user.confirmed_at %></td>
-      <td class="p-2"><%= user.username %></td>
       <td class="p-2"><%= user.roles |> Enum.join(", ") %></td>
-      <td class="p-2">...</td>
+      <td class="p-2">
+        <button class="btn-clear">
+          <%= link("...", to: Routes.admin_users_path(@socket, :edit, user.id)) %>
+        </button>
+      </td>
       </tr>
+
       <% end %>
   </tbody>
 </table>
-
 
   <h2 class="heading text-center mt-16">Invite a user</h2>
   <section class="w-full lg:w-3/5 mx-auto">

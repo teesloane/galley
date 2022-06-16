@@ -3,6 +3,7 @@ defmodule Galley.Accounts.User do
   import Ecto.Changeset
 
   @permitted_keys [:email, :password, :username, :roles]
+  @roles ~w(read-only admin contributor)
 
   schema "users" do
     field :email, :string
@@ -37,7 +38,7 @@ defmodule Galley.Accounts.User do
   def registration_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, @permitted_keys)
-    |> validate_inclusion(:roles, ~w(contributor read-only admin))
+    |> validate_inclusion(:roles, @roles)
     |> validate_email()
     |> validate_username()
     |> validate_password(opts)
@@ -45,9 +46,16 @@ defmodule Galley.Accounts.User do
 
   def user_promotion_changeset(user, attrs) do
     user
-    |> cast(attrs, @permitted_keys)
-    |> validate_inclusion(:roles, ~w(contributor read-only admin))
+    |> cast(attrs, [:roles])
+    |> validate_change(:roles, fn :roles, roles ->
+      if MapSet.subset?(roles |> MapSet.new(), @roles |> MapSet.new()) do
+        []
+        else
+          [roles: "invalid role found"]
+      end
+    end)
   end
+
 
   defp validate_username(changeset) do
     changeset

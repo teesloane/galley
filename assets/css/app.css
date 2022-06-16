@@ -153,7 +153,7 @@
 }
 
 .phx-modal-content {
-  background-color: #fefefe;
+  /* background-color: #fefefe; */
   margin: 15vh auto;
   padding: 20px;
   border: 1px solid #888;
@@ -165,6 +165,7 @@
   float: right;
   font-size: 28px;
   font-weight: bold;
+  margin-top: -12px;
 }
 
 .phx-modal-close:hover,

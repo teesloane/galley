@@ -77,6 +77,8 @@ defmodule GalleyWeb.Router do
     pipe_through [:browser, :require_admin_user]
     live "/", AdminLive.Index, :index
     live "/users", AdminLive.Users, :show
+    live "/users/:id/edit", AdminLive.Users, :edit
+    live "/settings", AdminLive.Settings, :show
     live "/recipes", AdminLive.Recipes, :show
   end
 

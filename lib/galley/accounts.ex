@@ -371,7 +371,17 @@ defmodule Galley.Accounts do
     if is_admin?(user) === false do
       user
       |> Galley.Accounts.User.user_promotion_changeset(%{roles: ["admin" | user.roles]})
-      |> Repo.update!(user)
+      |> Repo.update!()
+    end
+  end
+
+  def demote_admin_to_contributor(user) do
+    if is_admin?(user) do
+      user
+      |> Galley.Accounts.User.user_promotion_changeset(%{
+        roles: Enum.reject(user.roles, fn role -> role === "admin" end)
+      })
+      |> Repo.update!()
     end
   end
 end
