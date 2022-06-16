@@ -370,7 +370,7 @@ defmodule Galley.Accounts do
   def promote_user_to_admin(user) do
     if is_admin?(user) === false do
       user
-      |> Galley.Accounts.User.user_promotion_changeset(%{roles: ["admin" | user.roles]})
+      |> User.user_promotion_changeset(%{roles: ["admin" | user.roles]})
       |> Repo.update!()
     end
   end
@@ -378,10 +378,22 @@ defmodule Galley.Accounts do
   def demote_admin_to_contributor(user) do
     if is_admin?(user) do
       user
-      |> Galley.Accounts.User.user_promotion_changeset(%{
+      |> User.user_promotion_changeset(%{
         roles: Enum.reject(user.roles, fn role -> role === "admin" end)
       })
       |> Repo.update!()
+    end
+  end
+
+  def ban_user(user) do
+    if user.banned == false || user.banned == nil do
+      user |> User.ban_changeset(%{banned: true}) |>  Repo.update!()
+    end
+  end
+
+  def unban_user(user) do
+    if user.banned == false || user.banned == nil do
+      user |> User.ban_changeset(%{banned: false}) |>  Repo.update!()
     end
   end
 end

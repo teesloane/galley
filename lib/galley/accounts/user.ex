@@ -11,6 +11,7 @@ defmodule Galley.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :banned, :boolean, default: false
     field :roles, {:array, :string}, default: ["contributor"]
     has_many :recipes, Galley.Recipes.Recipe
 
@@ -56,6 +57,9 @@ defmodule Galley.Accounts.User do
     end)
   end
 
+  def ban_changeset(user, attrs) do
+    user |> cast(attrs, [:banned])
+  end
 
   defp validate_username(changeset) do
     changeset

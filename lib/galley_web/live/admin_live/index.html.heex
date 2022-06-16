@@ -2,11 +2,4 @@
 
 <div id="admin-index" class="page_wrapper">
   <h2 class="heading text-center mb-24">Welcome my good admin!</h2>
-
-  <div class="grid grid-cols-3 mt-8 gap-4">
-    <%= for l <- index_links(@socket) do %>
-      <%= link(l.name, to: l.link, class: "tile") %>
-    <% end %>
-  </div>
-
 </div>

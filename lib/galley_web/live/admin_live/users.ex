@@ -35,17 +35,41 @@ defmodule GalleyWeb.AdminLive.Users do
   def handle_event("promote_user", value, socket) do
     user = socket.assigns.user
     Accounts.promote_user_to_admin(user)
-    {:noreply, socket
+
+    {:noreply,
+     socket
      |> assign(:user, Accounts.get_user!(user.id))
-    |> put_flash(:info, "Promoted #{user.username}")}
+     |> put_flash(:info, "Promoted #{user.username}")}
   end
 
   def handle_event("demote_user", value, socket) do
     user = socket.assigns.user
     Accounts.demote_admin_to_contributor(user)
-    {:noreply, socket
+
+    {:noreply,
+     socket
      |> assign(:user, Accounts.get_user!(user.id))
-    |> put_flash(:info, "Demoted #{user.username} from admin")}
+     |> put_flash(:info, "Demoted #{user.username} from admin")}
+  end
+
+  def handle_event("ban_user", value, socket) do
+    user = socket.assigns.user
+    Accounts.ban_user(user)
+
+    {:noreply,
+     socket
+     |> assign(:user, Accounts.get_user!(user.id))
+     |> put_flash(:info, "Banned #{user.username}")}
+  end
+
+  def handle_event("unban_user", value, socket) do
+    user = socket.assigns.user
+    Accounts.unban_user(user)
+
+    {:noreply,
+     socket
+     |> assign(:user, Accounts.get_user!(user.id))
+     |> put_flash(:info, "Banned #{user.username}")}
   end
 
   def handle_event("save", %{"user" => user}, socket) do
@@ -60,16 +84,13 @@ defmodule GalleyWeb.AdminLive.Users do
         {:noreply,
          socket
          |> put_flash(:info, "User registration done.")
-         |> assign(:users, Accounts.list_users()),
-        }
+         |> assign(:users, Accounts.list_users())}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(:changeset, changeset)}
     end
   end
-
 end
-
 
 # defmodule GalleyWeb.AdminLive.UsersModal do
 #   use GalleyWeb, :live_component
