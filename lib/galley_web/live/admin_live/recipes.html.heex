@@ -5,41 +5,39 @@
 
   <%= if @live_action == :edit do %>
     <.modal return_to={Routes.admin_recipes_path(@socket, :show)}>
-    <div class="p-8">
-      <h1 class="heading pb-2 mb-4 border-b-2"><%= @recipe.title %></h1>
-      <div>
-        <span class="font-bold pr-8"> Actions: </span>
-        <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">hide recipe</button>
-        <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">
-          <%= live_redirect to: Routes.recipe_upsert_path(@socket, :edit, @recipe) do %>
-          edit recipe
+      <div class="p-8">
+        <h1 class="heading pb-2 mb-4 border-b-2"><%= @recipe.title %></h1>
+        <div>
+          <span class="font-bold pr-8">Actions:</span>
+          <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">hide recipe</button>
+          <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">
+            <%= live_redirect to: Routes.recipe_upsert_path(@socket, :edit, @recipe) do %>
+              edit recipe
             <% end %>
-        </button>
+          </button>
+        </div>
       </div>
-    </div>
     </.modal>
   <% end %>
 
   <table class="min-w-full shadow-md rounded border dark:border-neutral-900">
-
     <thead class="bg-gray-50 dark:bg-neutral-700">
-    <tr>
-      <th class="text-left p-2">Title</th>
-      <th class="text-left p-2">Actions</th>
-    </tr>
-  </thead>
-  <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
-    <%= for recipe <- @recipes do %>
       <tr>
-      <td class="p-2"><%= recipe.title %></td>
-      <td class="p-2">
-        <button class="btn-clear">
-          <%= link("...", to: Routes.admin_recipes_path(@socket, :edit, recipe.id)) %>
-        </button>
-      </td>
+        <th class="text-left p-2">Title</th>
+        <th class="text-left p-2">Actions</th>
       </tr>
-
+    </thead>
+    <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+      <%= for recipe <- @recipes do %>
+        <tr>
+          <td class="p-2"><%= recipe.title %></td>
+          <td class="p-2">
+            <button class="btn-clear">
+              <%= link("...", to: Routes.admin_recipes_path(@socket, :edit, recipe.id)) %>
+            </button>
+          </td>
+        </tr>
       <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
 </div>

@@ -1,10 +1,11 @@
 <aside class="">
   <ul class="flex flex-col md:flex-row mr-2">
-
     <%= for l <- topbar_links(@conn, @current_user) do %>
       <li class="">
-        <%=  if l.condition do %>
-          <div class="md:px-2"><%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %></div>
+        <%= if l.condition do %>
+          <div class="md:px-2">
+            <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
+          </div>
         <% end %>
       </li>
     <% end %>

@@ -1,11 +1,11 @@
 <div class="comp-full-page-with-center-item">
   <div class="w-full md:w-3/5 lg:w-1/5 px-4 ">
     <div class="card p-8">
-    <div class="text-2xl mb-2 flex-start font-bold">Welcome to Galley!</div>
-    <div class="text-md mb-8">Please confirm your account below:</div>
-    <.form let={_f} for={:user} action={Routes.user_confirmation_path(@conn, :update, @token)}>
+      <div class="text-2xl mb-2 flex-start font-bold">Welcome to Galley!</div>
+      <div class="text-md mb-8">Please confirm your account below:</div>
+      <.form let={_f} for={:user} action={Routes.user_confirmation_path(@conn, :update, @token)}>
         <%= submit("Confirm my account", class: "btn text-lg") %>
-    </.form>
+      </.form>
     </div>
   </div>
 </div>

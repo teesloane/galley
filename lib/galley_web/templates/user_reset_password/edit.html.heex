@@ -3,34 +3,39 @@
     <h1 class="text-xl mb-4 flex-start font-bold">Reset your password</h1>
 
     <div class="card">
+      <.form
+        let={f}
+        for={@changeset}
+        action={Routes.user_reset_password_path(@conn, :update, @token)}
+      >
+        <%= if @changeset.action do %>
+          <div class="alert alert-danger">
+            <p>Oops, something went wrong! Please check the errors below.</p>
+          </div>
+        <% end %>
 
-      <.form let={f} for={@changeset} action={Routes.user_reset_password_path(@conn, :update, @token)}>
-      <%= if @changeset.action do %>
-        <div class="alert alert-danger">
-          <p>Oops, something went wrong! Please check the errors below.</p>
+        <div class="flex flex-col">
+          <%= label(f, :password, "New password") %>
+          <%= password_input(f, :password, required: true) %>
+          <%= error_tag(f, :password) %>
+
+          <%= label(f, :password_confirmation, "Confirm new password") %>
+          <%= password_input(f, :password_confirmation, required: true) %>
+          <%= error_tag(f, :password_confirmation) %>
         </div>
-      <% end %>
 
-      <div class="flex flex-col">
-      <%= label(f, :password, "New password") %>
-      <%= password_input(f, :password, required: true) %>
-      <%= error_tag(f, :password) %>
-
-      <%= label(f, :password_confirmation, "Confirm new password") %>
-      <%= password_input(f, :password_confirmation, required: true) %>
-      <%= error_tag(f, :password_confirmation) %>
-      </div>
-
-      <div>
-        <%= submit("Reset password", class: "btn mt-4") %>
-      </div>
+        <div>
+          <%= submit("Reset password", class: "btn mt-4") %>
+        </div>
       </.form>
     </div>
 
     <p class="mt-2 text-sm">
-      <%= link("Register", to: Routes.user_registration_path(@conn, :new), class: "hover:underline") %> |
+      <%= link("Register",
+        to: Routes.user_registration_path(@conn, :new),
+        class: "hover:underline"
+      ) %> |
       <%= link("Log in", to: Routes.user_session_path(@conn, :new), class: "hover:underline") %>
     </p>
-
   </div>
 </div>

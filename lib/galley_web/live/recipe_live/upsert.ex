@@ -21,8 +21,6 @@ defmodule GalleyWeb.RecipeLive.Upsert do
              )
            end
          end).()}
-
-    # |> allow_upload(:recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)}
   end
 
   @impl true

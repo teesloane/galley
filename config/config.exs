@@ -57,7 +57,6 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
-
 config :ex_aws,
   access_key_id: [{:system, "GALLEY_AWS_ACCESS_KEY_ID"}, :instance_role],
   secret_access_key: [{:system, "GALLEY_AWS_SECRET_ACCESS_KEY"}, :instance_role],

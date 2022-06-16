@@ -22,7 +22,10 @@
 
         <div class="flex items-center py-4">
           <%= checkbox(f, :remember_me) %>
-          <%= label(f, :remember_me, "Keep me logged in for 60 days", style: "margin-top: -2px", class: "ml-2 text-sm") %>
+          <%= label(f, :remember_me, "Keep me logged in for 60 days",
+            style: "margin-top: -2px",
+            class: "ml-2 text-sm"
+          ) %>
         </div>
 
         <%= submit("Log in", class: "btn") %>

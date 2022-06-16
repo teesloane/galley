@@ -5,79 +5,76 @@
 
   <%= if @live_action == :edit do %>
     <.modal return_to={Routes.admin_users_path(@socket, :show)}>
-    <div class="p-8">
-      <h1 class="heading pb-2 mb-4 border-b-2"><%= @user.username %></h1>
-      <div class="flex flex-row justify-between mb-8">
-        <span class={if @user.banned, do: 'text-red'}><%=  @user.email %></span>
-        <span><span class="font-bold">Created:</span><%=  @user.inserted_at %></span>
-        <span><span class="font-bold">Confirmed:</span> <%=  @user.confirmed_at || "no" %></span>
-        <span><span class="font-bold">Roles:</span> <%=  @user.roles |> Enum.join(", ") %></span>
+      <div class="p-8">
+        <h1 class="heading pb-2 mb-4 border-b-2"><%= @user.username %></h1>
+        <div class="flex flex-row justify-between mb-8">
+          <span class={if @user.banned, do: 'text-red'}><%= @user.email %></span>
+          <span><span class="font-bold">Created:</span><%= @user.inserted_at %></span>
+          <span><span class="font-bold">Confirmed:</span> <%= @user.confirmed_at || "no" %></span>
+          <span><span class="font-bold">Roles:</span> <%= @user.roles |> Enum.join(", ") %></span>
+        </div>
+        <div>
+          <span class="font-bold pr-8">Actions:</span>
+          <button class="btn-clear p-2 mr-2" phx-click="promote_user">promote user</button>
+          <button class="btn-clear p-2 mr-2" phx-click="demote_user">demote user</button>
+          <button class="btn-clear p-2 mr-2" phx-click="ban_user">ban user</button>
+          <button class="btn-clear p-2 mr-2" phx-click="unban_user">unban user</button>
+        </div>
       </div>
-      <div>
-        <span class="font-bold pr-8"> Actions: </span>
-        <button class="btn-clear p-2 mr-2" phx-click="promote_user">promote user</button>
-        <button class="btn-clear p-2 mr-2" phx-click="demote_user">demote user</button>
-        <button class="btn-clear p-2 mr-2" phx-click="ban_user">ban user</button>
-        <button class="btn-clear p-2 mr-2" phx-click="unban_user">unban user</button>
-      </div>
-    </div>
     </.modal>
   <% end %>
 
   <table class="min-w-full shadow-md rounded border dark:border-neutral-900">
-
     <thead class="bg-gray-50 dark:bg-neutral-700">
-    <tr>
-      <th class="text-left p-2">username</th>
-      <th class="text-left p-2">Email</th>
-      <th class="text-left p-2">Confirmed at?</th>
-      <th class="text-left p-2">roles</th>
-      <th class="text-left p-2">actions</th>
-    </tr>
-  </thead>
-  <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
-    <%= for user <- @users do %>
       <tr>
-      <td class="p-2"><%= user.username %></td>
-      <td class="p-2"><%= user.email %></td>
-      <td class="p-2"><%= user.confirmed_at %></td>
-      <td class="p-2"><%= user.roles |> Enum.join(", ") %></td>
-      <td class="p-2">
-        <button class="btn-clear">
-          <%= link("...", to: Routes.admin_users_path(@socket, :edit, user.id)) %>
-        </button>
-      </td>
+        <th class="text-left p-2">username</th>
+        <th class="text-left p-2">Email</th>
+        <th class="text-left p-2">Confirmed at?</th>
+        <th class="text-left p-2">roles</th>
+        <th class="text-left p-2">actions</th>
       </tr>
-
+    </thead>
+    <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+      <%= for user <- @users do %>
+        <tr>
+          <td class="p-2"><%= user.username %></td>
+          <td class="p-2"><%= user.email %></td>
+          <td class="p-2"><%= user.confirmed_at %></td>
+          <td class="p-2"><%= user.roles |> Enum.join(", ") %></td>
+          <td class="p-2">
+            <button class="btn-clear">
+              <%= link("...", to: Routes.admin_users_path(@socket, :edit, user.id)) %>
+            </button>
+          </td>
+        </tr>
       <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
 
   <h2 class="heading text-center mt-16">Invite a user</h2>
   <section class="w-full lg:w-3/5 mx-auto">
-      <.form let={f} for={@changeset} phx-submit="save">
-        <%= if @changeset.action do %>
-          <div class="alert alert-danger">
-            <p>Oops, something went wrong! Please check the errors below.</p>
-          </div>
-        <% end %>
-
-        <div class="card">
-          <%= label(f, :username, class: "pb-2 text-sm") %>
-          <%= text_input(f, :username, required: true, class: "border rounded mb-2 p-1 px-2") %>
-          <%= error_tag(f, :username) %>
-
-          <%= label(f, :email, class: "pb-2 text-sm") %>
-          <%= email_input(f, :email, required: true, class: "border rounded mb-2 p-1 px-2") %>
-          <%= error_tag(f, :email) %>
-
-          <%= label(f, :password, class: "pb-2 text-sm") %>
-          <%= password_input(f, :password, required: true, class: "border rounded mb-2 p-1 px-2") %>
-          <%= error_tag(f, :password) %>
-
-          <%= submit("Register", class: "mt-2 btn") %>
+    <.form let={f} for={@changeset} phx-submit="save">
+      <%= if @changeset.action do %>
+        <div class="alert alert-danger">
+          <p>Oops, something went wrong! Please check the errors below.</p>
         </div>
-      </.form>
-  </section>
+      <% end %>
 
+      <div class="card">
+        <%= label(f, :username, class: "pb-2 text-sm") %>
+        <%= text_input(f, :username, required: true, class: "border rounded mb-2 p-1 px-2") %>
+        <%= error_tag(f, :username) %>
+
+        <%= label(f, :email, class: "pb-2 text-sm") %>
+        <%= email_input(f, :email, required: true, class: "border rounded mb-2 p-1 px-2") %>
+        <%= error_tag(f, :email) %>
+
+        <%= label(f, :password, class: "pb-2 text-sm") %>
+        <%= password_input(f, :password, required: true, class: "border rounded mb-2 p-1 px-2") %>
+        <%= error_tag(f, :password) %>
+
+        <%= submit("Register", class: "mt-2 btn") %>
+      </div>
+    </.form>
+  </section>
 </div>
