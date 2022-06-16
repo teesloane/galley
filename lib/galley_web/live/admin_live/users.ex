@@ -2,7 +2,6 @@ defmodule GalleyWeb.AdminLive.Users do
   use GalleyWeb, :live_view
   alias Galley.Accounts
   alias Galley.Accounts.User
-  alias Phoenix.LiveView.JS
 
   @impl true
   def mount(_params, _session, socket) do
@@ -26,13 +25,14 @@ defmodule GalleyWeb.AdminLive.Users do
     |> assign(:user, Accounts.get_user!(id))
   end
 
-  defp apply_action(socket, :show, params) do
+  defp apply_action(socket, :show, _params) do
     socket
     |> assign(:page_title, "Edit User")
     |> assign(:users, Accounts.list_users())
   end
 
-  def handle_event("promote_user", value, socket) do
+  @impl true
+  def handle_event("promote_user", _value, socket) do
     user = socket.assigns.user
     Accounts.promote_user_to_admin(user)
 
@@ -42,7 +42,7 @@ defmodule GalleyWeb.AdminLive.Users do
      |> put_flash(:info, "Promoted #{user.username}")}
   end
 
-  def handle_event("demote_user", value, socket) do
+  def handle_event("demote_user", _value, socket) do
     user = socket.assigns.user
     Accounts.demote_admin_to_contributor(user)
 
@@ -52,7 +52,7 @@ defmodule GalleyWeb.AdminLive.Users do
      |> put_flash(:info, "Demoted #{user.username} from admin")}
   end
 
-  def handle_event("ban_user", value, socket) do
+  def handle_event("ban_user", _value, socket) do
     user = socket.assigns.user
     Accounts.ban_user(user)
 
@@ -62,7 +62,7 @@ defmodule GalleyWeb.AdminLive.Users do
      |> put_flash(:info, "Banned #{user.username}")}
   end
 
-  def handle_event("unban_user", value, socket) do
+  def handle_event("unban_user", _value, socket) do
     user = socket.assigns.user
     Accounts.unban_user(user)
 
@@ -91,25 +91,3 @@ defmodule GalleyWeb.AdminLive.Users do
     end
   end
 end
-
-# defmodule GalleyWeb.AdminLive.UsersModal do
-#   use GalleyWeb, :live_component
-
-#   @impl true
-#   def update(assigns, socket) do
-#     # changeset = Recipes.change_recipe(recipe)
-#     {:ok, socket}
-
-#     # {:ok,
-#     #  socket
-#     #  |> assign(assigns)
-#     #  |> assign(:changeset, changeset)}
-#   end
-
-#   def render(assigns) do
-#     ~H"""
-#     <div>hi</div>
-#     """
-#   end
-
-# end
