@@ -9,15 +9,15 @@ defmodule Mix.Tasks.Db.MigrateAris do
     me = Galley.Accounts.get_user_by_email("weakty@theiceshelf.com")
     {:ok, json} = get_json(json_file)
 
-    for {_name, recipe_data} <- json["recipes"],
-        recipe = ari_to_galley(recipe_data),
+    for {slug, recipe_data} <- json["recipes"],
+        recipe = ari_to_galley(slug, recipe_data),
         do: insert_recipe(me, recipe)
   end
 
   defp insert_recipe(me, recipe) do
     case Galley.Recipes.insert_recipe(me, recipe) do
-      {:ok, _recipe} ->
-        {:noreply, _recipe}
+      {:ok, recipe} ->
+        {:noreply, recipe}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset, label: "error...........")
@@ -25,8 +25,7 @@ defmodule Mix.Tasks.Db.MigrateAris do
     end
   end
 
-  @spec ari_to_galley(nil | maybe_improper_list | map) :: %{optional(<<_::32, _::_*8>>) => any}
-  def ari_to_galley(ag) do
+  def ari_to_galley(slug, ag) do
     %{
       "ingredients" => parse_ingredients(ag["ingredients"]),
       "notes" => "",
@@ -35,15 +34,39 @@ defmodule Mix.Tasks.Db.MigrateAris do
       "tags" => "#{ag["belongs_to"]}, #{ag["meal_type"]}",
       "time" => parse_timer(ag["time"]),
       "title" => ag["name"],
-      "uploaded_images" => [
+      "uploaded_images" => parse_images(slug, ag["imgs"]),
+      "yields" => parse_yields(ag["serves"])
+    }
+  end
+
+  defp parse_yields(serves) do
+    if String.length(serves) === 1 do
+      "#{serves} servings"
+    else
+        serves
+    end
+
+  end
+
+  defp parse_images(slug, ag_imgs) do
+    imgs = ag_imgs |> Enum.with_index |> Enum.map(fn {i, _index} ->
+      key = "#{slug}-#{i}"
+        %{
+          "is_hero" => false,
+          "key_s3" => key,
+          "url" => "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{key}"
+        }
+    end)
+
+    hero_key = "#{slug}-hero.JPG"
+    old_hero_img =
         %{
           "is_hero" => true,
-          "key_s3" => "<local_file>",
-          "url" => "/uploads/live_view_upload-1655424290-957761377085798-1"
+          "key_s3" => hero_key,
+          "url" => "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}"
         }
-      ],
-      "yields" => ag["serves"]
-    }
+    [old_hero_img | imgs]
+
   end
 
   defp parse_steps(ag_steps) do

@@ -27,25 +27,26 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   def handle_params(params, _url, socket) do
     action = socket.assigns.live_action
     u = socket.assigns.current_user
-    u_id = u.id |> to_string()
+    u_id = u.id
     recipe_id = params["id"]
+    recipe = Recipes.get_recipe!(recipe_id)
 
     cond do
       action == :new ->
         {:noreply, apply_action(socket, action, params)}
 
-      action == :edit && Galley.Accounts.is_admin?(u) ->
-        {:noreply, apply_action(socket, action, params)}
+      action == :edit && u_id === recipe.user.id ->
+        {:noreply, apply_action(socket, action, params, recipe)}
 
-      action == :edit && u_id !== recipe_id ->
-        {:noreply, socket |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
+      action == :edit && Galley.Accounts.is_admin?(u) ->
+        {:noreply, apply_action(socket, action, params, recipe)}
+
+      true -> {:noreply, socket |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
     end
   end
 
   # This is how we set the form to work for either :edit or :new
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    recipe = Recipes.get_recipe!(id)
-
+  defp apply_action(socket, :edit, %{"id" => _id}, recipe) do
     socket
     |> assign(:page_title, "Edit - #{recipe.title}")
     |> assign(:recipe, recipe)
