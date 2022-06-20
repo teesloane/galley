@@ -10,17 +10,10 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      socket
      |> assign(:formState, 0)
      |> assign(:uploaded_images, [])
-     |> (fn socket ->
-           if GalleyUtils.is_dev?() do
-             allow_upload(socket, :recipe_img, accept: ~w(.jpg .jpeg .png), max_entries: 4)
-           else
-             allow_upload(socket, :recipe_img,
-               accept: ~w(.jpg .jpeg .png),
-               max_entries: 4,
-               external: &SimpleS3Upload.presign_upload/2
-             )
-           end
-         end).()}
+     |> allow_upload(:recipe_img,
+       accept: ~w(.jpg .jpeg .png),
+       max_entries: 4
+     )}
   end
 
   @impl true
@@ -28,20 +21,24 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     action = socket.assigns.live_action
     u = socket.assigns.current_user
     u_id = u.id
-    recipe_id = params["id"]
-    recipe = Recipes.get_recipe!(recipe_id)
 
-    cond do
-      action == :new ->
+    case action do
+      :new ->
         {:noreply, apply_action(socket, action, params)}
 
-      action == :edit && u_id === recipe.user.id ->
-        {:noreply, apply_action(socket, action, params, recipe)}
+      :edit ->
+        recipe = Recipes.get_recipe!(params["id"])
 
-      action == :edit && Galley.Accounts.is_admin?(u) ->
-        {:noreply, apply_action(socket, action, params, recipe)}
+        cond do
+          u_id == recipe.user.id ->
+            {:noreply, apply_action(socket, action, params, recipe)}
 
-      true -> {:noreply, socket |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
+          Galley.Accounts.is_admin?(u) ->
+            {:noreply, apply_action(socket, action, params, recipe)}
+
+          true ->
+            {:noreply, socket |> push_redirect(to: Routes.recipe_index_path(socket, :index))}
+        end
     end
   end
 

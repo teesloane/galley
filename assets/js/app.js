@@ -70,7 +70,7 @@ let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("
 let liveSocket = new LiveSocket("/live", Socket, {
   params: {_csrf_token: csrfToken},
   hooks,
-  uploaders: Uploaders
+  // uploaders: Uploaders
 })
 
 // Show progress bar on live navigation and form submits

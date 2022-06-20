@@ -6,6 +6,7 @@ defmodule Galley.Recipes do
   import Ecto.Query, warn: false
   alias Galley.Repo
   alias Ecto.Multi
+  alias Mogrify
 
   alias Galley.Recipes.{Recipe, Tag, Ingredient}
 
@@ -49,10 +50,11 @@ defmodule Galley.Recipes do
             do: tag
 
       tagged_recipe_ids = get_by_tags(split_tags)
+
       from(r in Recipe)
-        |> where([s], ^and_condition)
-        |> where([r], r.id in ^tagged_recipe_ids)
-        |> Repo.all()
+      |> where([s], ^and_condition)
+      |> where([r], r.id in ^tagged_recipe_ids)
+      |> Repo.all()
     end
   end
 
@@ -136,7 +138,7 @@ defmodule Galley.Recipes do
     |> Multi.insert_all(:insert_tags, Tag, tags, on_conflict: :nothing)
     |> Multi.run(:tags, fn repo, _changes ->
       tag_names = for t <- tags, do: t.name
-      {:ok, repo.all(from t in Tag, where: t.name in ^tag_names)}
+      {:ok, repo.all(from(t in Tag, where: t.name in ^tag_names))}
     end)
   end
 
@@ -159,14 +161,15 @@ defmodule Galley.Recipes do
     case Repo.delete(recipe) do
       {:ok, deleted_recipe} ->
         if GalleyUtils.is_prod?() do
-          Enum.each(deleted_recipe.uploaded_images, fn image  ->
+          Enum.each(deleted_recipe.uploaded_images, fn image ->
             delete_image_on_s3(image)
           end)
         end
 
         {:ok, deleted_recipe}
-      {:error, changeset } ->
-        {:error, changeset }
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 
@@ -183,12 +186,13 @@ defmodule Galley.Recipes do
     filtered_photos =
       recipe.uploaded_images
       |> Enum.filter(fn image ->
-          # NOTE: side effect - let's delete the image in s3 (optimistically)
+        # NOTE: side effect - let's delete the image in s3 (optimistically)
         if image.id == photo_id do
           delete_image_on_s3(image)
         end
 
-        image.id != photo_id end)
+        image.id != photo_id
+      end)
 
     recipe
     |> change_recipe()
@@ -199,6 +203,40 @@ defmodule Galley.Recipes do
   defp delete_image_on_s3(image) do
     ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
   end
+
+  # defp move_local_imgs_to_s3(recipe) do
+  #   # full_file = recipe.
+  #   Enum.each(recipe.uploaded_images, fn img ->
+  #     client_name = entry.client_name |> String.replace(" ", "_")
+  #     uploads_dir = Galley.Application.get_uploads_folder()
+  #     thumb_file = Path.join([uploads_dir, "thumb_#{Path.basename(path)}_#{client_name}"])
+  #     # resize images
+  #     open(full_file) |> resize_to_fill("450x300") |> save(path: thumb_file)
+  #     open(full_file) |> resize_to_limit("1800") |> save(path: full_file)
+
+  #     make_key = fn f_name ->
+  #       "public/recipes_imgs/#{Path.basename(f_name)}"
+  #     end
+
+  #     base_url = "https://theiceshelf-galley.s3.ca-central-1.amazonaws.com"
+
+  #     full_upload =
+  #       ExAws.S3.put_object(
+  #         "theiceshelf-galley",
+  #         make_key.(full_file),
+  #         File.read!(full_file)
+  #       )
+  #       |> ExAws.request()
+
+  #     thumb_upload =
+  #       ExAws.S3.put_object(
+  #         "theiceshelf-galley",
+  #         make_key.(thumb_file),
+  #         File.read!(thumb_file)
+  #       )
+  #       |> ExAws.request()
+  #   end)
+  # end
 
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
     filtered_ingredient =
@@ -216,7 +254,7 @@ defmodule Galley.Recipes do
   """
   def get_by_tags(tag_list) do
     q =
-      from tags in Tag,
+      from(tags in Tag,
         join: recipe_tags in Galley.Recipes.RecipeTag,
         on: recipe_tags.tag_id == tags.id,
         # tag must be in the tag_list
@@ -225,6 +263,7 @@ defmodule Galley.Recipes do
         select: recipe_tags.recipe_id,
         # remove duplicate ids
         group_by: recipe_tags.recipe_id
+      )
 
     Repo.all(q)
   end

@@ -362,13 +362,16 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
   # take the form_params and extract the uploaded entries
   # then put the uploaded files into the form params to be inserted into the db.
   defp handle_upload(socket, :new, form_params) do
-    uploaded_images = consume_uploads(socket, form_params)
-    Map.put(form_params, "uploaded_images", uploaded_images)
+    imgs =
+      consume_uploads(socket)
+      |> attach_selected_hero_to_uploads(form_params)
+
+    Map.put(form_params, "uploaded_images", imgs)
   end
 
   defp handle_upload(socket, :edit, form_params) do
     existing_uploads = socket.assigns.recipe.uploaded_images
-    uploaded_images = consume_uploads(socket, form_params)
+    uploaded_images = consume_uploads(socket)
     # FIXME: I wonder if this should be existing_uploads at the end?
     uploads =
       (existing_uploads ++ uploaded_images)
@@ -377,36 +380,23 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     Map.put(form_params, "uploaded_images", uploads)
   end
 
-  # takes uploaded images and transforms them to be db friendly.
-  defp consume_uploads(socket, form_params) do
-    uploaded_images =
-      consume_uploaded_entries(socket, :recipe_img, fn params, entry ->
-        consume_uploaded_entries_helper(socket, params, entry)
-      end)
+  defp consume_uploads(socket) do
+    consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, entry ->
+      uploads_dir = Galley.Application.get_uploads_folder()
+      client_name = entry.client_name |> String.replace(" ", "_")
+      full_file = Path.join([uploads_dir, "#{Path.basename(path)}_#{client_name}"])
+      thumb_file = Path.join([uploads_dir, "thumb_#{Path.basename(path)}_#{client_name}"])
+      File.rename!(path, full_file)
 
-    attach_selected_hero_to_uploads(uploaded_images, form_params)
-  end
-
-  # This is the local version (dev only)
-  defp consume_uploaded_entries_helper(socket, %{path: path}, _entry) do
-    upload_folder = Path.join([:code.priv_dir(:galley), "static", "uploads"])
-    # make the upload directory if it doesn't exist
-    File.mkdir_p!(upload_folder)
-    dest = Path.join([upload_folder, Path.basename(path)])
-    # The `static/uploads` directory must exist for `File.cp!/2` to work.
-    File.cp!(path, dest)
-
-    {:ok,
-     %{
-       "url" => Routes.static_path(socket, "/uploads/#{Path.basename(dest)}"),
-       "key_s3" => "<local_file>"
-     }}
-  end
-
-  # this pulls the url from s3 out of the uploaded entry.
-  defp consume_uploaded_entries_helper(socket, %{key: key, url: url} = params, _entry) do
-    img_url = "#{url}/#{key}"
-    {:ok, %{"url" => img_url, "key_s3" => key}}
+      {:ok,
+       %{
+         "url" => Routes.static_path(socket, "/uploads/#{Path.basename(full_file)}"),
+         "url_thumb" => Routes.static_path(socket, "/uploads/#{Path.basename(full_file)}"),
+         "key_s3" => "",
+         "local_path" => full_file,
+         "is_local" => true
+       }}
+    end)
   end
 
   # iterates over images and attaches the selected integer of the image to be the hero

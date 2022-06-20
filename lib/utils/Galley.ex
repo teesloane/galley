@@ -1,5 +1,4 @@
 defmodule GalleyUtils do
-
   @moduledoc """
   Utils for Galley specific things.
   """
