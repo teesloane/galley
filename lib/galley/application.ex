@@ -9,6 +9,7 @@ defmodule Galley.Application do
   def start(_type, _args) do
     # we do this here because fly.io can'd do release script with migrations and sqlite.
     Galley.Release.migrate()
+    create_uploads_folder()
     children = [
       # Start the Ecto repository
       Galley.Repo,
@@ -35,4 +36,13 @@ defmodule Galley.Application do
     GalleyWeb.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  def create_uploads_folder() do
+    File.mkdir_p!(get_uploads_folder())
+  end
+
+  def get_uploads_folder() do
+    Path.join([:code.priv_dir(:galley), "static", "uploads"])
+  end
+
 end
