@@ -1,5 +1,5 @@
 defmodule Galley.Recipes.MigrateAris do
-  def do_migration() do
+  def do_migration(sleep \\ 0) do
     # for http requests to get ag images.
     IO.puts("GLOG: migrating ari's garden...")
     :inets.start()
@@ -13,11 +13,15 @@ defmodule Galley.Recipes.MigrateAris do
 
     for {slug, recipe_data} <- json["recipes"],
         recipe = ari_to_galley(slug, recipe_data),
-        do: insert_recipe(me, recipe)
+        do:
+          (
+            insert_recipe(me, recipe, sleep)
+            :timer.sleep(sleep)
+          )
   end
 
-  defp insert_recipe(me, recipe) do
-    case Galley.Recipes.insert_recipe(me, recipe, async_upload: false) do
+  defp insert_recipe(me, recipe, sleep) do
+    case Galley.Recipes.insert_recipe(me, recipe, async_upload: false, timer: sleep) do
       {:ok, recipe} ->
         {:noreply, recipe}
 

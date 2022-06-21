@@ -246,6 +246,15 @@ defmodule Galley.Recipes do
     end
   end
 
+  def delete_all_images_in_static() do
+    dir = Galley.Application.get_uploads_folder()
+
+    uploads = Path.wildcard("#{dir}/*")
+
+    uploads
+    |> Enum.each(fn e -> File.rm(e) end)
+  end
+
   def compress_and_upload_s3(recipe) do
     # little lambda to do the uploading later.
     upload_file = fn {src_path, dest_path} ->
