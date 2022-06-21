@@ -95,8 +95,18 @@ defmodule Galley.Recipes do
       |> Repo.transaction()
 
     case multi_result do
-      {:ok, %{recipe: recipe}} -> {:ok, recipe}
-      {:error, :recipe, changeset, _} -> {:error, changeset}
+      {:ok, %{recipe: recipe}} ->
+        # Task.start(fn -> compress_and_upload_s3(recipe) end)
+        case compress_and_upload_s3(recipe) do
+          {:ok, u_recipe} ->
+            {:ok, u_recipe}
+
+          {:error, changeset} ->
+            {:error, changeset}
+        end
+
+      {:error, :recipe, changeset, _} ->
+        {:error, changeset}
     end
   end
 
@@ -159,11 +169,12 @@ defmodule Galley.Recipes do
   def delete_recipe(%Recipe{} = recipe) do
     case Repo.delete(recipe) do
       {:ok, deleted_recipe} ->
-        if GalleyUtils.is_prod?() do
-          Enum.each(deleted_recipe.uploaded_images, fn image ->
-            delete_image_on_s3(image)
-          end)
-        end
+        # if GalleyUtils.is_prod?() do
+        Enum.each(deleted_recipe.uploaded_images, fn image ->
+          delete_image_on_s3(image)
+        end)
+
+        # end
 
         {:ok, deleted_recipe}
 
@@ -187,7 +198,7 @@ defmodule Galley.Recipes do
       |> Enum.filter(fn image ->
         # NOTE: side effect - let's delete the image in s3 (optimistically)
         if image.id == photo_id do
-          delete_image_on_s3(image)
+          Task.start(fn -> delete_image_on_s3(image) end)
         end
 
         image.id != photo_id
@@ -199,8 +210,12 @@ defmodule Galley.Recipes do
     |> Repo.update()
   end
 
+  # delete the full image and thumbnail for a recipe.
   defp delete_image_on_s3(image) do
     ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
+
+    ExAws.S3.delete_object("theiceshelf-galley", GalleyUtils.get_thumbnail(image.key_s3))
+    |> ExAws.request()
   end
 
   def compress_and_upload_s3(recipe) do
@@ -218,7 +233,7 @@ defmodule Galley.Recipes do
         if img.is_local do
           full_file = img.local_path
           aws_dir = "https://theiceshelf-galley.s3-ca-central-1.amazonaws.com"
-          thumb_file = "#{Path.rootname(full_file)}_thumb#{Path.extname(full_file)}"
+          thumb_file = GalleyUtils.get_thumbnail(full_file)
 
           s3_dest = fn f ->
             "/public/recipes_imgs/#{Path.basename(f)}"
@@ -239,7 +254,8 @@ defmodule Galley.Recipes do
             | url: "#{aws_dir}#{s3_dest.(full_file)}",
               url_thumb: "#{aws_dir}#{s3_dest.(thumb_file)}",
               local_path: "",
-              is_local: false
+              is_local: false,
+              key_s3: s3_dest.(full_file)
           }
 
           # desired result: %{"path/to/src0" => "path/to/dest0", "path/to/src1" => "path/to/dest1"}
@@ -262,13 +278,24 @@ defmodule Galley.Recipes do
       |> Stream.run()
 
     if res == :ok do
-      IO.inspect({recipe.uploaded_images, image_data}, label: ">>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      updated_recipe =
+        recipe
+        |> change_recipe(%{uploaded_images: image_data.updated_images})
+        |> Repo.update()
 
-      recipe
-      |> change_recipe(%{uploaded_images: image_data.updated_images})
-      # |> Ecto.Changeset.put_embed(:uploaded_images, image_data.updated_images)
-      |> IO.inspect(label: "<<<<<<<<<<<<<<<")
-      |> Repo.update()
+      case updated_recipe do
+        {:ok, new_recipe} ->
+          # delete local images
+          Enum.each(recipe.uploaded_images, fn img ->
+            File.rm!(img.local_path)
+            File.rm!(GalleyUtils.get_thumbnail(img.local_path))
+          end)
+
+          {:ok, new_recipe}
+
+        {:error, :recipe, changeset, _} ->
+          {:error, changeset}
+      end
     end
   end
 

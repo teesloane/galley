@@ -384,8 +384,10 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     consume_uploaded_entries(socket, :recipe_img, fn %{path: path}, entry ->
       uploads_dir = Galley.Application.get_uploads_folder()
       client_name = entry.client_name |> String.replace(" ", "_")
-      full_file = Path.join([uploads_dir, "#{Path.basename(path)}_#{client_name}"])
-      thumb_file = Path.join([uploads_dir, "thumb_#{Path.basename(path)}_#{client_name}"])
+      prefix = Path.basename(path) |> String.replace("live_view_upload-", "")
+
+      full_file = Path.join([uploads_dir, "#{prefix}_#{client_name}"])
+      thumb_file = Path.join([uploads_dir, "thumb_#{prefix}_#{client_name}"])
       File.rename!(path, full_file)
 
       {:ok,

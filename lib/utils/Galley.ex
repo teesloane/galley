@@ -13,6 +13,10 @@ defmodule GalleyUtils do
     s |> String.downcase() |> String.replace(" ", "-")
   end
 
+  def get_thumbnail(img_file) do
+    "#{Path.rootname(img_file)}_thumb#{Path.extname(img_file)}"
+  end
+
   def pad_digit(d) do
     d_as_str = to_string(d)
 

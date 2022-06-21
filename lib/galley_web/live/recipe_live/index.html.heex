@@ -24,7 +24,7 @@
           <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
             <%= if length(recipe.uploaded_images) > 0 do %>
               <img
-                src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images)}
+                src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images).url_thumb}
                 class="h-48 object-cover"
               />
             <% else %>

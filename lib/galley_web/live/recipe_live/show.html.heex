@@ -1,6 +1,6 @@
 <div class="page_wrapper">
   <%= if length(@recipe.uploaded_images) > 0 do %>
-    <img src={get_hero_img(@recipe.uploaded_images)} class="h-96 w-full mb-8 object-cover" />
+    <img src={get_hero_img(@recipe.uploaded_images).url} class="h-96 w-full mb-8 object-cover" />
   <% end %>
   <div class="flex flex-col md:flex-row justify-between md:items-end">
     <h1 class="heading text-2xl  md:text-4xl font-light capitalize mt-8 md:mt-16 mb-4">
@@ -71,7 +71,7 @@
     <h3 class="heading-with-lines"><span>Photos</span></h3>
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
       <%= for img <- get_other_images(@recipe.uploaded_images) do %>
-        <img class="object-cover h-64 md:h-48 w-full" src={img.url} />
+        <img class="object-cover h-64 md:h-48 w-full" src={img.url_thumb} />
       <% end %>
     </section>
   <% end %>
