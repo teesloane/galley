@@ -6,7 +6,12 @@ defmodule Mix.Tasks.Db.MigrateAris do
   @shortdoc "Migrate from Ari's garden"
   @spec run(any) :: any
   def run(_) do
+    # for http requests to get ag images.
+    :inets.start()
+    :ssl.start()
+    # turn off annoying sql
     Logger.configure(level: :info)
+    # open up the json file
     json_file = Path.join(:code.priv_dir(:galley), "/repo/aris_garden.json")
     me = Galley.Accounts.get_user_by_email("weakty@theiceshelf.com")
     {:ok, json} = get_json(json_file)
@@ -56,8 +61,11 @@ defmodule Mix.Tasks.Db.MigrateAris do
       |> Enum.map(fn {i, _index} ->
         key = "#{slug}-#{i}"
 
-        local_path =
-          "/Users/tees/Development/galley/_build/dev/lib/galley/priv/static/uploads/#{key}"
+        img_url =
+          "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{key}"
+
+        download_img_to_static_folder(img_url)
+        local_path = "#{Galley.Application.get_uploads_folder()}/#{key}"
 
         %{
           "is_hero" => false,
@@ -70,6 +78,12 @@ defmodule Mix.Tasks.Db.MigrateAris do
       end)
 
     hero_key = "#{slug}-hero.JPG"
+
+    img_url =
+      "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}"
+
+    download_img_to_static_folder(img_url)
+    local_path = "#{Galley.Application.get_uploads_folder()}/#{hero_key}"
 
     local_path =
       "/Users/tees/Development/galley/_build/dev/lib/galley/priv/static/uploads/#{hero_key}"
@@ -86,7 +100,6 @@ defmodule Mix.Tasks.Db.MigrateAris do
         "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}"
     }
 
-    # IO.inspect([old_hero_img | imgs], label: "$$$")
     [old_hero_img | imgs]
   end
 
@@ -232,6 +245,14 @@ defmodule Mix.Tasks.Db.MigrateAris do
   #   }
   # defp upload_images() do
   # end
+
+  def download_img_to_static_folder(img_url) do
+    img_output = "#{Galley.Application.get_uploads_folder()}/#{Path.basename(img_url)}"
+
+    :httpc.request(:get, {img_url |> String.to_charlist(), []}, [],
+      stream: img_output |> String.to_charlist()
+    )
+  end
 
   def get_json(filename) do
     with {:ok, body} <- File.read(filename), {:ok, json} <- Poison.decode(body), do: {:ok, json}

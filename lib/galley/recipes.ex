@@ -286,7 +286,7 @@ defmodule Galley.Recipes do
 
     res =
       image_data.s3_uploads
-      |> Task.async_stream(upload_file, max_concurrency: 10, timeout: 15000)
+      |> Task.async_stream(upload_file, max_concurrency: 10, timeout: 25000)
       |> Stream.run()
 
     if res == :ok do
