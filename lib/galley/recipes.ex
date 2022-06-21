@@ -96,14 +96,8 @@ defmodule Galley.Recipes do
 
     case multi_result do
       {:ok, %{recipe: recipe}} ->
-        # Task.start(fn -> compress_and_upload_s3(recipe) end)
-        case compress_and_upload_s3(recipe) do
-          {:ok, u_recipe} ->
-            {:ok, u_recipe}
-
-          {:error, changeset} ->
-            {:error, changeset}
-        end
+        Task.start(fn -> compress_and_upload_s3(recipe) end)
+        {:ok, recipe}
 
       {:error, :recipe, changeset, _} ->
         {:error, changeset}
