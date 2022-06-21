@@ -117,8 +117,12 @@ defmodule Galley.Recipes do
       |> Repo.transaction()
 
     case multi_result do
-      {:ok, %{recipe: recipe}} -> {:ok, recipe}
-      {:error, :recipe, changeset, _} -> {:error, changeset}
+      {:ok, %{recipe: recipe}} ->
+        Task.start(fn -> compress_and_upload_s3(recipe) end)
+        {:ok, recipe}
+
+      {:error, :recipe, changeset, _} ->
+        {:error, changeset}
     end
   end
 
@@ -206,17 +210,24 @@ defmodule Galley.Recipes do
 
   # delete the full image and thumbnail for a recipe.
   defp delete_image_on_s3(image) do
-    ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
+    x = ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
+    IO.inspect({x, image}, label: "[log - s3]: deleted image")
 
-    ExAws.S3.delete_object("theiceshelf-galley", GalleyUtils.get_thumbnail(image.key_s3))
-    |> ExAws.request()
+    y =
+      ExAws.S3.delete_object("theiceshelf-galley", GalleyUtils.get_thumbnail(image.key_s3))
+      |> ExAws.request()
+
+    IO.inspect({y, image}, label: "[log - s3]: deleted image thumbnail")
   end
 
   def compress_and_upload_s3(recipe) do
     # little lambda to do the uploading later.
     upload_file = fn {src_path, dest_path} ->
-      ExAws.S3.put_object("theiceshelf-galley", dest_path, File.read!(src_path))
-      |> ExAws.request!()
+      z =
+        ExAws.S3.put_object("theiceshelf-galley", dest_path, File.read!(src_path))
+        |> ExAws.request!()
+
+      IO.inspect(z, label: "[log - s3]: put object")
     end
 
     # we use reduce so we can update the old images and build up a map
@@ -233,6 +244,7 @@ defmodule Galley.Recipes do
             "/public/recipes_imgs/#{Path.basename(f)}"
           end
 
+          IO.inspect({img}, label: ">>> mogrifying files.")
           # resize images
           Mogrify.open(full_file)
           |> Mogrify.resize_to_fill("450x300")
