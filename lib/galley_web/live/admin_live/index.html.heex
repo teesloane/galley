@@ -6,4 +6,8 @@
   <div class="flex w-full justify-center">
     <%= link("Export the database", to: Routes.admin_settings_download_path(@socket, :download_db), class: "tile px-2") %>
   </div>
+
+  <div class="flex w-full justify-center">
+    <button class="btn-clear p-2 mr-2" phx-click="migrate_aris">Migrate Ari's Garden</button>
+  </div>
 </div>

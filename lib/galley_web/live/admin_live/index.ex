@@ -19,4 +19,21 @@ defmodule GalleyWeb.AdminLive.Index do
   def handle_params(_arams, _url, socket) do
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_event("migrate_aris", _value, socket) do
+    has_migrated = Galley.Recipes.get_recipe_by_slug("black-bean-salad")
+
+    if has_migrated === nil do
+      Galley.Recipes.MigrateAris.do_migration()
+
+      {:noreply,
+       socket
+       |> put_flash(:info, "Finished migration")}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:info, "Migration already completed")}
+    end
+  end
 end

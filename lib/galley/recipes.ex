@@ -76,6 +76,10 @@ defmodule Galley.Recipes do
     Repo.get!(Recipe, id) |> Repo.preload(:user) |> Repo.preload(:tags)
   end
 
+  def get_recipe_by_slug(slug) do
+    Repo.get_by(Recipe, slug: slug)
+  end
+
   def get_recipe_by_id_and_slug!(id, slug) do
     Repo.get_by!(Recipe, id: id, slug: slug)
     |> Repo.preload(:user)
@@ -225,6 +229,21 @@ defmodule Galley.Recipes do
       |> ExAws.request()
 
     IO.inspect({y, image}, label: "[log - s3]: deleted image thumbnail")
+  end
+
+  def delete_all_images_on_s3() do
+    x = IO.gets("Are you sure? ") |> String.trim()
+    IO.inspect(x)
+    bucket = "theiceshelf-galley"
+
+    if x == "y" do
+      stream =
+        ExAws.S3.list_objects(bucket)
+        |> ExAws.stream!()
+        |> Stream.map(& &1.key)
+
+      ExAws.S3.delete_all_objects(bucket, stream) |> ExAws.request()
+    end
   end
 
   def compress_and_upload_s3(recipe) do
