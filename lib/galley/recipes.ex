@@ -82,7 +82,9 @@ defmodule Galley.Recipes do
     |> Repo.preload(:tags)
   end
 
-  def insert_recipe(user, attrs \\ %{}) do
+  def insert_recipe(user, attrs \\ %{}, opts \\ []) do
+    async_upload = Keyword.get(opts, :async_upload, true)
+
     multi_result =
       Multi.new()
       |> insert_and_get_tags(attrs)
@@ -96,7 +98,12 @@ defmodule Galley.Recipes do
 
     case multi_result do
       {:ok, %{recipe: recipe}} ->
-        Task.start(fn -> compress_and_upload_s3(recipe) end)
+        if async_upload do
+          Task.start(fn -> compress_and_upload_s3(recipe) end)
+        else
+          compress_and_upload_s3(recipe)
+        end
+
         {:ok, recipe}
 
       {:error, :recipe, changeset, _} ->
@@ -244,7 +251,6 @@ defmodule Galley.Recipes do
             "/public/recipes_imgs/#{Path.basename(f)}"
           end
 
-          IO.inspect({img}, label: ">>> mogrifying files.")
           # resize images
           Mogrify.open(full_file)
           |> Mogrify.resize_to_fill("450x300")
@@ -280,7 +286,7 @@ defmodule Galley.Recipes do
 
     res =
       image_data.s3_uploads
-      |> Task.async_stream(upload_file, max_concurrency: 10)
+      |> Task.async_stream(upload_file, max_concurrency: 10, timeout: 15000)
       |> Stream.run()
 
     if res == :ok do

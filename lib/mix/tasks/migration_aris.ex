@@ -1,10 +1,12 @@
 defmodule Mix.Tasks.Db.MigrateAris do
   use Mix.Task
+  import Mogrify
 
   @requirements ["app.start"]
   @shortdoc "Migrate from Ari's garden"
   @spec run(any) :: any
   def run(_) do
+    Logger.configure(level: :info)
     json_file = Path.join(:code.priv_dir(:galley), "/repo/aris_garden.json")
     me = Galley.Accounts.get_user_by_email("weakty@theiceshelf.com")
     {:ok, json} = get_json(json_file)
@@ -15,7 +17,7 @@ defmodule Mix.Tasks.Db.MigrateAris do
   end
 
   defp insert_recipe(me, recipe) do
-    case Galley.Recipes.insert_recipe(me, recipe) do
+    case Galley.Recipes.insert_recipe(me, recipe, async_upload: false) do
       {:ok, recipe} ->
         {:noreply, recipe}
 
@@ -43,30 +45,49 @@ defmodule Mix.Tasks.Db.MigrateAris do
     if String.length(serves) === 1 do
       "#{serves} servings"
     else
-        serves
+      serves
     end
-
   end
 
   defp parse_images(slug, ag_imgs) do
-    imgs = ag_imgs |> Enum.with_index |> Enum.map(fn {i, _index} ->
-      key = "#{slug}-#{i}"
+    imgs =
+      ag_imgs
+      |> Enum.with_index()
+      |> Enum.map(fn {i, _index} ->
+        key = "#{slug}-#{i}"
+
+        local_path =
+          "/Users/tees/Development/galley/_build/dev/lib/galley/priv/static/uploads/#{key}"
+
         %{
           "is_hero" => false,
           "key_s3" => key,
-          "url" => "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{key}"
+          "is_local" => true,
+          "local_path" => local_path,
+          "url" => local_path,
+          "url_thumb" => ""
         }
-    end)
+      end)
 
     hero_key = "#{slug}-hero.JPG"
-    old_hero_img =
-        %{
-          "is_hero" => true,
-          "key_s3" => hero_key,
-          "url" => "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}"
-        }
-    [old_hero_img | imgs]
 
+    local_path =
+      "/Users/tees/Development/galley/_build/dev/lib/galley/priv/static/uploads/#{hero_key}"
+
+    # grab the hero, which isn't part of the imgs url.
+    old_hero_img = %{
+      "is_hero" => true,
+      "key_s3" => hero_key,
+      "is_local" => true,
+      "local_path" => local_path,
+      "url" =>
+        "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}",
+      "url_thumb" =>
+        "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{hero_key}"
+    }
+
+    # IO.inspect([old_hero_img | imgs], label: "$$$")
+    [old_hero_img | imgs]
   end
 
   defp parse_steps(ag_steps) do
