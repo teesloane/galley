@@ -18,6 +18,7 @@ Galley.Accounts.register_user(%{
 })
 
 user = Galley.Accounts.get_user_by_email("weakty@theiceshelf.com")
+Galley.Accounts.promote_user_to_admin(user)
 
 ## === Recipe ==================================================================
 
