@@ -129,8 +129,7 @@ defmodule Galley.Recipes do
         do: %{name: tag, inserted_at: now, updated_at: now}
   end
 
-  # fetches tags from form and makes them into maps.
-  # then upserts them,
+  # fetches tags from form and makes them into maps then upserts them.
   defp insert_and_get_tags(multi, attrs) do
     tags = parse_tags(attrs["tags"])
 
@@ -204,39 +203,74 @@ defmodule Galley.Recipes do
     ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
   end
 
-  # defp move_local_imgs_to_s3(recipe) do
-  #   # full_file = recipe.
-  #   Enum.each(recipe.uploaded_images, fn img ->
-  #     client_name = entry.client_name |> String.replace(" ", "_")
-  #     uploads_dir = Galley.Application.get_uploads_folder()
-  #     thumb_file = Path.join([uploads_dir, "thumb_#{Path.basename(path)}_#{client_name}"])
-  #     # resize images
-  #     open(full_file) |> resize_to_fill("450x300") |> save(path: thumb_file)
-  #     open(full_file) |> resize_to_limit("1800") |> save(path: full_file)
+  def compress_and_upload_s3(recipe) do
+    # little lambda to do the uploading later.
+    upload_file = fn {src_path, dest_path} ->
+      ExAws.S3.put_object("theiceshelf-galley", dest_path, File.read!(src_path))
+      |> ExAws.request!()
+    end
 
-  #     make_key = fn f_name ->
-  #       "public/recipes_imgs/#{Path.basename(f_name)}"
-  #     end
+    # we use reduce so we can update the old images and build up a map
+    # of images to upload in a single iteration.
+    # We also happen to do the compression in this function, but that could be done elsewhere if necessary.
+    image_data =
+      Enum.reduce(recipe.uploaded_images, %{updated_images: [], s3_uploads: %{}}, fn img, acc ->
+        if img.is_local do
+          full_file = img.local_path
+          aws_dir = "https://theiceshelf-galley.s3-ca-central-1.amazonaws.com"
+          thumb_file = "#{Path.rootname(full_file)}_thumb#{Path.extname(full_file)}"
 
-  #     base_url = "https://theiceshelf-galley.s3.ca-central-1.amazonaws.com"
+          s3_dest = fn f ->
+            "/public/recipes_imgs/#{Path.basename(f)}"
+          end
 
-  #     full_upload =
-  #       ExAws.S3.put_object(
-  #         "theiceshelf-galley",
-  #         make_key.(full_file),
-  #         File.read!(full_file)
-  #       )
-  #       |> ExAws.request()
+          # resize images
+          Mogrify.open(full_file)
+          |> Mogrify.resize_to_fill("450x300")
+          |> Mogrify.save(path: thumb_file)
 
-  #     thumb_upload =
-  #       ExAws.S3.put_object(
-  #         "theiceshelf-galley",
-  #         make_key.(thumb_file),
-  #         File.read!(thumb_file)
-  #       )
-  #       |> ExAws.request()
-  #   end)
-  # end
+          Mogrify.open(full_file)
+          |> Mogrify.resize_to_limit("1800")
+          |> Mogrify.save(path: full_file)
+
+          # update the original image with the s3 urls.
+          updated_original = %{
+            img
+            | url: "#{aws_dir}#{s3_dest.(full_file)}",
+              url_thumb: "#{aws_dir}#{s3_dest.(thumb_file)}",
+              local_path: "",
+              is_local: false
+          }
+
+          # desired result: %{"path/to/src0" => "path/to/dest0", "path/to/src1" => "path/to/dest1"}
+          s3_uploads =
+            acc.s3_uploads
+            |> Map.put(img.local_path, s3_dest.(img.local_path))
+            |> Map.put(thumb_file, s3_dest.(thumb_file))
+
+          %{
+            acc
+            | updated_images: [Map.from_struct(updated_original) | acc.updated_images],
+              s3_uploads: s3_uploads
+          }
+        end
+      end)
+
+    res =
+      image_data.s3_uploads
+      |> Task.async_stream(upload_file, max_concurrency: 10)
+      |> Stream.run()
+
+    if res == :ok do
+      IO.inspect({recipe.uploaded_images, image_data}, label: ">>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+      recipe
+      |> change_recipe(%{uploaded_images: image_data.updated_images})
+      # |> Ecto.Changeset.put_embed(:uploaded_images, image_data.updated_images)
+      |> IO.inspect(label: "<<<<<<<<<<<<<<<")
+      |> Repo.update()
+    end
+  end
 
   def delete_ingredient_step(%Recipe{} = recipe, ingredient_id) do
     filtered_ingredient =
