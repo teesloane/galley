@@ -80,9 +80,6 @@ defmodule Galley.Recipes.MigrateAris do
     download_img_to_static_folder(img_url)
     local_path = "#{Galley.Application.get_uploads_folder()}/#{hero_key}"
 
-    local_path =
-      "/Users/tees/Development/galley/_build/dev/lib/galley/priv/static/uploads/#{hero_key}"
-
     # grab the hero, which isn't part of the imgs url.
     old_hero_img = %{
       "is_hero" => true,
