@@ -198,6 +198,7 @@ defmodule Galley.Recipes.MigrateAris do
            %{
              "ingredient" => ingr["ingredient"] |> String.downcase(),
              "measurement" => ingr["unit"],
+             "prep" => ingr["prep"],
              "quantity" => map_get_string(ingr, "quantity"),
              "temp_id" => GalleyUtils.get_temp_id()
            }}

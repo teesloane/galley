@@ -48,7 +48,12 @@
             if rem(index, 2) == 0, do: "bg-neutral-100 dark:bg-neutral-700 p-2", else: "p-2"
           }>
             <p class="flex justify-between">
-              <span><%= item.ingredient %></span>
+              <span>
+                <%= item.ingredient %>
+                <%=  if item.prep do %>
+                  <span class="text-neutral-400 text-xs">(<%= item.prep %>)</span>
+                <% end %>
+              </span>
               <span>
                 <span><%= item.quantity %></span>
                 <span><%= item.measurement %></span>
