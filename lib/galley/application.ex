@@ -49,7 +49,7 @@ defmodule Galley.Application do
   def get_bucket() do
     cond do
       GalleyUtils.is_dev?() -> "theiceshelf-galley-dev"
-      GalleyUtils.is_prod() -> "theiceshelf-galley"
+      GalleyUtils.is_prod?() -> "theiceshelf-galley"
     end
   end
 end
