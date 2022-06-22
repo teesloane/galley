@@ -221,20 +221,20 @@ defmodule Galley.Recipes do
 
   # delete the full image and thumbnail for a recipe.
   defp delete_image_on_s3(image) do
-    x = ExAws.S3.delete_object("theiceshelf-galley", image.key_s3) |> ExAws.request()
+    bucket = Galley.Application.get_bucket()
+    x = ExAws.S3.delete_object(bucket, image.key_s3) |> ExAws.request()
     IO.inspect({x, image}, label: "[log - s3]: deleted image")
 
     y =
-      ExAws.S3.delete_object("theiceshelf-galley", GalleyUtils.get_thumbnail(image.key_s3))
+      ExAws.S3.delete_object(bucket, GalleyUtils.get_thumbnail(image.key_s3))
       |> ExAws.request()
 
     IO.inspect({y, image}, label: "[log - s3]: deleted image thumbnail")
   end
 
   def delete_all_images_on_s3() do
-    x = IO.gets("Are you sure? ") |> String.trim()
-    IO.inspect(x)
-    bucket = "theiceshelf-galley"
+    x = IO.gets("Do you want to delete all s3 assets? ") |> String.trim()
+    bucket = Galley.Application.get_bucket()
 
     if x == "y" do
       stream =
@@ -246,20 +246,44 @@ defmodule Galley.Recipes do
     end
   end
 
+  def delete_all_recipes() do
+    x = IO.gets("Do you want to delete all recipes? ") |> String.trim()
+
+    if x == "y" do
+      Repo.delete_all(Recipe)
+    end
+  end
+
   def delete_all_images_in_static() do
     dir = Galley.Application.get_uploads_folder()
 
-    uploads = Path.wildcard("#{dir}/*")
+    x = IO.gets("Do you want to delete all static_assets? ") |> String.trim()
 
-    uploads
-    |> Enum.each(fn e -> File.rm(e) end)
+    if x == "y" do
+      uploads = Path.wildcard("#{dir}/*")
+
+      uploads
+      |> Enum.each(fn e -> File.rm(e) end)
+    end
+  end
+
+  def delete_recipes_local_and_s3_images() do
+    delete_all_images_in_static()
+  end
+
+  def delete_all_recipes_and_associated() do
+    delete_all_images_in_static()
+    delete_all_images_on_s3()
+    delete_all_recipes()
   end
 
   def compress_and_upload_s3(recipe) do
+    bucket = Galley.Application.get_bucket()
+
     # little lambda to do the uploading later.
     upload_file = fn {src_path, dest_path} ->
       z =
-        ExAws.S3.put_object("theiceshelf-galley", dest_path, File.read!(src_path))
+        ExAws.S3.put_object(bucket, dest_path, File.read!(src_path))
         |> ExAws.request!()
 
       IO.inspect(z, label: "[log - s3]: put object")
@@ -270,9 +294,9 @@ defmodule Galley.Recipes do
     # We also happen to do the compression in this function, but that could be done elsewhere if necessary.
     image_data =
       Enum.reduce(recipe.uploaded_images, %{updated_images: [], s3_uploads: %{}}, fn img, acc ->
-        if img.is_local do
+        if img.is_local && String.length(img.local_path) > 0 do
           full_file = img.local_path
-          aws_dir = "https://theiceshelf-galley.s3-ca-central-1.amazonaws.com"
+          aws_dir = "https://#{bucket}.s3-ca-central-1.amazonaws.com"
           thumb_file = GalleyUtils.get_thumbnail(full_file)
 
           s3_dest = fn f ->
@@ -314,7 +338,7 @@ defmodule Galley.Recipes do
 
     res =
       image_data.s3_uploads
-      |> Task.async_stream(upload_file, max_concurrency: 10, timeout: 25000)
+      |> Task.async_stream(upload_file, max_concurrency: 1, timeout: 25000)
       |> Stream.run()
 
     if res == :ok do

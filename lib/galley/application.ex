@@ -10,6 +10,7 @@ defmodule Galley.Application do
     # we do this here because fly.io can'd do release script with migrations and sqlite.
     Galley.Release.migrate()
     create_uploads_folder()
+
     children = [
       # Start the Ecto repository
       Galley.Repo,
@@ -45,4 +46,10 @@ defmodule Galley.Application do
     Path.join([:code.priv_dir(:galley), "static", "uploads"])
   end
 
+  def get_bucket() do
+    cond do
+      GalleyUtils.is_dev?() -> "theiceshelf-galley-dev"
+      GalleyUtils.is_prod() -> "theiceshelf-galley"
+    end
+  end
 end

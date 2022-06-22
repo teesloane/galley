@@ -25,6 +25,7 @@ defmodule Galley.Recipes.Recipe do
       field(:ingredient, :string)
       field(:quantity, :string)
       field(:measurement, :string)
+      field(:prep, :string)
       field(:temp_id, :string, virtual: true)
     end
 

@@ -13,11 +13,7 @@ defmodule Galley.Recipes.MigrateAris do
 
     for {slug, recipe_data} <- json["recipes"],
         recipe = ari_to_galley(slug, recipe_data),
-        do:
-          (
-            insert_recipe(me, recipe, sleep)
-            :timer.sleep(sleep)
-          )
+        do: insert_recipe(me, recipe, sleep)
   end
 
   defp insert_recipe(me, recipe, sleep) do
@@ -64,6 +60,7 @@ defmodule Galley.Recipes.MigrateAris do
           "https://raw.githubusercontent.com/theiceshelf/arisgarden/master/src/assets/imgs/#{key}"
 
         download_img_to_static_folder(img_url)
+
         local_path = "#{Galley.Application.get_uploads_folder()}/#{key}"
 
         %{

@@ -25,7 +25,7 @@ defmodule GalleyWeb.AdminLive.Index do
     has_migrated = Galley.Recipes.get_recipe_by_slug("black-bean-salad")
 
     if has_migrated === nil do
-      Galley.Recipes.MigrateAris.do_migration(15000)
+      Galley.Recipes.MigrateAris.do_migration(1000)
 
       {:noreply,
        socket
