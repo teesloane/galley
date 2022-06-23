@@ -9,7 +9,8 @@ defmodule GalleyWeb.RecipeLive.Index do
       recipes: list_recipes(),
       search_query: "",
       search_filter: "All",
-      search_tags: ""
+      search_tags: "",
+      page_heading: "Recipes"
     }
 
     {:ok, assign(socket, state)}
@@ -30,6 +31,13 @@ defmodule GalleyWeb.RecipeLive.Index do
       |> assign(:search_filter, search["filter"])
       |> assign(:search_query, search["query"])
       |> assign(:search_tags, search["tags"])
+      |> assign(
+        :page_heading,
+        case search["filter"] do
+          "My Recipes" -> "My Recipes"
+          "" -> "Recipes"
+        end
+      )
 
     {:noreply, socket}
   end

@@ -239,7 +239,6 @@
     <hr class="my-16" />
     <section class="pb-8">
       <h2 class="heading">Additional notes</h2>
-      <p>Add whatever else you want below. Keep it brief - you've only got 400 characters 🙃.</p>
 
       <%= textarea(f, :notes,
         id: "recipe-notes",
@@ -248,7 +247,7 @@
         phx_hook: "ShowTextAreaCount",
         data_attrs: "style, id, rows",
         maxlength: 400,
-        class: "w-full my-8"
+        class: "w-full mb-8"
       ) %>
       <div class="text-sm flex justify-end">
         <div id="notes-count" class="">0</div>
