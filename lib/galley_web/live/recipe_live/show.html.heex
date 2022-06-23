@@ -50,7 +50,7 @@
             <p class="flex justify-between">
               <span>
                 <%= item.ingredient %>
-                <%=  if item.prep do %>
+                <%= if item.prep do %>
                   <span class="text-neutral-400 text-xs">(<%= item.prep %>)</span>
                 <% end %>
               </span>
@@ -66,15 +66,20 @@
 
     <div class="instructions p-4  pr-0 w-full md:w-2/4 lg:w-3/5">
       <h3 class="heading-with-lines md:mt-0 md:mb-16"><span>Instructions</span></h3>
-    <div x-data="{selected: 0}">
-      <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
-        <div :class={"selected == '#{index}' ? 'border-blue-500 border-l-2' : 'border-transparent border-l-2'"}>
-        <p
-          x-on:click={"selected = '#{index}'"}
-          class="cursor-pointer break-words p-1  mb-6 pl-4"><%= index + 1 %>. <%= item.instruction %></p>
+      <div x-data="{selected: 0}">
+        <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
+          <div :class={
+            "selected == '#{index}' ? 'border-blue-500 border-l-2' : 'border-transparent border-l-2'"
+          }>
+            <p
+              x-on:click={"selected = '#{index}'"}
+              class="cursor-pointer break-words p-1  mb-6 pl-4"
+            >
+              <%= index + 1 %>. <%= item.instruction %>
+            </p>
           </div>
-      <% end %>
-  </div>
+        <% end %>
+      </div>
     </div>
   </section>
 

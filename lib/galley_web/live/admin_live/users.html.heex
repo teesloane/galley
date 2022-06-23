@@ -42,7 +42,10 @@
           <td class="p-2"><%= user.confirmed_at %></td>
           <td class="p-2"><%= user.roles |> Enum.join(", ") %></td>
           <td class="p-2">
-              <%= link("...", to: Routes.admin_users_path(@socket, :edit, user.id), class: "btn-clear") %>
+            <%= link("...",
+              to: Routes.admin_users_path(@socket, :edit, user.id),
+              class: "btn-clear"
+            ) %>
           </td>
         </tr>
       <% end %>

@@ -1,9 +1,14 @@
 <aside class="">
-  <ul class="flex flex-col md:flex-row mr-2">
+  <ul class="flex flex-row mr-2">
+    <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+      <li class="pr-2">
+        <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
+      </li>
+    <% end %>
     <%= for l <- topbar_links(@conn, @current_user) do %>
       <li class="">
         <%= if l.condition do %>
-          <div class="md:px-2">
+          <div class="px-2">
             <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
           </div>
         <% end %>

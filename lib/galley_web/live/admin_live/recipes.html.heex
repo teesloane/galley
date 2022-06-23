@@ -32,7 +32,10 @@
         <tr>
           <td class="p-2"><%= recipe.title %></td>
           <td class="p-2">
-              <%= link("...", to: Routes.admin_recipes_path(@socket, :edit, recipe.id), class: "btn-clear") %>
+            <%= link("...",
+              to: Routes.admin_recipes_path(@socket, :edit, recipe.id),
+              class: "btn-clear"
+            ) %>
           </td>
         </tr>
       <% end %>

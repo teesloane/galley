@@ -14,20 +14,14 @@
       src={Routes.static_path(@conn, "/assets/app.js")}
     >
     </script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js">
+    </script>
   </head>
   <body class="min-h-screen flex flex-col bg-white dark:bg-neutral-800">
     <header class="bg-blue-500 py-2 px-4 text-white text-sm">
       <nav class="flex">
         <div class="flex flex-1">Galley</div>
-        <ul class="flex flex-col md:flex-row">
-          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-            <li class="pr-2">
-              <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
-            </li>
-          <% end %>
-          <%= render("_topbar.html", assigns) %>
-        </ul>
+        <%= render("_topbar.html", assigns) %>
       </nav>
     </header>
     <div class="flex flex-1 flex-col"><%= @inner_content %></div>
