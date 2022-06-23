@@ -40,7 +40,7 @@
   </div>
 
   <section class="my-8 flex flex-col sm:flex-row">
-    <div class="ingredients p-4 pl-0 w-full md:w-2/4 lg:w-1/4">
+    <div class="ingredients p-4 pl-0 w-full md:w-2/4 lg:w-2/5">
       <h3 class="heading-with-lines md:mt-0 md:mb-16"><span>Ingredients</span></h3>
       <div class="border dark:border-neutral-900">
         <%= for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
@@ -64,11 +64,17 @@
       </div>
     </div>
 
-    <div class="instructions p-4 lg:px-16 pr-0 w-full md:w-2/4 lg:w-3/4">
+    <div class="instructions p-4  pr-0 w-full md:w-2/4 lg:w-3/5">
       <h3 class="heading-with-lines md:mt-0 md:mb-16"><span>Instructions</span></h3>
+    <div x-data="{selected: 0}">
       <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
-        <p class="break-words p-2 mb-4"><%= index + 1 %>. <%= item.instruction %></p>
+        <div :class={"selected == '#{index}' ? 'border-blue-500 border-l-2' : 'border-transparent border-l-2'"}>
+        <p
+          x-on:click={"selected = '#{index}'"}
+          class="cursor-pointer break-words p-1  mb-6 pl-4"><%= index + 1 %>. <%= item.instruction %></p>
+          </div>
       <% end %>
+  </div>
     </div>
   </section>
 
