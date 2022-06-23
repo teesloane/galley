@@ -1,6 +1,22 @@
 <header class="fixed top-0 left-0 w-full flex bg-blue-500 py-2 px-4 text-white text-sm h-10 items-center">
   <div class="flex items-center">Galley</div>
   <aside class="flex flex-1 items-end items-center justify-end" x-data="{open: false}">
+    <!-- Desktop menu -->
+    <ul class="hidden md:flex flex-row w-full justify-end ">
+      <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+        <li class="pr-4">
+          <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
+        </li>
+      <% end %>
+      <%= for l <- topbar_links(@conn, @current_user) do %>
+        <%= if l.condition do %>
+          <li class="pr-4">
+              <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+
     <button
       x-on:click="open = !open"
       x-text="open ? 'Close Menu' : 'Menu'"
@@ -8,16 +24,17 @@
     >
       Menu
     </button>
-    <ul :class="open ? 'mobile-menu' : 'desktop-menu'">
-      <div class="w-full md:w-auto divide-y md:flex md:divide-y-0">
+
+    <ul class="mobile-menu">
+      <div class="w-full md:hidden divide-y md:flex md:divide-y-0" x-show="open">
         <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-          <li :class="open ? 'mobile-menu-item' : 'pr-2'">
+          <li class="mobile-menu-item">
             <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
           </li>
         <% end %>
         <%= for l <- topbar_links(@conn, @current_user) do %>
           <%= if l.condition do %>
-            <li :class="open ? 'mobile-menu-item' : ''">
+            <li class="mobile-menu-item">
               <div class="px-2">
                 <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
               </div>

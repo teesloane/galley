@@ -211,9 +211,9 @@
       <h2 class="heading">Upload images</h2>
 
       <p>
-        Add some images of your process or the final result! You can upload up to four images.
+        Upload up to 4 images. Clicking an image below will set it as the display picture for this recipe.
       </p>
-      <p>Click an image below to set it as the display picture for this recipe.</p>
+      <p></p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>

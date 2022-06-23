@@ -1,18 +1,28 @@
-/* This file is for your main application CSS */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import './phoenix';
 
 @layer components {
   input,select,textarea {
     @apply border border-neutral-300 rounded-sm mb-2 p-0 p-1 outline-0 dark:bg-neutral-700 dark:border-neutral-700 dark:text-white text-sm border rounded mb-2 p-1 px-2;
   }
 
+  select {
+    padding: 10px;
+    padding-right: 30px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat, repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100%;
+  }
+
   label {
     @apply pb-2 text-sm;
-
   }
 
   input::placeholder {
@@ -89,18 +99,12 @@
     @apply hover:text-white hover:bg-blue-800 hover:bg-opacity-20 hover:border-neutral-100 hover:shadow;
   }
 
-
-  .desktop-menu {
-    @apply w-full flex-row mr-2 hidden md:flex justify-end;
-  }
-
   .mobile-menu {
-    @apply fixed top-0 left-0 w-full bg-white text-neutral-800 shadow-lg border-b-2 flex flex-col justify-center items-center mt-10 z-10;
-
+    @apply fixed top-0 left-0 w-full bg-white text-neutral-800 shadow-lg  flex flex-col justify-center items-center mt-10 z-10;
   }
 
   .mobile-menu-item {
-    @apply p-4 text-xl text-center;
+    @apply p-4 text-lg text-center;
   }
 
   .btn-icon {
@@ -110,16 +114,10 @@
   .select-time {
     @apply bg-white text-black p-2
   }
-
 }
 
 
-/* see views/error_helpers */
-.invalid-item {
-  border: 1px solid #F87171;
-
-}
-
+/* -- Phoenix ------------------------------------------------------------------ */
 
 /* Alerts and form errors used by phx.new */
 .alert {
@@ -145,6 +143,11 @@
   display: block;
   /* margin: 0rem 0 2rem; */
   font-size: 12px;
+}
+
+.invalid-item {
+  border: 1px solid #F87171;
+
 }
 
 /* LiveView specific classes for your customization */

@@ -8,7 +8,7 @@
     </h1>
     <div class="mb-4 text-neutral-700 dark:text-neutral-100">
       <%= for tag <- @recipe.tags do %>
-        #<%= tag.name %>
+        <span class="text-neutral-400">#<%= tag.name %></span>
       <% end %>
     </div>
   </div>
