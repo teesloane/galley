@@ -1,16 +1,15 @@
 <header class="fixed top-0 left-0 w-full flex bg-blue-500 py-2 px-4 text-white text-sm h-10 items-center">
-    <div class="flex items-center">Galley</div>
-    <aside class="flex flex-1 items-end items-center justify-end" x-data="{open: false}">
-      <button
-        x-on:click="open = !open"
-        x-text="open ? 'Close Menu' : 'Menu'"
-        class="btn-clear justify-end text-xs bg-transparent md:hidden cursor-pointer border-1 border-white rounded-sm"
-      >
-        Menu
-      </button>
-      <ul :class={"open ? 'mobile-menu' : 'desktop-menu'"}>
-        <div class="w-full md:w-auto divide-y md:flex md:divide-y-0">
-
+  <div class="flex items-center">Galley</div>
+  <aside class="flex flex-1 items-end items-center justify-end" x-data="{open: false}">
+    <button
+      x-on:click="open = !open"
+      x-text="open ? 'Close Menu' : 'Menu'"
+      class="btn-clear justify-end text-xs bg-transparent md:hidden cursor-pointer border-1 border-white rounded-sm"
+    >
+      Menu
+    </button>
+    <ul :class="open ? 'mobile-menu' : 'desktop-menu'">
+      <div class="w-full md:w-auto divide-y md:flex md:divide-y-0">
         <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
           <li :class="open ? 'mobile-menu-item' : 'pr-2'">
             <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
@@ -25,7 +24,7 @@
             </li>
           <% end %>
         <% end %>
-        </div>
-      </ul>
-    </aside>
+      </div>
+    </ul>
+  </aside>
 </header>
