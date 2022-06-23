@@ -60,7 +60,7 @@
   }
 
   .card {
-    @apply flex flex-col bg-white dark:bg-neutral-800 border drop-shadow-lg rounded p-4 border-neutral-200 dark:border-neutral-700;
+    @apply flex flex-col bg-white dark:bg-neutral-800 border drop-shadow-lg rounded p-4 border-neutral-200 dark:border-neutral-700 z-0;
   }
 
   .recipe-form-label {
@@ -87,13 +87,16 @@
     @apply bg-transparent transition ease-in-out;
     @apply text-neutral-100 border-neutral-50;
     @apply hover:text-white hover:bg-blue-800 hover:bg-opacity-20 hover:border-neutral-100 hover:shadow;
+  }
 
 
+  .desktop-menu {
+    @apply w-full flex-row mr-2 hidden md:flex justify-end;
   }
 
   .mobile-menu {
-    @apply absolute top-0 left-0 w-full bg-blue-900 text-white flex flex-col justify-center items-center mt-10;
-    z-index: 10;
+    @apply fixed top-0 left-0 w-full bg-white text-neutral-800 shadow-lg border-b-2 flex flex-col justify-center items-center mt-10 z-10;
+
   }
 
   .mobile-menu-item {
