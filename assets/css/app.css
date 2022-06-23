@@ -7,7 +7,7 @@
 
 @layer components {
   input,select,textarea {
-    @apply border border-slate-300 rounded-sm mb-2 p-0 p-1 outline-0 dark:bg-neutral-700 dark:border-neutral-700 dark:text-white text-sm border rounded mb-2 p-1 px-2;
+    @apply border border-neutral-300 rounded-sm mb-2 p-0 p-1 outline-0 dark:bg-neutral-700 dark:border-neutral-700 dark:text-white text-sm border rounded mb-2 p-1 px-2;
   }
 
   label {
@@ -76,13 +76,32 @@
     @apply bg-red-500 hover:bg-red-600 active:bg-red-700;
   }
 
+  .btn-white {
+    @apply btn;
+    @apply bg-white text-neutral-500 hover:bg-gray-50 border border-neutral-300 hover:border-neutral-400 hover:shadow-sm active:bg-gray-100 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:active:bg-neutral-800 dark:text-white;
+  }
+
   .btn-clear {
     @apply btn;
-    @apply bg-white text-slate-500 hover:bg-gray-50 border border-slate-300 hover:border-slate-400 hover:shadow-sm active:bg-gray-100 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:active:bg-neutral-800 dark:text-white;
+    @apply btn-white;
+    @apply bg-transparent transition ease-in-out;
+    @apply text-neutral-100 border-neutral-50;
+    @apply hover:text-white hover:bg-blue-800 hover:bg-opacity-20 hover:border-neutral-100 hover:shadow;
+
+
+  }
+
+  .mobile-menu {
+    @apply absolute top-0 left-0 w-full bg-blue-900 text-white flex flex-col justify-center items-center mt-10;
+    z-index: 10;
+  }
+
+  .mobile-menu-item {
+    @apply p-4 text-xl text-center;
   }
 
   .btn-icon {
-    @apply btn-clear w-10 flex justify-center opacity-50 hover:opacity-100;
+    @apply btn-white w-10 flex justify-center opacity-50 hover:opacity-100;
   }
 
   .select-time {
@@ -101,7 +120,7 @@
 
 /* Alerts and form errors used by phx.new */
 .alert {
-  @apply p-2 fixed bottom-0 right-0 m-4 text-sm border shadow-sm cursor-pointer rounded-sm text-slate-800;
+  @apply p-2 fixed bottom-0 right-0 m-4 text-sm border shadow-sm cursor-pointer rounded-sm text-neutral-800;
 }
 .alert-info {
   @apply alert bg-green-100 border-green-400;

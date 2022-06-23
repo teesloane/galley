@@ -15,10 +15,10 @@
         </div>
         <div>
           <span class="font-bold pr-8">Actions:</span>
-          <button class="btn-clear p-2 mr-2" phx-click="promote_user">promote user</button>
-          <button class="btn-clear p-2 mr-2" phx-click="demote_user">demote user</button>
-          <button class="btn-clear p-2 mr-2" phx-click="ban_user">ban user</button>
-          <button class="btn-clear p-2 mr-2" phx-click="unban_user">unban user</button>
+          <button class="btn-white p-2 mr-2" phx-click="promote_user">promote user</button>
+          <button class="btn-white p-2 mr-2" phx-click="demote_user">demote user</button>
+          <button class="btn-white p-2 mr-2" phx-click="ban_user">ban user</button>
+          <button class="btn-white p-2 mr-2" phx-click="unban_user">unban user</button>
         </div>
       </div>
     </.modal>
@@ -44,7 +44,7 @@
           <td class="p-2">
             <%= link("...",
               to: Routes.admin_users_path(@socket, :edit, user.id),
-              class: "btn-clear"
+              class: "btn-white"
             ) %>
           </td>
         </tr>

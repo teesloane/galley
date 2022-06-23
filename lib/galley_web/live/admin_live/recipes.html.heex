@@ -9,8 +9,8 @@
         <h1 class="heading pb-2 mb-4 border-b-2"><%= @recipe.title %></h1>
         <div>
           <span class="font-bold pr-8">Actions:</span>
-          <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">hide recipe</button>
-          <button class="btn-clear p-2 mr-2" phx-click="hide_recipe">
+          <button class="btn-white p-2 mr-2" phx-click="hide_recipe">hide recipe</button>
+          <button class="btn-white p-2 mr-2" phx-click="hide_recipe">
             <%= live_redirect to: Routes.recipe_upsert_path(@socket, :edit, @recipe) do %>
               edit recipe
             <% end %>
@@ -34,7 +34,7 @@
           <td class="p-2">
             <%= link("...",
               to: Routes.admin_recipes_path(@socket, :edit, recipe.id),
-              class: "btn-clear"
+              class: "btn-white"
             ) %>
           </td>
         </tr>

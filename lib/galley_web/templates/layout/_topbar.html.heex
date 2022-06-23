@@ -1,18 +1,25 @@
-<aside class="">
-  <ul class="flex flex-row mr-2">
+<aside class="" x-data="{open: false}">
+  <button
+    x-on:click="open = !open"
+    x-text="open ? 'Close Menu' : 'Menu'"
+    class="btn-clear text-xs bg-transparent md:hidden cursor-pointer border-1 border-white rounded-sm"
+  >
+    Menu
+  </button>
+  <ul :class={"open ? 'mobile-menu' : 'flex-row mr-2 hidden md:flex'"}>
     <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-      <li class="pr-2">
+      <li :class="open ? 'mobile-menu-item' : 'pr-2'">
         <%= link("Debug Dashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
       </li>
     <% end %>
     <%= for l <- topbar_links(@conn, @current_user) do %>
-      <li class="">
         <%= if l.condition do %>
+      <li :class="open ? 'mobile-menu-item' : ''">
           <div class="px-2">
             <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
           </div>
-        <% end %>
       </li>
+        <% end %>
     <% end %>
   </ul>
 </aside>
