@@ -80,6 +80,16 @@ defmodule Galley.Accounts do
     |> Repo.insert()
   end
 
+  def delete_user(email) do
+    u = get_user_by_email(email)
+
+    if u do
+      Repo.delete!(u)
+    else
+      nil
+    end
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 

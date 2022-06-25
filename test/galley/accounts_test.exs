@@ -48,6 +48,22 @@ defmodule Galley.AccountsTest do
     end
   end
 
+  describe "delete_user" do
+    test "returns nil if user doesn't exist" do
+      u = Accounts.get_user_by_email("nonaccount@noaccount.com")
+      assert u === nil
+    end
+
+    test "user can't be found after deleting" do
+      u = user_fixture()
+      u2 = Accounts.get_user_by_email(u.email)
+      assert u !== nil
+      Accounts.delete_user(u2.email)
+      u3 = Accounts.get_user_by_email(u.email)
+      assert u3 === nil
+    end
+  end
+
   describe "register_user/1" do
     test "requires email and password to be set" do
       {:error, changeset} = Accounts.register_user(%{})
