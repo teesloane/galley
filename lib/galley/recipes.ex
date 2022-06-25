@@ -28,17 +28,33 @@ defmodule Galley.Recipes do
   Determine the query we are going to make.
   """
   def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => tags}, user_id) do
-    s_conditions =
+    search_conditions =
       if search_query !== "",
         do: dynamic([r], like(r.title, ^"%#{search_query}%")),
         else: true
 
-    f_conditions =
-      if filter === "My Recipes",
-        do: dynamic([r], r.user_id == ^user_id),
-        else: true
+    filter_conditions =
+      case filter do
+        "My Recipes" ->
+          dynamic([r], r.user_id == ^user_id)
 
-    and_condition = dynamic([s], ^s_conditions and ^f_conditions)
+        "Under an hour" ->
+          dynamic(
+            [r],
+            fragment(~s|time->'hour' = '1' and time->'minute' = '0' or time->'hour' < '1'|)
+          )
+
+        "Under 30 minutes" ->
+          dynamic(
+            [r],
+            fragment(~s|time->'hour' < '1' and time->'minute' < '30'|)
+          )
+
+        _ ->
+          true
+      end
+
+    and_condition = dynamic([s], ^search_conditions and ^filter_conditions)
 
     if String.length(tags) === 0 do
       from(r in Recipe) |> where([s], ^and_condition) |> Repo.all()
