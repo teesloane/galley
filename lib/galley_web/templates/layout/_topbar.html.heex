@@ -25,7 +25,7 @@
       Menu
     </button>
 
-    <ul class="mobile-menu">
+    <ul class="mobile-menu" x-cloak>
       <div class="w-full md:hidden divide-y md:flex md:divide-y-0" x-show="open">
         <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
           <li class="mobile-menu-item">
