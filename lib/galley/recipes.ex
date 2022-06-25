@@ -50,6 +50,9 @@ defmodule Galley.Recipes do
             fragment(~s|time->'hour' < '1' and time->'minute' < '30'|)
           )
 
+        "Recently posted" ->
+          dynamic([r], r.inserted_at > ago(2, "week"))
+
         _ ->
           true
       end

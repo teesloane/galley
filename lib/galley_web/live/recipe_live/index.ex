@@ -3,7 +3,7 @@ defmodule GalleyWeb.RecipeLive.Index do
 
   alias Galley.Recipes
 
-  @recipe_filters ["All", "My Recipes", "Under an hour", "Under 30 minutes"]
+  @recipe_filters ["All", "My Recipes", "Under an hour", "Under 30 minutes", "Recently posted"]
 
   @impl true
   def mount(_params, _session, socket) do
@@ -34,20 +34,22 @@ defmodule GalleyWeb.RecipeLive.Index do
 
     tagged =
       if search["tags"] !== "" do
-        x = search["tags"] |> String.split(",") |> Enum.join("  ")
-
-        "tagged with: #{x}"
+        "tagged with: #{search["tags"]}"
       end
 
     page_heading = fn ->
       l = recipes |> length
 
-      case search["filter"] do
-        "My Recipes" -> "Your recipes (#{l}) #{tagged}"
-        "Under an hour" -> "Recipes under an hour (#{l})"
-        "Under 30 minutes" -> "Recipes under 30 minutes (#{l})"
-        _ -> "Recipes"
-      end
+      res =
+        case search["filter"] do
+          "My Recipes" -> "Your recipes"
+          "Under an hour" -> "Recipes under an hour"
+          "Under 30 minutes" -> "Recipes under 30 minutes"
+          "Recently posted" -> "Recipes posted in the last 2 weeks"
+          _ -> "Recipes"
+        end
+
+      res = "#{res} #{tagged} (#{l})"
     end
 
     socket =
