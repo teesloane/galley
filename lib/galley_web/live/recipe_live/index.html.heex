@@ -5,16 +5,19 @@
     <%= text_input(:search, :query,
       placeholder: "Search recipes by name...",
       "phx-debounce": "300",
-      class: "w-3/5 md:mr-4 py-2 px-4",
+      class: "w-full md:w-3/5 md:mr-4",
       value: @search_query
     ) %>
     <%= text_input(:search, :tags,
       placeholder: "Search by tags (ex: 'spicey, breakfast, ...')",
       "phx-debounce": "200",
-      class: "w-2/5 md:mr-4 px-4",
+      class: "w-full md:w-2/5 md:mr-4",
       value: @search_tags
     ) %>
-    <%= select(:search, :filter, get_recipe_filters(), class: "w-1/5", selected: @search_filter) %>
+    <%= select(:search, :filter, get_recipe_filters(),
+      class: "w-full md:w-1/5",
+      selected: @search_filter
+    ) %>
   </form>
   <!-- Cards -->
   <%= if @recipes !== [] do %>

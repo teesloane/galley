@@ -46,7 +46,7 @@
   }
 
   select {
-    padding: 5.5px !important;
+    padding: 4px !important;
     @apply bg-white dark:bg-neutral-700;
   }
 

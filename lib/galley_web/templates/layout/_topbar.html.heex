@@ -11,7 +11,7 @@
       <%= for l <- topbar_links(@conn, @current_user) do %>
         <%= if l.condition do %>
           <li class="pr-4">
-              <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
+            <%= link(l.name, to: l.link, method: Map.get(l, :method, :get)) %>
           </li>
         <% end %>
       <% end %>
