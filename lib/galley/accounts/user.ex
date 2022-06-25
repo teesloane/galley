@@ -6,14 +6,14 @@ defmodule Galley.Accounts.User do
   @roles ~w(read-only admin contributor)
 
   schema "users" do
-    field :email, :string
-    field :username, :string
-    field :password, :string, virtual: true, redact: true
-    field :hashed_password, :string, redact: true
-    field :confirmed_at, :naive_datetime
-    field :banned, :boolean, default: false
-    field :roles, {:array, :string}, default: ["contributor"]
-    has_many :recipes, Galley.Recipes.Recipe
+    field(:email, :string)
+    field(:username, :string)
+    field(:password, :string, virtual: true, redact: true)
+    field(:hashed_password, :string, redact: true)
+    field(:confirmed_at, :naive_datetime)
+    field(:banned, :boolean, default: false)
+    field(:roles, {:array, :string}, default: ["contributor"])
+    has_many(:recipes, Galley.Recipes.Recipe)
 
     timestamps()
   end
@@ -51,8 +51,8 @@ defmodule Galley.Accounts.User do
     |> validate_change(:roles, fn :roles, roles ->
       if MapSet.subset?(roles |> MapSet.new(), @roles |> MapSet.new()) do
         []
-        else
-          [roles: "invalid role found"]
+      else
+        [roles: "invalid role found"]
       end
     end)
   end

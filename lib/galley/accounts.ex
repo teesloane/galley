@@ -387,13 +387,13 @@ defmodule Galley.Accounts do
 
   def ban_user(user) do
     if user.banned == false || user.banned == nil do
-      user |> User.ban_changeset(%{banned: true}) |>  Repo.update!()
+      user |> User.ban_changeset(%{banned: true}) |> Repo.update!()
     end
   end
 
   def unban_user(user) do
     if user.banned == false || user.banned == nil do
-      user |> User.ban_changeset(%{banned: false}) |>  Repo.update!()
+      user |> User.ban_changeset(%{banned: false}) |> Repo.update!()
     end
   end
 end

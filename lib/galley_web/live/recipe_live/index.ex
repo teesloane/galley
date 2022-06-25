@@ -49,7 +49,7 @@ defmodule GalleyWeb.RecipeLive.Index do
           _ -> "Recipes"
         end
 
-      res = "#{res} #{tagged} (#{l})"
+      "#{res} #{tagged} (#{l})"
     end
 
     socket =
