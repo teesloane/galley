@@ -69,7 +69,7 @@ defmodule Galley.Recipes.Recipe do
     ingredient
     |> Map.put(:temp_id, ingredient.temp_id || attrs["temp_id"])
     |> cast(attrs, [:ingredient, :quantity, :measurement, :prep])
-    |> validate_required([:ingredient, :quantity])
+    |> validate_required([:ingredient])
   end
 
   def step_changeset(step, attrs) do
