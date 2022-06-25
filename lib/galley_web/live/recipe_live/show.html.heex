@@ -83,7 +83,7 @@
     </div>
   </section>
 
-  <%= if length(@recipe.uploaded_images) > 0 do %>
+  <%= if length(@recipe.uploaded_images) > 1 do %>
     <h3 class="heading-with-lines"><span>Photos</span></h3>
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
       <%= for img <- get_other_images(@recipe.uploaded_images) do %>
