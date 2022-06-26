@@ -48,8 +48,8 @@ defmodule Galley.Application do
 
   def get_bucket() do
     cond do
-      GalleyUtils.is_dev?() -> "theiceshelf-galley-dev"
-      GalleyUtils.is_prod?() -> "theiceshelf-galley"
+      GalleyUtils.is_dev?() -> System.get_env("GALLEY_S3_BUCKET_DEV")
+      GalleyUtils.is_prod?() -> System.get_env("GALLEY_S3_BUCKET_PROD")
     end
   end
 end

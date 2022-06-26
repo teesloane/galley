@@ -15,6 +15,8 @@ processes = []
   PHX_HOST = "galley.fly.dev"
   PORT = "8080"
   DATABASE_PATH = "/data/galleydata_prod.db"
+  GALLEY_S3_BUCKET_DEV = "theiceshelf-galley-dev"
+  GALLEY_S3_BUCKET_PROD = "theiceshelf-galley"
 
 [mounts]
 source = "galley_data"
