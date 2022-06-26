@@ -22,6 +22,7 @@ defmodule Galley.Recipes do
   def list_recipes do
     Repo.all(Recipe)
     |> Repo.preload(:user)
+    |> Repo.preload(:tags)
   end
 
   @doc """

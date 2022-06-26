@@ -25,14 +25,29 @@
       <%= for recipe <- @recipes do %>
         <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
           <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
-            <%= if length(recipe.uploaded_images) > 0 do %>
-              <img
-                src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images).url_thumb}
-                class="h-48 object-cover"
-              />
-            <% else %>
-              <div class="h-48 object-cover" />
-            <% end %>
+            <div class="flex w-full relative">
+              <%= if length(recipe.uploaded_images) > 0 do %>
+                <img
+                  src={GalleyWeb.RecipeLive.Show.get_hero_img(recipe.uploaded_images).url_thumb}
+                  class="h-48 object-cover w-full"
+                />
+              <% else %>
+                <div class="h-48 object-cover w-full" />
+              <% end %>
+              <div class="text-white text-opacity-0 hover:text-opacity-80 absolute top-0 left-0 flex flex-col justify-center items-center w-full hover:bg-neutral-900 bg-opacity-0 hover:bg-opacity-80 h-full">
+                <div>
+                  Time: <%= recipe.time.hour %>:<%= GalleyUtils.pad_digit(recipe.time.minute) %>
+                </div>
+                <div> <%=  recipe.ingredients |> length %> Ingredients</div>
+
+                <div>
+                  <%= for tag <- recipe.tags do %>
+                    <span>#<%= tag.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
             <div class="flex justify-between align-center">
               <div class="font-bold p-2"><%= recipe.title %></div>
             </div>
