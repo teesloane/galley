@@ -47,7 +47,7 @@ defmodule Galley.Recipes do
         "Under 30 minutes" ->
           dynamic(
             [r],
-            fragment(~s|time->'hour' < '1' and time->'minute' < '30'|)
+            fragment(~s|time->'hour' < '1' and time->'minute' <= '30'|)
           )
 
         "Recently posted" ->
