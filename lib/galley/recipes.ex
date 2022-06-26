@@ -61,7 +61,7 @@ defmodule Galley.Recipes do
     and_condition = dynamic([s], ^search_conditions and ^filter_conditions)
 
     if String.length(tags) === 0 do
-      from(r in Recipe) |> where([s], ^and_condition) |> Repo.all()
+      from(r in Recipe) |> where([s], ^and_condition) |> Repo.all() |> Repo.preload(:tags)
     else
       split_tags =
         for tag <- String.split(tags, ","),
@@ -75,6 +75,7 @@ defmodule Galley.Recipes do
       |> where([s], ^and_condition)
       |> where([r], r.id in ^tagged_recipe_ids)
       |> Repo.all()
+      |> Repo.preload(:tags)
     end
   end
 
