@@ -27,7 +27,7 @@ ingredients you have etc.
 
 ## Screenshots
 
-![](./docs/screenshots/screen_index.png)
+![](./docs/screenshots/screen_index.jpg)
 
-![](./docs/screenshots/screen_show.png)
+![](./docs/screenshots/screen_show.jpg)
 
