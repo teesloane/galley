@@ -1,7 +1,7 @@
 <div class="page_wrapper pb-24 lg:w-3/5">
   <h2 class="heading"><%= @title %></h2>
   <.form
-    let={f}
+    let={form_state}
     for={@changeset}
     id="recipe-form"
     class="flex flex-col"
@@ -12,45 +12,45 @@
     <div class="flex flex-col md:flex-row">
       <div class="flex flex-col w-full md:w-1/2 md:pr-3">
         <span class="flex items-center pb-1 justify-between">
-          <%= label(f, :title, class: "recipe-form-label") %>
-          <%= error_tag(f, :title) %>
+          <%= label(form_state, :title, class: "recipe-form-label") %>
+          <%= error_tag(form_state, :title) %>
         </span>
-        <%= text_input(f, :title) %>
+        <%= text_input(form_state, :title) %>
       </div>
 
       <div class="flex flex-col w-full md:w-1/2 ">
         <span class="flex items-center justify-between pb-1">
-          <%= label(f, :source, "Source", class: "recipe-form-label") %>
-          <%= error_tag(f, :source) %>
+          <%= label(form_state, :source, "Source", class: "recipe-form-label") %>
+          <%= error_tag(form_state, :source) %>
         </span>
-        <%= text_input(f, :source, placeholder: "Link to recipe (optional)") %>
+        <%= text_input(form_state, :source, placeholder: "Link to recipe (optional)") %>
       </div>
     </div>
     <div class="flex flex-col md:flex-row">
       <div class="flex flex-col w-full md:w-1/2 md:pr-3">
         <span class="flex items-center justify-between pb-1">
-          <%= label(f, :tags, class: "recipe-form-label") %>
-          <%= error_tag(f, :tags) %>
+          <%= label(form_state, :tags, class: "recipe-form-label") %>
+          <%= error_tag(form_state, :tags) %>
         </span>
-        <%= tag_input(f, :tags, placeholder: "ex: spicy, bbq, mealprep") %>
+        <%= tag_input(form_state, :tags, placeholder: "ex: spicy, bbq, mealprep") %>
       </div>
 
       <div class="flex flex-col w-full md:w-1/4 md:pr-3">
         <span class="flex items-center justify-between pb-1">
-          <%= label(f, :yields, class: "recipe-form-label") %>
-          <%= error_tag(f, :yields) %>
+          <%= label(form_state, :yields, class: "recipe-form-label") %>
+          <%= error_tag(form_state, :yields) %>
         </span>
-        <%= text_input(f, :yields, placeholder: "ex: 2 Servings; 12 Muffins") %>
+        <%= text_input(form_state, :yields, placeholder: "ex: 2 Servings; 12 Muffins") %>
       </div>
 
       <div class="flex flex-col w-full md:w-1/4">
         <span class="flex items-center justify-between pb-1">
-          <%= label(f, :time, "Total time (hh:mm)", class: "recipe-form-label") %>
-          <%= error_tag(f, :time) %>
+          <%= label(form_state, :time, "Total time (hh:mm)", class: "recipe-form-label") %>
+          <%= error_tag(form_state, :time) %>
         </span>
 
         <div class="flex">
-          <%= inputs_for f, :time, fn fp -> %>
+          <%= inputs_for form_state, :time, fn fp -> %>
             <%= select(fp, :hour, 0..12, class: "w-full mr-2 py-1") %>
             <span class="self-center dark:text-gray-100 -mt-2">:</span>
             <%= select(fp, :minute, 0..59, class: "w-full ml-2 py-1") %>
@@ -85,7 +85,7 @@
             <br />
           </td>
         </tr>
-        <%= inputs_for f, :ingredients, fn fp -> %>
+        <%= inputs_for form_state, :ingredients, fn fp -> %>
           <div class="text-white"></div>
           <tr class="mt-2">
             <td><%= text_input(fp, :quantity, class: "w-16 md:w-32 mr-2") %></td>
@@ -146,7 +146,7 @@
           </td>
         </tr>
 
-        <%= inputs_for f, :steps, fn fp -> %>
+        <%= inputs_for form_state, :steps, fn fp -> %>
           <tr class="mt-2 items-center">
             <td>
               <%= textarea(fp, :instruction,
@@ -206,7 +206,9 @@
     </section>
 
     <hr class="my-16" />
-    <!-- Section: uploaded images ---------------------------------------------->
+
+    <%# Section: Uploaded images ---------------------------------------------- %>
+
     <section>
       <h2 class="heading">Upload images</h2>
 
@@ -217,17 +219,103 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
+
+          <%# -- New Uploads -- %>
+          
           <%= if uploadType(entry) == :new_upload do %>
-            <.render_to_be_uploaded entry={entry} f={f} uploads={@uploads} myself={@myself} />
+            <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+              <%= label do %>
+                <%= live_img_preview(entry,
+                  class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover"
+                ) %>
+                <%= radio_button(form_state, :hero_image, entry.ref,
+                  class: "peer sr-only",
+                  value: entry.ref
+                ) %>
+                <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
+                <progress class="flex h-2 text-white w-full" value={entry.progress} max="100">
+                  <%= entry.progress %>%
+                </progress>
+              <% end %>
+
+              <button
+                class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+                phx-click="cancel-upload"
+                type="button"
+                style="margin: 4px"
+                phx-value-ref={entry.ref}
+                aria-label="cancel"
+                phx-target={@myself}
+              >
+                &times;
+              </button>
+
+              <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
+                <p class="alert alert-danger"><%= error_to_string(err) %></p>
+              <% end %>
+            </article>
           <% end %>
 
+          <%# -- Existing Uploads -- %>
+
           <%= if uploadType(entry) == :existing_upload do %>
-            <.render_already_uploaded entry={entry} ref={i} f={f} myself={@myself} />
+            <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+              <%= label do %>
+                <img src={entry.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
+                <%= radio_button(form_state, :hero_image, i, class: "peer sr-only", value: i) %>
+                <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
+              <% end %>
+
+              <button
+                class="absolute top-0 right-0 bg-black text-white py-1 px-3"
+                phx-click="remove-persisted-upload"
+                phx-value-remove={entry.id}
+                type="button"
+                style="margin: 4px"
+                phx-target={@myself}
+              >
+                &times;
+              </button>
+            </article>
           <% end %>
         <% end %>
 
+        <%# File Upload Area --------------------------------------------------- %>
+
         <div class={if length(get_uploads(@uploads, @recipe)) == 4, do: "hidden"}>
-          <.render_file_upload uploads={@uploads} />
+          <section phx-drop-target={@uploads.recipe_img.ref} class="">
+            <div class="">
+              <div class="sm:h-48 sm:w-48 flex flex-col justify-center rounded-sm bg-gray-50 border border-neutral-200">
+                <div class="m-4">
+                  <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col w-full  justify-center  border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                      <div class="flex flex-col items-center justify-center pt-7">
+                        <!-- upload icon -->
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                          />
+                        </svg>
+                        <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                          Attach a file
+                        </p>
+                      </div>
+                      <%= live_file_input(@uploads.recipe_img, class: "opacity-0") %>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -240,7 +328,7 @@
     <section class="pb-8">
       <h2 class="heading">Additional notes</h2>
 
-      <%= textarea(f, :notes,
+      <%= textarea(form_state, :notes,
         id: "recipe-notes",
         rows: 8,
         phx_debounce: "2000",

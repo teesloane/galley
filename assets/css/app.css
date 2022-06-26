@@ -121,7 +121,7 @@
 
 /* Alerts and form errors used by phx.new */
 .alert {
-  @apply p-2 fixed bottom-0 right-0 m-4 text-sm border shadow-sm cursor-pointer rounded-sm text-neutral-800;
+  @apply z-10 p-2 fixed bottom-0 right-0 m-4 text-sm border shadow-sm cursor-pointer rounded-sm text-neutral-800;
 }
 .alert-info {
   @apply alert bg-green-100 border-green-400;

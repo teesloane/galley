@@ -38,14 +38,14 @@
                 <div>
                   Time: <%= recipe.time.hour %>:<%= GalleyUtils.pad_digit(recipe.time.minute) %>
                 </div>
-                <div> <%=  recipe.ingredients |> length %> Ingredients</div>
+                <div><%= recipe.ingredients |> length %> Ingredients</div>
 
                 <%= if is_list(recipe.tags) do %>
-                <div>
-                  <%= for tag <- recipe.tags do %>
-                    <span>#<%= tag.name %></span>
-                  <% end %>
-                </div>
+                  <div>
+                    <%= for tag <- recipe.tags do %>
+                      <span>#<%= tag.name %></span>
+                    <% end %>
+                  </div>
                 <% end %>
               </div>
             </div>

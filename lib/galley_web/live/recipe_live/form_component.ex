@@ -256,102 +256,11 @@ defmodule GalleyWeb.RecipeLive.FormComponent do
     uploads.recipe_img.entries ++ recipe.uploaded_images
   end
 
-  def render_file_upload(assigns) do
-    ~H"""
-    <section phx-drop-target={@uploads.recipe_img.ref} class="">
-      <div class="">
-        <div class="sm:h-48 sm:w-48 flex flex-col justify-center rounded-sm bg-gray-50 border border-neutral-200">
-          <div class="m-4">
-            <div class="flex items-center justify-center w-full">
-              <label class="flex flex-col w-full  justify-center  border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
-                <div class="flex flex-col items-center justify-center pt-7">
-                  <!-- upload icon -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                    Attach a file
-                  </p>
-                </div>
-                <%= live_file_input(@uploads.recipe_img, class: "opacity-0") %>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    """
-  end
-
-  @doc """
-  Renders icon of an image to be uploades, as well as the
-  ability to click on it and make it a "hero" image
-  """
-  def render_to_be_uploaded(assigns) do
-    ~H"""
-    <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
-      <%= label do %>
-        <%= live_img_preview(@entry, class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover") %>
-        <%= radio_button(@f, :hero_image, @entry.ref, class: "peer sr-only", value: @entry.ref) %>
-        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
-        <progress class="flex h-2 text-white w-full" value={@entry.progress} max="100">
-          <%= @entry.progress %>%
-        </progress>
-      <% end %>
-
-      <button
-        class="absolute top-0 right-0 bg-black text-white py-1 px-3"
-        phx-click="cancel-upload"
-        type="button"
-        style="margin: 4px"
-        phx-value-ref={@entry.ref}
-        aria-label="cancel"
-        phx-target={@myself}
-      >
-        &times;
-      </button>
-
-      <%= for err <- upload_errors(@uploads.recipe_img, @entry) do %>
-        <p class="alert alert-danger"><%= error_to_string(err) %></p>
-      <% end %>
-    </article>
-    """
-  end
-
   @doc """
   Render already uploaded images from the database.
   """
   def render_already_uploaded(assigns) do
     ~H"""
-    <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
-      <%= label do %>
-        <img src={@entry.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
-        <%= radio_button(@f, :hero_image, @ref, class: "peer sr-only", value: @ref) %>
-        <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
-      <% end %>
-
-      <button
-        class="absolute top-0 right-0 bg-black text-white py-1 px-3"
-        phx-click="remove-persisted-upload"
-        phx-value-remove={@entry.id}
-        type="button"
-        style="margin: 4px"
-        phx-target={@myself}
-      >
-        &times;
-      </button>
-    </article>
     """
   end
 
