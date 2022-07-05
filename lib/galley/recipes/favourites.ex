@@ -13,7 +13,5 @@ defmodule Galley.Recipes.Favourite do
     favourite
     |> cast(attrs, [:user_id, :recipe_id])
     |> validate_required([:user_id, :recipe_id])
-    |> unique_constraint(:recipe_id)
-
   end
 end
