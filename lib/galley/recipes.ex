@@ -8,7 +8,7 @@ defmodule Galley.Recipes do
   alias Ecto.Multi
   alias Mogrify
 
-  alias Galley.Recipes.{Recipe, Tag, Ingredient}
+  alias Galley.Recipes.{Recipe, Tag, Ingredient, Favourite}
 
   @doc """
   Returns the list of recipes.
@@ -158,6 +158,31 @@ defmodule Galley.Recipes do
     end
   end
 
+  @doc """
+  Adds a recipe to a user's favourites if it doesn't exist.
+  If it does exist, remove it from the user's favourites.
+  """
+  def favourite_recipe(attrs) do
+    %Favourite{}
+    |> Favourite.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def unfavourite_recipe(attrs) do
+    x =
+      %Favourite{recipe_id: attrs.recipe_id, user_id: attrs.user_id}
+      |> Repo.delete()
+  end
+
+  def is_favourite?(%{user_id: user_id, recipe_id: recipe_id}) do
+    query = from(f in Favourite, where: f.user_id == ^user_id and f.recipe_id == ^recipe_id)
+    Repo.all(query) |> Enum.count() > 0
+  end
+
+  @doc """
+  Remove recipes from user's favourites
+  """
+
   defp parse_tags(nil), do: []
 
   defp parse_tags(tags) do
@@ -244,7 +269,6 @@ defmodule Galley.Recipes do
   defp delete_image_on_s3(image) do
     bucket = Galley.Application.get_bucket()
     x = ExAws.S3.delete_object(bucket, image.key_s3) |> ExAws.request()
-    IO.inspect({x, image}, label: "[log - s3]: deleted image")
 
     y =
       ExAws.S3.delete_object(bucket, GalleyUtils.get_thumbnail(image.key_s3))

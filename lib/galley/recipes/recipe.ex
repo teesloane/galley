@@ -35,7 +35,8 @@ defmodule Galley.Recipes.Recipe do
       field(:temp_id, :string, virtual: true)
     end
 
-    many_to_many(:tags, Galley.Recipes.Tag, join_through: "recipes_tags", on_replace: :delete)
+    many_to_many(:tags, R.Tag, join_through: "recipes_tags", on_replace: :delete)
+    many_to_many(:favourites, R.Favourite, join_through: "favourite_recipes", on_replace: :delete)
 
     timestamps()
   end
