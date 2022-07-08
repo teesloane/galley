@@ -165,7 +165,7 @@ end
 defmodule GalleyWeb.UserLiveAuth do
   import Phoenix.LiveView
 
-  def on_mount(:default, params, session, socket) do
+  def on_mount(:default, _params, session, socket) do
     user_token = session["user_token"]
 
     socket =
@@ -180,5 +180,9 @@ defmodule GalleyWeb.UserLiveAuth do
       {:cont, socket}
       {:halt, redirect(socket, to: "/users/login")}
     end
+  end
+
+  def get_user_from_socket(socket) do
+    socket.assigns.current_user
   end
 end

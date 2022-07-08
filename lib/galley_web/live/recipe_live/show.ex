@@ -5,7 +5,7 @@ defmodule GalleyWeb.RecipeLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, %{is_favourite: false})}
   end
 
   @impl true
@@ -15,7 +15,33 @@ defmodule GalleyWeb.RecipeLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, "Galley - #{recipe.title}")
-     |> assign(:recipe, recipe)}
+     |> assign(:recipe, recipe)
+     |> assign(:is_favourite, Recipes.is_favourite?(get_favourite_attrs(socket, recipe)))}
+  end
+
+  @impl true
+  def handle_event("favourite-recipe", _params, socket) do
+    res = Recipes.favourite_recipe(get_favourite_attrs(socket))
+
+    case res do
+      {:ok, _fav} ->
+        {:noreply, socket |> assign(:is_favourite, true)}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("unfavourite-recipe", _params, socket) do
+    res = Recipes.unfavourite_recipe(get_favourite_attrs(socket))
+
+    case res do
+      {:ok, _fav} ->
+        {:noreply, socket |> assign(:is_favourite, false)}
+
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   def get_hero_img(recipe_images) do
@@ -33,5 +59,23 @@ defmodule GalleyWeb.RecipeLive.Show do
     else
       filtered
     end
+  end
+
+  defp get_favourite_attrs(socket) do
+    user = get_user_from_socket(socket)
+
+    %{
+      user_id: user.id,
+      recipe_id: socket.assigns.recipe.id
+    }
+  end
+
+  defp get_favourite_attrs(socket, recipe) do
+    user = get_user_from_socket(socket)
+
+    %{
+      user_id: user.id,
+      recipe_id: recipe.id
+    }
   end
 end

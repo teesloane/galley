@@ -1,12 +1,12 @@
 defmodule GalleyWeb.AdminLive.Recipes do
   use GalleyWeb, :live_view
 
-
   @impl true
   def mount(_params, _session, socket) do
     state = %{
-      recipes: Galley.Recipes.list_recipes(),
+      recipes: Galley.Recipes.list_recipes()
     }
+
     {:ok, assign(socket, state)}
   end
 
@@ -20,7 +20,7 @@ defmodule GalleyWeb.AdminLive.Recipes do
     |> assign(:recipe, Galley.Recipes.get_recipe!(id))
   end
 
-  defp apply_action(socket, :show, params) do
+  defp apply_action(socket, :show, _params) do
     socket
     |> assign(:recipes, Galley.Recipes.list_recipes())
   end

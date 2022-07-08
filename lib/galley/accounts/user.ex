@@ -14,6 +14,7 @@ defmodule Galley.Accounts.User do
     field(:banned, :boolean, default: false)
     field(:roles, {:array, :string}, default: ["contributor"])
     has_many(:recipes, Galley.Recipes.Recipe)
+    has_many(:favourite_recipes, Galley.Recipes.Favourite)
 
     timestamps()
   end
