@@ -137,10 +137,12 @@ defmodule Galley.Recipes do
 
     case multi_result do
       {:ok, %{recipe: recipe}} ->
-        if async_upload do
-          Task.start(fn -> compress_and_upload_s3(recipe) end)
-        else
-          compress_and_upload_s3(recipe)
+        unless GalleyUtils.is_test?() do
+          if async_upload do
+            Task.start(fn -> compress_and_upload_s3(recipe) end)
+          else
+            compress_and_upload_s3(recipe)
+          end
         end
 
         {:ok, recipe}

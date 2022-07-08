@@ -20,7 +20,8 @@ ingredients you have etc.
 * Create and migrate your database with `mix ecto.setup`
 * Fill your .env.dev variables (see `env.example`) for a template.
   * our shell implies using fish shell.
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+* Start Phoenix endpoint with `source env.dev; mix phx.server` 
+  - or inside IEx with `source env.dev; iex -S mix phx.server`
 * You can migrate recipes from [Aris Garden](https://github.com/theiceshelf/arisgarden) by runnimg `mix db.migrate_aris` if you want test data
 * Visit [`localhost:4000`](http://localhost:4000) from your browser.
   

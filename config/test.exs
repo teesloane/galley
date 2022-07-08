@@ -21,6 +21,8 @@ config :galley, GalleyWeb.Endpoint,
   secret_key_base: "cx/KS59WcXepSc9Hw5Sol2vWiKY9FPcGSobiIOqXic5xncVB3g/8ygcDOlQQ2Hdf",
   server: false
 
+config :galley, env: config_env()
+
 # In test we don't send emails.
 config :galley, Galley.Mailer, adapter: Swoosh.Adapters.Test
 
