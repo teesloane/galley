@@ -41,3 +41,5 @@ npm-debug.log
 
 .env.*
 !.env.example
+
+prod_db_backups/
