@@ -121,7 +121,7 @@ defmodule Galley.Recipes do
     |> Repo.preload(:tags)
   end
 
-  def insert_recipe(user, attrs \\ %{}, opts \\ []) do
+  def insert_recipe(attrs \\ %{}, user, opts \\ []) do
     async_upload = Keyword.get(opts, :async_upload, true)
 
     multi_result =

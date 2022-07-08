@@ -13,11 +13,11 @@ defmodule Galley.Recipes.MigrateAris do
 
     for {slug, recipe_data} <- json["recipes"],
         recipe = ari_to_galley(slug, recipe_data),
-        do: insert_recipe(me, recipe, sleep)
+        do: insert_recipe(recipe, me, sleep)
   end
 
-  defp insert_recipe(me, recipe, sleep) do
-    case Galley.Recipes.insert_recipe(me, recipe, async_upload: false, timer: sleep) do
+  defp insert_recipe(recipe, me, sleep) do
+    case Galley.Recipes.insert_recipe(recipe, me, async_upload: false, timer: sleep) do
       {:ok, recipe} ->
         {:noreply, recipe}
 

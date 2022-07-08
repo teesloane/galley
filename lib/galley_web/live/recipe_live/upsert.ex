@@ -288,7 +288,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   defp save_recipe(socket, :new, recipe_params) do
     recipe_params = handle_upload(socket, socket.assigns.live_action, recipe_params)
 
-    case Recipes.insert_recipe(socket.assigns.current_user, recipe_params) do
+    case Recipes.insert_recipe(recipe_params, socket.assigns.current_user) do
       {:ok, _recipe} ->
         {:noreply,
          socket
