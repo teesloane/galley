@@ -24,7 +24,7 @@ defmodule GalleyWeb.RecipeLive.Show do
     res = Recipes.favourite_recipe(get_favourite_attrs(socket))
 
     case res do
-      {:ok, fav} ->
+      {:ok, _fav} ->
         {:noreply, socket |> assign(:is_favourite, true)}
 
       _ ->
@@ -36,7 +36,7 @@ defmodule GalleyWeb.RecipeLive.Show do
     res = Recipes.unfavourite_recipe(get_favourite_attrs(socket))
 
     case res do
-      {:ok, fav} ->
+      {:ok, _fav} ->
         {:noreply, socket |> assign(:is_favourite, false)}
 
       _ ->

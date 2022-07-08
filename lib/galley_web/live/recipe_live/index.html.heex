@@ -1,7 +1,7 @@
 <div id="recipes" class="page_wrapper">
   <h2 class="heading"><%= @page_heading %></h2>
 
-  <form phx-change="search" class="flex-col md:flex-row flex mb-8">
+  <form phx-change="search-params" class="flex-col md:flex-row flex mb-8">
     <%= text_input(:search, :query,
       placeholder: "Search recipes by name...",
       "phx-debounce": "300",

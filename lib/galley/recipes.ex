@@ -28,55 +28,69 @@ defmodule Galley.Recipes do
   @doc """
   Determine the query we are going to make.
   """
-  def search_recipes(%{"filter" => filter, "query" => search_query, "tags" => tags}, user_id) do
-    search_conditions =
-      if search_query !== "",
-        do: dynamic([r], like(r.title, ^"%#{search_query}%")),
-        else: true
+  def search_recipes(params, user_id) do
+    from(r in Recipe)
+    |> filter_recipes(params, user_id)
+    |> Repo.all()
+    |> Repo.preload(:tags)
+  end
 
-    filter_conditions =
-      case filter do
-        "My Recipes" ->
-          dynamic([r], r.user_id == ^user_id)
+  defp filter_recipes(query, params, user_id) do
+    Enum.reduce(params, query, fn
+      {"tags", ""}, query ->
+        query
 
-        "Under an hour" ->
-          dynamic(
-            [r],
-            fragment(~s|time->'hour' = '1' and time->'minute' = '0' or time->'hour' < '1'|)
-          )
+      {"tags", val}, query ->
+        split_tags =
+          for tag <- String.split(val, ","),
+              tag = tag |> String.trim() |> String.downcase(),
+              tag != "",
+              do: tag
 
-        "Under 30 minutes" ->
-          dynamic(
-            [r],
-            fragment(~s|time->'hour' < '1' and time->'minute' <= '30'|)
-          )
+        # FIXME: This should be optional defp? esp if tagged_recipe_ids is []
+        tagged_recipe_ids = get_by_tags(split_tags)
 
-        "Recently posted" ->
-          dynamic([r], r.inserted_at > ago(2, "week"))
+        query |> where([r], r.id in ^tagged_recipe_ids)
 
-        _ ->
-          true
-      end
+      {"query", ""}, query ->
+        query
 
-    and_condition = dynamic([s], ^search_conditions and ^filter_conditions)
+      {"query", val}, query ->
+        like = "%#{val}%"
+        query |> where([r], like(r.title, ^like))
 
-    if String.length(tags) === 0 do
-      from(r in Recipe) |> where([s], ^and_condition) |> Repo.all() |> Repo.preload(:tags)
-    else
-      split_tags =
-        for tag <- String.split(tags, ","),
-            tag = tag |> String.trim() |> String.downcase(),
-            tag != "",
-            do: tag
+      {"filter", "My Recipes"}, query ->
+        query |> where([r], r.user_id == ^user_id)
 
-      tagged_recipe_ids = get_by_tags(split_tags)
+      {"filter", "Under an hour"}, query ->
+        query
+        |> where(
+          [r],
+          fragment(~s|time->'hour' = '1' and time->'minute' = '0' or time->'hour' < '1'|)
+        )
 
-      from(r in Recipe)
-      |> where([s], ^and_condition)
-      |> where([r], r.id in ^tagged_recipe_ids)
-      |> Repo.all()
-      |> Repo.preload(:tags)
-    end
+      {"filter", "Under 30 minutes"}, query ->
+        query
+        |> where(
+          [r],
+          fragment(~s|time->'hour' < '1' and time->'minute' <= '30'|)
+        )
+
+      {"filter", "Recently posted"}, query ->
+        query |> where([r], r.inserted_at > ago(2, "week"))
+
+      {"filter", "My favourites"}, query ->
+        from(recipes in query,
+          left_join: fav in Favourite,
+          on: fav.recipe_id == recipes.id,
+          preload: [favourites: fav],
+          where: fav.user_id == ^user_id
+        )
+
+      {_, _}, query ->
+        # Not a where parameter
+        query
+    end)
   end
 
   @doc """
@@ -169,9 +183,8 @@ defmodule Galley.Recipes do
   end
 
   def unfavourite_recipe(attrs) do
-    x =
-      %Favourite{recipe_id: attrs.recipe_id, user_id: attrs.user_id}
-      |> Repo.delete()
+    %Favourite{recipe_id: attrs.recipe_id, user_id: attrs.user_id}
+    |> Repo.delete()
   end
 
   def is_favourite?(%{user_id: user_id, recipe_id: recipe_id}) do
@@ -268,13 +281,13 @@ defmodule Galley.Recipes do
   # delete the full image and thumbnail for a recipe.
   defp delete_image_on_s3(image) do
     bucket = Galley.Application.get_bucket()
-    x = ExAws.S3.delete_object(bucket, image.key_s3) |> ExAws.request()
+    _x = ExAws.S3.delete_object(bucket, image.key_s3) |> ExAws.request()
 
-    y =
+    _y =
       ExAws.S3.delete_object(bucket, GalleyUtils.get_thumbnail(image.key_s3))
       |> ExAws.request()
 
-    IO.inspect({y, image}, label: "[log - s3]: deleted image thumbnail")
+    # IO.inspect({y, image}, label: "[log - s3]: deleted image thumbnail")
   end
 
   def delete_all_images_on_s3() do
