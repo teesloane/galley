@@ -5,68 +5,46 @@ defmodule Galley.RecipesFixtures do
   """
 
   import Galley.AccountsFixtures
-  alias Galley.Recipes.Recipe
+  alias Galley.Recipes
 
   @valid_attrs %{
-    ingredients: [
-      %{
-        ingredient: "onion",
-        measurement: "lb",
-        prep: "minced",
-        quantity: "1",
-        temp_id: "gTHDl"
+    "ingredients" => %{
+      "0" => %{
+        "ingredient" => "onion",
+        "measurement" => "lb",
+        "prep" => "minced",
+        "quantity" => "1",
+        "temp_id" => "gTHDl"
       }
-    ],
-    notes: "",
-    source: "test",
-    steps: [
-      %{
-        instruction: "Cut the onions",
-        temp_id: "njwyI",
-        timer: %{hour: "0", minute: "0"}
+    },
+    "notes" => "",
+    "source" => "test",
+    "steps" => %{
+      "0" => %{
+        "instruction" => "Cut the onions",
+        "temp_id" => "njwyI",
+        "timer" => %{"hour" => "0", "minute" => "0"}
       }
-    ],
-    tags: "spicy",
-    time: %{hour: "1", minute: "0"},
-    title: "test",
-    uploaded_images: [],
-    yields: "12 muffins"
+    },
+    "tags" => "",
+    "time" => %{"hour" => "1", "minute" => "0"},
+    "title" => "Boring onion muffins",
+    "uploaded_images" => [],
+    "yields" => "12 muffins"
   }
 
   @doc """
   Generate a recipe.
   """
-  def recipe_fixture(attrs \\ %{}) do
-    user = user_fixture()
-
-    base = %{
-      "ingredients" => %{
-        "0" => %{
-          "ingredient" => "onion",
-          "measurement" => "lb",
-          "prep" => "minced",
-          "quantity" => "1",
-          "temp_id" => "gTHDl"
-        }
-      },
-      "notes" => "",
-      "source" => "test",
-      "steps" => %{
-        "0" => %{
-          "instruction" => "Cut the onions",
-          "temp_id" => "njwyI",
-          "timer" => %{"hour" => "0", "minute" => "0"}
-        }
-      },
-      "tags" => "spicy",
-      "time" => %{"hour" => "1", "minute" => "0"},
-      "title" => "test",
-      "uploaded_images" => [],
-      "yields" => "12 muffins"
-    }
-
-    new_attrs = Enum.into(base, attrs)
-    {:ok, recipe} = Galley.Recipes.insert_recipe(user, new_attrs)
+  def recipe_fixture(attrs \\ %{}, user \\ user_fixture()) do
+    {:ok, recipe} = Enum.into(attrs, @valid_attrs) |> Recipes.insert_recipe(user)
     recipe
   end
+
+  # def recipe_fixture(attrs \\ %{}) do
+  #   {:ok, recipe} = Enum.into(attrs, @valid_attrs) |> Recipes.insert_recipe(user_fixture())
+  #   recipe
+  # end
+
+  def valid_attrs, do: @valid_attrs
 end

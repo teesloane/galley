@@ -166,7 +166,10 @@ defmodule Galley.Recipes do
 
     case multi_result do
       {:ok, %{recipe: recipe}} ->
-        Task.start(fn -> compress_and_upload_s3(recipe) end)
+        unless GalleyUtils.is_test?() do
+          Task.start(fn -> compress_and_upload_s3(recipe) end)
+        end
+
         {:ok, recipe}
 
       {:error, :recipe, changeset, _} ->
@@ -177,6 +180,15 @@ defmodule Galley.Recipes do
   @doc """
   Adds a recipe to a user's favourites if it doesn't exist.
   If it does exist, remove it from the user's favourites.
+
+  ## Examples
+
+    iex> favourite_recipe(%{
+      user_id: user.id,
+      recipe_id: recipe.id
+    })
+
+    => [%Recipe{}, ...]
   """
   def favourite_recipe(attrs) do
     %Favourite{}
@@ -184,6 +196,9 @@ defmodule Galley.Recipes do
     |> Repo.insert()
   end
 
+  @doc """
+  Remove recipes from user's favourites
+  """
   def unfavourite_recipe(attrs) do
     %Favourite{recipe_id: attrs.recipe_id, user_id: attrs.user_id}
     |> Repo.delete()
@@ -193,10 +208,6 @@ defmodule Galley.Recipes do
     query = from(f in Favourite, where: f.user_id == ^user_id and f.recipe_id == ^recipe_id)
     Repo.all(query) |> Enum.count() > 0
   end
-
-  @doc """
-  Remove recipes from user's favourites
-  """
 
   defp parse_tags(nil), do: []
 
@@ -225,6 +236,7 @@ defmodule Galley.Recipes do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     # NOTE: the difference between Ingrdient here (Recipes.Ingredient) and
     # Recipe.Ingredient (which is generated automatically as an embedded_schema)
+
     ingrs =
       attrs["ingredients"]
       |> Map.values()
