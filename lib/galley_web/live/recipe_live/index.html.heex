@@ -51,7 +51,7 @@
             </div>
 
             <div class="flex justify-between align-center items-center">
-              <div class="font-bold p-2"><%= recipe.title %></div>
+              <div class="font-bold p-2 truncate"><%= recipe.title %></div>
               <%= if Enum.any?(recipe.favourites) do %>
                 <div class="pr-2">❤️</div>
               <% end %>

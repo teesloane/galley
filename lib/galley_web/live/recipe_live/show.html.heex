@@ -3,7 +3,7 @@
     <img src={get_hero_img(@recipe.uploaded_images).url} class="md:h-96 w-full mb-8 object-cover" />
   <% end %>
   <div class="flex flex-col md:flex-row justify-between md:items-end">
-    <h1 class="heading text-2xl  md:text-4xl font-light capitalize mt-8 md:mt-16 mb-4">
+    <h1 class="heading text-2xl  md:text-4xl font-light capitalize mt-8 md:mt-16 mb-4 truncate">
       <%= @recipe.title %>
     </h1>
     <div class="mb-4 text-neutral-700 dark:text-neutral-100">
