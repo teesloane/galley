@@ -29,8 +29,14 @@ defmodule Galley.Recipes do
   Determine the query we are going to make.
   """
   def search_recipes(params, user_id) do
-    from(r in Recipe)
+    from(recipes in Recipe,
+      left_join: fav in Favourite,
+      as: :favourites,
+      on: fav.recipe_id == recipes.id and ^user_id == fav.user_id,
+      preload: [favourites: fav]
+    )
     |> filter_recipes(params, user_id)
+    |> select_for_index()
     |> Repo.all()
     |> Repo.preload(:tags)
   end
@@ -80,17 +86,28 @@ defmodule Galley.Recipes do
         query |> where([r], r.inserted_at > ago(2, "week"))
 
       {"filter", "My favourites"}, query ->
-        from(recipes in query,
-          left_join: fav in Favourite,
-          on: fav.recipe_id == recipes.id,
-          preload: [favourites: fav],
+        from([recipes, favourites: fav] in query,
           where: fav.user_id == ^user_id
         )
 
       {_, _}, query ->
-        # Not a where parameter
         query
     end)
+  end
+
+  defp select_for_index(query) do
+    from(r in query,
+      select: [
+        :id,
+        :title,
+        :slug,
+        :time,
+        :yields,
+        :uploaded_images,
+        :ingredients,
+        favourites: [:recipe_id, :user_id]
+      ]
+    )
   end
 
   @doc """
