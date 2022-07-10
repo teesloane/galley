@@ -271,11 +271,11 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     recipe_params = handle_upload(socket, socket.assigns.live_action, recipe_params)
 
     case Recipes.update_recipe(socket.assigns.recipe, recipe_params) do
-      {:ok, _recipe} ->
+      {:ok, recipe} ->
         {:noreply,
          socket
          |> put_flash(:info, "Recipe updated successfully!")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_redirect(to: Routes.recipe_show_path(socket, :show, recipe, recipe.slug))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
@@ -289,11 +289,11 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     recipe_params = handle_upload(socket, socket.assigns.live_action, recipe_params)
 
     case Recipes.insert_recipe(recipe_params, socket.assigns.current_user) do
-      {:ok, _recipe} ->
+      {:ok, recipe} ->
         {:noreply,
          socket
          |> put_flash(:info, "Recipe created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_redirect(to: Routes.recipe_show_path(socket, :show, recipe, recipe.slug))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
