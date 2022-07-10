@@ -11,7 +11,7 @@ defmodule GalleyWeb.UserSessionControllerTest do
     test "renders log in page", %{conn: conn} do
       conn = get(conn, Routes.user_session_path(conn, :new))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
+      assert response =~ "Log in"
       assert response =~ "Register</a>"
       assert response =~ "Forgot your password?</a>"
     end
@@ -35,8 +35,7 @@ defmodule GalleyWeb.UserSessionControllerTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, "/")
       response = html_response(conn, 200)
-      assert response =~ user.email
-      assert response =~ "Settings</a>"
+      assert response =~ "Browse Recipes</a>"
       assert response =~ "Log out</a>"
     end
 
@@ -75,7 +74,7 @@ defmodule GalleyWeb.UserSessionControllerTest do
         })
 
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
+      assert response =~ "Log in"
       assert response =~ "Invalid email or password"
     end
   end
@@ -85,14 +84,14 @@ defmodule GalleyWeb.UserSessionControllerTest do
       conn = conn |> log_in_user(user) |> delete(Routes.user_session_path(conn, :delete))
       assert redirected_to(conn) == "/"
       refute get_session(conn, :user_token)
-      assert get_flash(conn, :info) =~ "Logged out successfully"
+      assert get_flash(conn, :info) =~ "See you later, alligator 👋"
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
       conn = delete(conn, Routes.user_session_path(conn, :delete))
       assert redirected_to(conn) == "/"
       refute get_session(conn, :user_token)
-      assert get_flash(conn, :info) =~ "Logged out successfully"
+      assert get_flash(conn, :info) =~ "See you later, alligator 👋"
     end
   end
 end

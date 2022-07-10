@@ -201,7 +201,6 @@
 
     <hr class="my-16" />
 
-
     <section>
       <h2 class="heading">Upload images</h2>
 
@@ -212,7 +211,6 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
         <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
-          
           <%= if uploadType(entry) == :new_upload do %>
             <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
               <%= label do %>
@@ -246,7 +244,6 @@
             </article>
           <% end %>
 
-
           <%= if uploadType(entry) == :existing_upload do %>
             <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
               <%= label do %>
@@ -267,7 +264,6 @@
             </article>
           <% end %>
         <% end %>
-
 
         <div class={if length(get_uploads(@uploads, @recipe)) == 4, do: "hidden"}>
           <section phx-drop-target={@uploads.recipe_img.ref} class="">
