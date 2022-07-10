@@ -1,5 +1,5 @@
 defmodule GalleyWeb.UserConfirmationControllerTest do
-  use GalleyWeb.ConnCase, async: true
+  use GalleyWeb.ConnCase
 
   alias Galley.Accounts
   alias Galley.Repo
@@ -59,7 +59,8 @@ defmodule GalleyWeb.UserConfirmationControllerTest do
     test "renders the confirmation page", %{conn: conn} do
       conn = get(conn, Routes.user_confirmation_path(conn, :edit, "some-token"))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Confirm account</h1>"
+      assert response =~ "Welcome to Galley"
+      assert response =~ "Please confirm your account below:"
 
       form_action = Routes.user_confirmation_path(conn, :update, "some-token")
       assert response =~ "action=\"#{form_action}\""
@@ -75,7 +76,7 @@ defmodule GalleyWeb.UserConfirmationControllerTest do
 
       conn = post(conn, Routes.user_confirmation_path(conn, :update, token))
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "User confirmed successfully"
+      assert get_flash(conn, :info) =~ "Account confirmed (☞ﾟ∀ﾟ)☞"
       assert Accounts.get_user!(user.id).confirmed_at
       refute get_session(conn, :user_token)
       assert Repo.all(Accounts.UserToken) == []

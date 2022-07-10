@@ -1,5 +1,5 @@
 defmodule GalleyWeb.UserAuthTest do
-  use GalleyWeb.ConnCase, async: true
+  use GalleyWeb.ConnCase
 
   alias Galley.Accounts
   alias GalleyWeb.UserAuth

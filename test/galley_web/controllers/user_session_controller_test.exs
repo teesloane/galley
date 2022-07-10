@@ -1,5 +1,5 @@
 defmodule GalleyWeb.UserSessionControllerTest do
-  use GalleyWeb.ConnCase, async: true
+  use GalleyWeb.ConnCase
 
   import Galley.AccountsFixtures
 

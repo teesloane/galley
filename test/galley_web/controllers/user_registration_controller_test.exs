@@ -1,5 +1,5 @@
 defmodule GalleyWeb.UserRegistrationControllerTest do
-  use GalleyWeb.ConnCase, async: true
+  use GalleyWeb.ConnCase
 
   import Galley.AccountsFixtures
 
@@ -7,9 +7,9 @@ defmodule GalleyWeb.UserRegistrationControllerTest do
     test "renders registration page", %{conn: conn} do
       conn = get(conn, Routes.user_registration_path(conn, :new))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Register</h1>"
+      assert response =~ "Register on Galley</h1>"
       assert response =~ "Log in</a>"
-      assert response =~ "Register</a>"
+      assert response =~ "Forgot your password?</a>"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -34,7 +34,6 @@ defmodule GalleyWeb.UserRegistrationControllerTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, "/")
       response = html_response(conn, 200)
-      assert response =~ email
       assert response =~ "Settings</a>"
       assert response =~ "Log out</a>"
     end
@@ -42,13 +41,12 @@ defmodule GalleyWeb.UserRegistrationControllerTest do
     test "render errors for invalid data", %{conn: conn} do
       conn =
         post(conn, Routes.user_registration_path(conn, :create), %{
-          "user" => %{"email" => "with spaces", "password" => "too short"}
+          "user" => %{"username" => "test", "email" => "with spaces", "password" => "too short"}
         })
 
       response = html_response(conn, 200)
-      assert response =~ "<h1>Register</h1>"
-      assert response =~ "must have the @ sign and no spaces"
-      assert response =~ "should be at least 12 character"
+      assert response =~ "Register on Galley</h1>"
+      # assert get_flash(conn, :error) =~ "Oops, something went wrong! Please check for errors."
     end
   end
 end
