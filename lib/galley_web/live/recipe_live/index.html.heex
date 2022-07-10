@@ -4,16 +4,24 @@
   <form phx-change="search-params" class="flex-col md:flex-row flex mb-8">
     <%= text_input(:search, :query,
       placeholder: "Search recipes by name...",
-      "phx-debounce": "300",
+      "phx-debounce": "200",
       class: "w-full md:w-3/5 md:mr-4",
       value: @search_query
     ) %>
-    <%= text_input(:search, :tags,
-      placeholder: "Search by tags (ex: 'spicey, breakfast, ...')",
-      "phx-debounce": "200",
-      class: "w-full md:w-2/5 md:mr-4",
-      value: @search_tags
-    ) %>
+
+    <div class="w-full md:w-2/5 md:mr-4">
+    <.live_component
+      module={GalleyWeb.LiveComponent.Typeahead}
+      value={@search_tags}
+      form_name={:search}
+      form_key={:tags}
+      placeholder="Search by tags (ex: 'spicey, breakfast, ...')"
+      id="hero"
+      tags={@tags}
+     />
+    </div>
+
+
     <%= select(:search, :filter, get_recipe_filters(),
       class: "w-full md:w-1/5",
       selected: @search_filter
@@ -55,7 +63,6 @@
               <%= if Enum.any?(recipe.favourites) do %>
                 <div class="pr-2">❤️</div>
               <% end %>
-
             </div>
           </div>
         <% end %>

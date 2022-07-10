@@ -19,7 +19,9 @@ defmodule GalleyWeb.RecipeLive.Index do
       search_query: "",
       search_filter: "All",
       search_tags: "",
-      page_heading: "Recipes"
+      page_heading: "Recipes",
+      tags: ["spicy", "vegan", "easy"],
+      taggings: []
     }
 
     {:ok, assign(socket, state)}
@@ -79,6 +81,8 @@ defmodule GalleyWeb.RecipeLive.Index do
         %{"search" => %{"query" => query, "filter" => filter, "tags" => tags}},
         socket
       ) do
+    IO.inspect(tags, label: ">>>>>>>>>> tags")
+
     {:noreply,
      push_patch(socket,
        to: Routes.recipe_index_path(socket, :index, query: query, tags: tags, filter: filter)
