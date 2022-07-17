@@ -61,6 +61,7 @@ defmodule Galley.Recipes do
       {"query", ""}, query ->
         query
 
+
       {"query", val}, query ->
         like = "%#{val}%"
         query |> where([r], like(r.title, ^like))
@@ -97,6 +98,7 @@ defmodule Galley.Recipes do
 
   defp select_for_index(query) do
     from(r in query,
+      order_by: [desc: :inserted_at],
       select: [
         :id,
         :title,
