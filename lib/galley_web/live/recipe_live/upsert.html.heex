@@ -118,9 +118,13 @@
         <% end %>
       </table>
 
-      <button class="btn-white mt-8" type="button" phx-click="add-ingredient">
-        Add Ingredient
-      </button>
+      <.render_combo_btn
+        atom={:__add_n_ingredients}
+        num_entity={@__add_n_ingredients}
+        click="add-ingredient"
+        what_to_add="ingredients"
+        form_state={form_state}
+      />
     </section>
 
     <hr class="my-16" />
@@ -190,14 +194,13 @@
         <% end %>
       </table>
 
-      <button
-        id="add-instruction-btn"
-        class="btn-white mt-8"
-        type="button"
-        phx-click="add-instruction"
-      >
-        Add Instruction
-      </button>
+      <.render_combo_btn
+        atom={:__add_n_steps}
+        num_entity={@__add_n_steps}
+        click="add-instruction"
+        what_to_add="steps"
+        form_state={form_state}
+      />
     </section>
 
     <hr class="my-16" />

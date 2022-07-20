@@ -88,7 +88,7 @@
 
   .btn-white {
     @apply btn;
-    @apply bg-white text-neutral-500 hover:bg-gray-50 border border-neutral-300 hover:border-neutral-400 hover:shadow-sm active:bg-gray-100 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:active:bg-neutral-800 dark:text-white;
+    @apply bg-white text-neutral-500 hover:bg-gray-50 border border-neutral-300  hover:shadow-sm active:bg-gray-100 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:active:bg-neutral-800 dark:text-white dark:border-neutral-700;
   }
 
   .btn-clear {

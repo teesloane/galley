@@ -15,8 +15,8 @@ defmodule Galley.Recipes do
 
   ## Examples
 
-      iex> list_recipes()
-      [%Recipe{}, ...]
+  iex> list_recipes()
+  [%Recipe{}, ...]
 
   """
   def list_recipes do
@@ -60,7 +60,6 @@ defmodule Galley.Recipes do
 
       {"query", ""}, query ->
         query
-
 
       {"query", val}, query ->
         like = "%#{val}%"
@@ -119,11 +118,11 @@ defmodule Galley.Recipes do
 
   ## Examples
 
-      iex> get_recipe!(123)
-      %Recipe{}
+  iex> get_recipe!(123)
+  %Recipe{}
 
-      iex> get_recipe!(456)
-      ** (Ecto.NoResultsError)
+  iex> get_recipe!(456)
+  ** (Ecto.NoResultsError)
 
   """
   def get_recipe!(id) do
@@ -140,8 +139,14 @@ defmodule Galley.Recipes do
     |> Repo.preload(:tags)
   end
 
+  @doc """
+  Multi transaction that inserts ingredients and tags to separate table
+  and then inserts the recipe.
+  After this succeeds, it uploads images to s3 async.
+  """
   def insert_recipe(attrs \\ %{}, user, opts \\ []) do
     async_upload = Keyword.get(opts, :async_upload, true)
+    attrs = filter_empty_ingredients_and_steps(attrs)
 
     multi_result =
       Multi.new()
@@ -172,6 +177,7 @@ defmodule Galley.Recipes do
   end
 
   def update_recipe(%Recipe{} = recipe, attrs \\ %{}) do
+    attrs = filter_empty_ingredients_and_steps(attrs)
     multi_result =
       Multi.new()
       |> insert_and_get_tags(attrs)
@@ -202,12 +208,12 @@ defmodule Galley.Recipes do
 
   ## Examples
 
-    iex> favourite_recipe(%{
-      user_id: user.id,
-      recipe_id: recipe.id
-    })
+  iex> favourite_recipe(%{
+  user_id: user.id,
+  recipe_id: recipe.id
+  })
 
-    => [%Recipe{}, ...]
+  => [%Recipe{}, ...]
   """
   def favourite_recipe(attrs) do
     %Favourite{}
@@ -489,8 +495,8 @@ defmodule Galley.Recipes do
 
   ## Examples
 
-      iex> change_recipe(recipe)
-      %Ecto.Changeset{data: %Recipe{}}
+  iex> change_recipe(recipe)
+  %Ecto.Changeset{data: %Recipe{}}
 
   """
   def change_recipe(%Recipe{} = recipe, attrs \\ %{}) do
@@ -503,5 +509,19 @@ defmodule Galley.Recipes do
 
   def change_ingredient(%Recipe.Ingredient{} = recipe_ingredient, attrs \\ %{}) do
     Recipe.ingredient_changeset(recipe_ingredient, attrs)
+  end
+
+  defp filter_empty_ingredients_and_steps(attrs) do
+    attrs
+
+    |> Map.update!("steps", fn i ->
+      Enum.reject(i, fn {_, val} -> val["instruction"] === "" end)
+      |> Enum.into(%{})
+    end)
+    |> Map.update!("ingredients", fn i ->
+      Enum.reject(i, fn {_, val} -> val["ingredient"] === "" end)
+      |> Enum.into(%{})
+    end)
+
   end
 end
