@@ -25,6 +25,10 @@ defmodule Galley.Recipes do
     |> Repo.preload(:tags)
   end
 
+  def count_recipes do
+    Repo.aggregate(Recipe, :count)
+  end
+
   @doc """
   Determine the query we are going to make.
   """

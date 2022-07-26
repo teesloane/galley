@@ -36,10 +36,7 @@ defmodule GalleyWeb.RecipeLive.Index do
     recipes =
       Recipes.search_recipes(%{"query" => query, "tags" => tags, "filter" => filter}, user_id)
 
-    tagged =
-      if tags !== "" do
-        "tagged with: #{tags}"
-      end
+    tagged = if tags !== "", do: "tagged with: #{tags}"
 
     page_heading = fn ->
       l = recipes |> length
@@ -53,7 +50,7 @@ defmodule GalleyWeb.RecipeLive.Index do
           _ -> "Recipes"
         end
 
-      "#{res} #{if tags, do: tagged} (#{l})"
+      [res, tagged, "(#{l})"] |> Enum.reject(&is_nil(&1)) |> Enum.join(" ")
     end
 
     socket =
@@ -65,8 +62,6 @@ defmodule GalleyWeb.RecipeLive.Index do
       |> assign(:page_heading, page_heading.())
 
     {:noreply, socket}
-
-    # {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   def get_recipe_filters() do
