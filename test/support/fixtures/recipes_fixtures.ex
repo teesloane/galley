@@ -26,7 +26,7 @@ defmodule Galley.RecipesFixtures do
         "timer" => %{"hour" => "0", "minute" => "0"}
       }
     },
-    "tags" => "",
+    "tags" => "baking, sweet",
     "time" => %{"hour" => "1", "minute" => "0"},
     "title" => "Boring onion muffins",
     "uploaded_images" => [],

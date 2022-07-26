@@ -62,7 +62,7 @@
 
     <section>
       <h2 class="heading">Ingredients</h2>
-      <table class="table-fixed">
+      <table data-test-id="ingredients-table" class="table-fixed">
         <thead class="">
           <tr class="py-2 dark:text-neutral-50">
             <th class="th_small w-32">Quantity</th>
@@ -132,7 +132,7 @@
     <section class="">
       <h2 class="heading">Instructions</h2>
 
-      <table class="table-fixed">
+      <table data-test-id="instructions-table" class="table-fixed">
         <thead class="">
           <tr class="py-2 dark:text-neutral-50">
             <th class="th_small w-full italic">Instruction</th>
@@ -150,6 +150,8 @@
         <%= inputs_for form_state, :steps, fn fp -> %>
           <tr class="mt-2 items-center">
             <td>
+
+              <%# Instruction step %>
               <%= textarea(fp, :instruction,
                 id: fp.name,
                 rows: 1,
@@ -160,8 +162,10 @@
               ) %>
             </td>
 
+            <%# hidden inputs needed for deleting dynamic fields %>
             <%= hidden_input(fp, :temp_id) %>
 
+            <%# Timer %>
             <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
                 <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
