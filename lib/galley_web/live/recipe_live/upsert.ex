@@ -17,6 +17,8 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      |> assign(:return_to, Routes.recipe_index_path(socket, :index))
      |> assign(:recipe, build_base_recipe())
      |> assign(:changeset, build_base_recipe() |> Recipes.change_recipe())
+     |> assign(:__add_n_ingredients, 1)
+     |> assign(:__add_n_steps, 1)
      |> allow_upload(:recipe_img,
        accept: ~w(.jpg .jpeg .png),
        max_entries: 4
@@ -50,18 +52,22 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   end
 
   defp build_base_recipe() do
+    ingrs =
+      for _n <- 0..4,
+          do: %Recipe.Ingredient{
+            temp_id: GalleyUtils.get_temp_id(),
+            quantity: "",
+            measurement: "",
+            ingredient: ""
+          }
+
+    steps =
+      for _n <- 0..4,
+          do: %Recipe.Step{temp_id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
+
     %Recipe{
-      ingredients: [
-        %Recipe.Ingredient{
-          temp_id: GalleyUtils.get_temp_id(),
-          quantity: "",
-          measurement: "",
-          ingredient: ""
-        }
-      ],
-      steps: [
-        %Recipe.Step{temp_id: GalleyUtils.get_temp_id(), timer: nil, instruction: nil}
-      ],
+      ingredients: ingrs,
+      steps: steps,
       uploaded_images: [],
       tags: []
     }
@@ -73,6 +79,8 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     |> assign(:page_title, "Edit - #{recipe.title}")
     |> assign(:recipe, recipe)
     |> assign(:changeset, Recipes.change_recipe(recipe))
+    |> assign(:__add_n_ingredients, 1)
+    |> assign(:__add_n_steps, 1)
   end
 
   defp apply_action(socket, :new, _params) do
@@ -101,7 +109,12 @@ defmodule GalleyWeb.RecipeLive.Upsert do
       |> Recipes.change_recipe(recipe_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    socket =
+      socket
+      |> handle_change_num_ingr_or_steps(recipe_params)
+      |> assign(:changeset, changeset)
+
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"recipe" => recipe_params}, socket) do
@@ -112,28 +125,33 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     sA = socket.assigns
     existing_steps = Map.get(sA.changeset.changes, :steps, sA.recipe.steps)
 
-    steps =
-      existing_steps
-      |> Enum.concat([
-        Recipes.change_step(%Recipe.Step{temp_id: GalleyUtils.get_temp_id()})
-      ])
+    steps_to_add = get_int_or_convert_string(sA.__add_n_steps)
+
+    new_steps =
+      for _ <- 1..steps_to_add,
+          do: Recipes.change_step(%Recipe.Step{temp_id: GalleyUtils.get_temp_id()})
+
+    steps = existing_steps |> Enum.concat(new_steps)
+    steps = if Enum.count(steps) >= 30, do: Enum.take(steps, 30), else: steps
 
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:steps, steps)
-    {:noreply, assign(socket, changeset: changeset, num_steps: length(steps))}
+    {:noreply, assign(socket, changeset: changeset, num_steps: Enum.count(steps))}
   end
 
   def handle_event("add-ingredient", _val, socket) do
     sA = socket.assigns
     existing_ingredients = Map.get(sA.changeset.changes, :ingredients, sA.recipe.ingredients)
+    ingr_to_add = get_int_or_convert_string(sA.__add_n_ingredients)
 
-    ingredients =
-      existing_ingredients
-      |> Enum.concat([
-        Recipes.change_ingredient(%Recipe.Ingredient{temp_id: GalleyUtils.get_temp_id()})
-      ])
+    new_ingr =
+      for _ <- 1..ingr_to_add,
+          do: Recipes.change_ingredient(%Recipe.Ingredient{temp_id: GalleyUtils.get_temp_id()})
+
+    ingredients = existing_ingredients |> Enum.concat(new_ingr)
+    ingredients = if Enum.count(ingredients) >= 30, do: Enum.take(ingredients, 30), else: ingredients
 
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
-    {:noreply, assign(socket, changeset: changeset, num_ingredients: length(ingredients))}
+    {:noreply, assign(socket, changeset: changeset, num_ingredients: Enum.count(ingredients))}
   end
 
   def handle_event("remove-ingredient", params, socket) do
@@ -337,8 +355,21 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   @doc """
   Render already uploaded images from the database.
   """
-  def render_already_uploaded(assigns) do
+  def render_combo_btn(assigns) do
     ~H"""
+      <button class="btn-white mt-8 rounded-r-none -mr-4 pr-8" type="button" phx-click={assigns.click}>
+        Add
+      </button>
+      <%= number_input(assigns.form_state, assigns.atom,
+        [value: assigns.num_entity,
+        max: 20,
+        min: 1,
+        class: "w-20 -ml-2 pr-4 outline-none rounded-none"
+          ]
+      ) %>
+      <button class="btn-white mt-8 -ml-4 rounded-l-none" type="button" phx-click={assigns.click}>
+        <%= assigns.what_to_add %>
+      </button>
     """
   end
 
@@ -426,5 +457,22 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     else
       !is_nil(temp_id)
     end
+  end
+
+  defp handle_change_num_ingr_or_steps(socket, %{
+         "__add_n_ingredients" => ingr_count,
+         "__add_n_steps" => step_count
+       }) do
+    socket
+    |> assign(:__add_n_ingredients, ingr_count)
+    |> assign(:__add_n_steps, step_count)
+  end
+
+  defp get_int_or_convert_string(int_or_string) when is_binary(int_or_string) do
+    String.to_integer(int_or_string)
+  end
+
+  defp get_int_or_convert_string(int_or_string) when is_integer(int_or_string) do
+    int_or_string
   end
 end

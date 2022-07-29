@@ -21,9 +21,9 @@
   </form>
   <!-- Cards -->
   <%= if @recipes !== [] do %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div id="recipe_list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <%= for recipe <- @recipes do %>
-        <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug) do %>
+        <%= live_redirect to: Routes.recipe_show_path(@socket, :show, recipe, recipe.slug), id: "recipe-#{recipe.id}" do %>
           <div class="flex flex-col bg-white dark:bg-neutral-800 border dark:border-neutral-900 hover:drop-shadow-sm mr-4 w-full ">
             <div class="flex w-full relative">
               <%= if length(recipe.uploaded_images) > 0 do %>
@@ -55,7 +55,6 @@
               <%= if Enum.any?(recipe.favourites) do %>
                 <div class="pr-2">❤️</div>
               <% end %>
-
             </div>
           </div>
         <% end %>
@@ -63,7 +62,7 @@
     </div>
   <% else %>
     <div class="flex flex-col flex-1 h-64 justify-center items-center text-center">
-      <div>No Recipes Found.</div>
+      <div>No recipes found.</div>
       <div class="mt-4">( ˘︹˘ )</div>
     </div>
   <% end %>

@@ -62,7 +62,7 @@
 
     <section>
       <h2 class="heading">Ingredients</h2>
-      <table class="table-fixed">
+      <table data-test-id="ingredients-table" class="table-fixed">
         <thead class="">
           <tr class="py-2 dark:text-neutral-50">
             <th class="th_small w-32">Quantity</th>
@@ -118,9 +118,13 @@
         <% end %>
       </table>
 
-      <button class="btn-white mt-8" type="button" phx-click="add-ingredient">
-        Add Ingredient
-      </button>
+      <.render_combo_btn
+        atom={:__add_n_ingredients}
+        num_entity={@__add_n_ingredients}
+        click="add-ingredient"
+        what_to_add="ingredients"
+        form_state={form_state}
+      />
     </section>
 
     <hr class="my-16" />
@@ -128,7 +132,7 @@
     <section class="">
       <h2 class="heading">Instructions</h2>
 
-      <table class="table-fixed">
+      <table data-test-id="instructions-table" class="table-fixed">
         <thead class="">
           <tr class="py-2 dark:text-neutral-50">
             <th class="th_small w-full italic">Instruction</th>
@@ -146,6 +150,8 @@
         <%= inputs_for form_state, :steps, fn fp -> %>
           <tr class="mt-2 items-center">
             <td>
+
+              <%# Instruction step %>
               <%= textarea(fp, :instruction,
                 id: fp.name,
                 rows: 1,
@@ -156,8 +162,10 @@
               ) %>
             </td>
 
+            <%# hidden inputs needed for deleting dynamic fields %>
             <%= hidden_input(fp, :temp_id) %>
 
+            <%# Timer %>
             <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
                 <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
@@ -190,14 +198,13 @@
         <% end %>
       </table>
 
-      <button
-        id="add-instruction-btn"
-        class="btn-white mt-8"
-        type="button"
-        phx-click="add-instruction"
-      >
-        Add Instruction
-      </button>
+      <.render_combo_btn
+        atom={:__add_n_steps}
+        num_entity={@__add_n_steps}
+        click="add-instruction"
+        what_to_add="steps"
+        form_state={form_state}
+      />
     </section>
 
     <hr class="my-16" />

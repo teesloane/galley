@@ -26,7 +26,7 @@ defmodule Galley.RecipesFixtures do
         "timer" => %{"hour" => "0", "minute" => "0"}
       }
     },
-    "tags" => "",
+    "tags" => "baking, sweet",
     "time" => %{"hour" => "1", "minute" => "0"},
     "title" => "Boring onion muffins",
     "uploaded_images" => [],
@@ -41,10 +41,10 @@ defmodule Galley.RecipesFixtures do
     recipe
   end
 
-  # def recipe_fixture(attrs \\ %{}) do
-  #   {:ok, recipe} = Enum.into(attrs, @valid_attrs) |> Recipes.insert_recipe(user_fixture())
-  #   recipe
-  # end
+  def recipe_raw_data() do
+    @valid_attrs
+  end
+
 
   def valid_attrs, do: @valid_attrs
 end

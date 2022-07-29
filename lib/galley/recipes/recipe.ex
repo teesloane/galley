@@ -52,6 +52,8 @@ defmodule Galley.Recipes.Recipe do
     |> cast_embed(:uploaded_images, with: &uploaded_images_changeset/2)
     |> cast_embed(:steps, with: &step_changeset/2, required: true)
     |> cast_embed(:time)
+    |> validate_embed_min_one_key(:ingredients, :ingredient, "Missing ingredient")
+    |> validate_embed_min_one_key(:steps, :instruction, "Missing instruction on steps")
     |> validate_required([:title, :yields, :steps, :time, :uploaded_images])
     |> validate_length(:notes, min: 0, max: 400)
   end
@@ -66,11 +68,17 @@ defmodule Galley.Recipes.Recipe do
     schema |> cast(params, [:url, :url_thumb, :is_hero, :key_s3, :is_local, :local_path])
   end
 
+  @doc """
+  we don't validate_required on :ingredient here because
+  we want it to be possible for users to submit the form with empty ingredient fields
+  (for example, when the form loads, there might be 5 empty fields to fill in
+  but they only use 3 - they shouldn't have to delete empty fields in order
+  to submit the form.)
+  """
   def ingredient_changeset(ingredient, attrs) do
     ingredient
     |> Map.put(:temp_id, ingredient.temp_id || attrs["temp_id"])
     |> cast(attrs, [:ingredient, :quantity, :measurement, :prep])
-    |> validate_required([:ingredient])
   end
 
   def step_changeset(step, attrs) do
@@ -78,7 +86,23 @@ defmodule Galley.Recipes.Recipe do
     |> Map.put(:temp_id, step.temp_id || attrs["temp_id"])
     |> cast(attrs, [:instruction])
     |> cast_embed(:timer)
-    |> validate_required([:instruction])
+  end
+
+  # used to validate that at least one ingredient/instruciton is filled in
+  # (since we strip all empty fields on insert.)
+  def validate_embed_min_one_key(changeset, field, subkey, msg) do
+    validate_change(changeset, field, fn field, value ->
+      has_min_one_ingredient =
+        Enum.any?(value, fn val ->
+          is_nil(Map.get(val.changes, subkey)) == false
+        end)
+
+      if has_min_one_ingredient do
+        []
+      else
+        [{field, msg}]
+      end
+    end)
   end
 end
 

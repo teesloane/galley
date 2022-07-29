@@ -3,7 +3,10 @@
     <img src={get_hero_img(@recipe.uploaded_images).url} class="md:h-96 w-full mb-8 object-cover" />
   <% end %>
   <div class="flex flex-col md:flex-row justify-between md:items-end">
-    <h1 class="heading text-2xl  md:text-4xl font-light capitalize mt-8 md:mt-16 mb-4 truncate">
+    <h1
+      data-test-id="show-heading"
+      class="heading text-2xl md:text-4xl font-light capitalize mt-8 md:mt-16 mb-4 truncate"
+    >
       <%= @recipe.title %>
     </h1>
     <div class="mb-4 text-neutral-700 dark:text-neutral-100">
@@ -46,8 +49,13 @@
   </div>
 
   <section class="my-8 flex flex-col md:flex-row">
-    <div class="ingredients md:p-4 md:pl-0 pl-0 w-full md:w-2/4 lg:w-2/5">
-      <h3 class="heading-with-lines md:mt-0 md:mb-16"><span>Ingredients</span></h3>
+    <div
+      data-test-id="section-ingredients"
+      class="ingredients md:p-4 md:pl-0 pl-0 w-full md:w-2/4 lg:w-2/5"
+    >
+      <h3 class="heading-with-lines md:mt-0 md:mb-16">
+        <span>Ingredients</span>
+      </h3>
       <div class="border dark:border-neutral-900">
         <%= for {item, index} <- Enum.with_index(@recipe.ingredients) do %>
           <div class={
@@ -70,8 +78,13 @@
       </div>
     </div>
 
-    <div class="instructions p-0 md:p-4  md:pr-0 w-full md:w-2/4 lg:w-3/5">
-      <h3 class="heading-with-lines md:mt-0 md:mb-16"><span>Instructions</span></h3>
+    <div
+      data-test-id="section-instructions"
+      class="instructions p-0 md:p-4 md:pr-0 w-full md:w-2/4 lg:w-3/5"
+    >
+      <h3 class="heading-with-lines md:mt-0 md:mb-16">
+        <span>Instructions</span>
+      </h3>
       <div x-data="{selected: 0}">
         <%= for {item, index} <- Enum.with_index(@recipe.steps) do %>
           <div :class={
@@ -90,16 +103,18 @@
   </section>
 
   <%= if length(@recipe.uploaded_images) > 1 do %>
-    <h3 class="heading-with-lines"><span>Photos</span></h3>
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <%= for img <- get_other_images(@recipe.uploaded_images) do %>
-        <img class="object-cover h-64 md:h-48 w-full" src={img.url_thumb} />
-      <% end %>
-    </section>
+    <div data-test-id="section-photos">
+      <h3 class="heading-with-lines"><span>Photos</span></h3>
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <%= for img <- get_other_images(@recipe.uploaded_images) do %>
+          <img class="object-cover h-64 md:h-48 w-full" src={img.url_thumb} />
+        <% end %>
+      </section>
+    </div>
   <% end %>
 
   <%= if @recipe.notes do %>
-    <section class="mb-8">
+    <section data-test-id="additional-notes" class="mb-8">
       <h3 class="heading-with-lines "><span>Additional Notes</span></h3>
       <div class="w-full md:w-4/5 lg:w-3/5 mx-auto whitespace-pre-wrap text-center">
         <%= @recipe.notes %>
