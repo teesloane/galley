@@ -1,5 +1,6 @@
 <div class="page_wrapper pb-24 lg:w-3/5">
   <h2 class="heading"><%= @page_title %></h2>
+  <%= @selected_hero %>
   <.form
     let={form_state}
     for={@changeset}
@@ -150,8 +151,7 @@
         <%= inputs_for form_state, :steps, fn fp -> %>
           <tr class="mt-2 items-center">
             <td>
-
-              <%# Instruction step %>
+              
               <%= textarea(fp, :instruction,
                 id: fp.name,
                 rows: 1,
@@ -162,10 +162,8 @@
               ) %>
             </td>
 
-            <%# hidden inputs needed for deleting dynamic fields %>
             <%= hidden_input(fp, :temp_id) %>
 
-            <%# Timer %>
             <td class="flex ml-4">
               <%= inputs_for fp, :timer, fn fo -> %>
                 <%= select(fo, :hour, 0..12, class: "w-16 mr-2 py-1") %>
@@ -218,20 +216,21 @@
       <p></p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mt-8">
-        <%= for {entry, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
-          <%= if uploadType(entry) == :new_upload do %>
-            <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+        <%= for {new_upload, i} <- Enum.with_index(get_uploads(@uploads, @recipe)) do %>
+          <%= if uploadType(new_upload) == :new_upload do %>
+            <article class="upload-new_upload w-full sm:w-48 sm:h-48 relative mb-4">
               <%= label do %>
-                <%= live_img_preview(entry,
+                <%= live_img_preview(new_upload,
                   class: "w-full sm:w-48 sm:h-48 rounded-sm object-cover"
                 ) %>
-                <%= radio_button(form_state, :hero_image, entry.ref,
+                <%= radio_button(form_state, :hero_image, new_upload.ref,
                   class: "peer sr-only",
-                  value: entry.ref
+                  value: new_upload.ref,
+                  checked: new_upload.ref == to_string(@selected_hero)
                 ) %>
                 <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
-                <progress class="flex h-2 text-white w-full" value={entry.progress} max="100">
-                  <%= entry.progress %>%
+                <progress class="flex h-2 text-white w-full" value={new_upload.progress} max="100">
+                  <%= new_upload.progress %>%
                 </progress>
               <% end %>
 
@@ -240,30 +239,34 @@
                 phx-click="cancel-upload"
                 type="button"
                 style="margin: 4px"
-                phx-value-ref={entry.ref}
+                phx-value-ref={new_upload.ref}
                 aria-label="cancel"
               >
                 &times;
               </button>
 
-              <%= for err <- upload_errors(@uploads.recipe_img, entry) do %>
+              <%= for err <- upload_errors(@uploads.recipe_img, new_upload) do %>
                 <p class="alert alert-danger"><%= error_to_string(err) %></p>
               <% end %>
             </article>
           <% end %>
 
-          <%= if uploadType(entry) == :existing_upload do %>
-            <article class="upload-entry w-full sm:w-48 sm:h-48 relative mb-4">
+          <%= if uploadType(new_upload) == :existing_upload do %>
+            <article class="upload-new_upload w-full sm:w-48 sm:h-48 relative mb-4">
               <%= label do %>
-                <img src={entry.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
-                <%= radio_button(form_state, :hero_image, i, class: "peer sr-only", value: i) %>
+                <img src={new_upload.url} class="w-full sm:w-48 sm:h-48 rounded-sm object-cover" />
+                <%= radio_button(form_state, :hero_image, i,
+                  class: "peer sr-only",
+                  value: i,
+                  checked: i == @selected_hero
+                ) %>
                 <div class="absolute top-0 left-0 w-full sm:w-48 sm:h-48 border-4 border-neutral-300 rounded-sm peer-checked:border-blue-500" />
               <% end %>
 
               <button
                 class="absolute top-0 right-0 bg-black text-white py-1 px-3"
                 phx-click="remove-persisted-upload"
-                phx-value-remove={entry.id}
+                phx-value-remove={new_upload.id}
                 type="button"
                 style="margin: 4px"
               >

@@ -17,6 +17,7 @@ defmodule GalleyWeb.RecipeLive.Upsert do
      |> assign(:return_to, Routes.recipe_index_path(socket, :index))
      |> assign(:recipe, build_base_recipe())
      |> assign(:changeset, build_base_recipe() |> Recipes.change_recipe())
+     |> assign(:selected_hero, 0)
      |> assign(:__add_n_ingredients, 1)
      |> assign(:__add_n_steps, 1)
      |> allow_upload(:recipe_img,
@@ -75,10 +76,13 @@ defmodule GalleyWeb.RecipeLive.Upsert do
 
   # This is how we set the form to work for either :edit or :new
   defp apply_action(socket, :edit, %{"id" => _id}, recipe) do
+    selected_hero = get_current_hero_idx(socket.assigns.uploads, recipe)
+
     socket
     |> assign(:page_title, "Edit - #{recipe.title}")
     |> assign(:recipe, recipe)
     |> assign(:changeset, Recipes.change_recipe(recipe))
+    |> assign(:selected_hero, selected_hero)
     |> assign(:__add_n_ingredients, 1)
     |> assign(:__add_n_steps, 1)
   end
@@ -104,14 +108,19 @@ defmodule GalleyWeb.RecipeLive.Upsert do
 
   @impl true
   def handle_event("validate", %{"recipe" => recipe_params}, socket) do
+    sA = socket.assigns
+
     changeset =
-      socket.assigns.recipe
+      sA.recipe
       |> Recipes.change_recipe(recipe_params)
       |> Map.put(:action, :validate)
+
+    {hero_image, _} = Map.get(recipe_params, "hero_image", "0") |> Integer.parse()
 
     socket =
       socket
       |> handle_change_num_ingr_or_steps(recipe_params)
+      |> assign(:selected_hero, hero_image)
       |> assign(:changeset, changeset)
 
     {:noreply, socket}
@@ -148,7 +157,9 @@ defmodule GalleyWeb.RecipeLive.Upsert do
           do: Recipes.change_ingredient(%Recipe.Ingredient{temp_id: GalleyUtils.get_temp_id()})
 
     ingredients = existing_ingredients |> Enum.concat(new_ingr)
-    ingredients = if Enum.count(ingredients) >= 30, do: Enum.take(ingredients, 30), else: ingredients
+
+    ingredients =
+      if Enum.count(ingredients) >= 30, do: Enum.take(ingredients, 30), else: ingredients
 
     changeset = sA.changeset |> Ecto.Changeset.put_embed(:ingredients, ingredients)
     {:noreply, assign(socket, changeset: changeset, num_ingredients: Enum.count(ingredients))}
@@ -335,6 +346,29 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     Phoenix.HTML.Form.text_input(form, field, kwrds)
   end
 
+  ## - Components --
+
+  @doc """
+  Render a button and a number input together.
+  Used for adding N ingredients / instructions to a recipe.
+  """
+  def render_combo_btn(assigns) do
+    ~H"""
+    <button class="btn-white mt-8 rounded-r-none -mr-4 pr-8" type="button" phx-click={assigns.click}>
+      Add
+    </button>
+    <%= number_input(assigns.form_state, assigns.atom,
+      value: assigns.num_entity,
+      max: 20,
+      min: 1,
+      class: "w-20 -ml-2 pr-4 outline-none rounded-none"
+    ) %>
+    <button class="btn-white mt-8 -ml-4 rounded-l-none" type="button" phx-click={assigns.click}>
+      <%= assigns.what_to_add %>
+    </button>
+    """
+  end
+
   ## -- File Upload Stuff
 
   def uploadType(upload) do
@@ -352,25 +386,20 @@ defmodule GalleyWeb.RecipeLive.Upsert do
     uploads.recipe_img.entries ++ recipe.uploaded_images
   end
 
-  @doc """
-  Render already uploaded images from the database.
-  """
-  def render_combo_btn(assigns) do
-    ~H"""
-      <button class="btn-white mt-8 rounded-r-none -mr-4 pr-8" type="button" phx-click={assigns.click}>
-        Add
-      </button>
-      <%= number_input(assigns.form_state, assigns.atom,
-        [value: assigns.num_entity,
-        max: 20,
-        min: 1,
-        class: "w-20 -ml-2 pr-4 outline-none rounded-none"
-          ]
-      ) %>
-      <button class="btn-white mt-8 -ml-4 rounded-l-none" type="button" phx-click={assigns.click}>
-        <%= assigns.what_to_add %>
-      </button>
-    """
+  defp get_current_hero_idx(uploads, recipe) do
+    up = get_uploads(uploads, recipe)
+
+    if length(up) > 0 do
+      {_up, idx} =
+        get_uploads(uploads, recipe)
+        |> Enum.with_index()
+        |> Enum.filter(fn {up, _idx} -> up.is_hero end)
+        |> List.first()
+
+      idx
+    else
+      0
+    end
   end
 
   defp error_to_string(:too_large), do: "Too large"
@@ -410,7 +439,6 @@ defmodule GalleyWeb.RecipeLive.Upsert do
       prefix = Path.basename(path) |> String.replace("live_view_upload-", "")
 
       full_file = Path.join([uploads_dir, "#{prefix}_#{client_name}"])
-      # thumb_file = Path.join([uploads_dir, "thumb_#{prefix}_#{client_name}"])
       File.rename!(path, full_file)
 
       {:ok,
