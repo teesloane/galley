@@ -88,11 +88,19 @@ defmodule GalleyWeb.RecipeLiveTest do
     end
 
     test "Visiting a recipe shows expected dom content", ctx do
+      timer_id = Enum.at(ctx.recipe.steps, 1).timer.id
       assert ctx.view |> element("[data-test-id=show-heading]") |> render() =~ ctx.recipe.title
       assert ctx.view |> has_element?("[data-test-id=section-ingredients]")
-      assert ctx.view |> has_element?("[data-test-id=section-instructions]")
       refute ctx.view |> has_element?("[data-test-id=additional-notes]")
       refute ctx.view |> has_element?("[data-test-id=section-photos]")
+
+      # timers
+      # on load, we should have a new timer on the recipe
+      assert ctx.view |> has_element?("[data-test-id=timer-new-#{timer_id}]")
+      render_click(ctx.view, "create-timer", %{"value" => timer_id})
+      assert Galley.TimerServer.get_timers() |> Enum.count() == 1
+      :timer.sleep(1000)
+      assert ctx.view |> has_element?("[data-test-id=timer-countdown-#{timer_id}]")
     end
 
     test "favouriting works", ctx do
@@ -145,14 +153,14 @@ defmodule GalleyWeb.RecipeLiveTest do
     end
 
     test "ability to add instructions fields dynamically", ctx do
-      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 1
+      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 2
       ## now add a instruction
       render_click(ctx.view, "add-instruction")
-      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 2
+      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 3
       # now check that the counter works by adding 8 more steps.
       ctx.view |> form("#recipe-form", %{"recipe[__add_n_steps]" => "8"}) |> render_change()
       render_click(ctx.view, "add-instruction")
-      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 10
+      assert ctx.view |> get_inputs_in_table("instructions-table", "textarea") == 11
     end
 
     test "ability to add ingredient fields dynamically", ctx do

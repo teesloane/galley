@@ -51,7 +51,7 @@
   <section class="my-8 flex flex-col md:flex-row">
     <div
       data-test-id="section-ingredients"
-      class="ingredients md:p-4 md:pl-0 pl-0 w-full md:w-2/4 lg:w-2/5"
+      class="ingredients md:p-4 md:pl-0 pl-0 w-full md:w-2/5 lg:w-4/12"
     >
       <h3 class="heading-with-lines md:mt-0 md:mb-16">
         <span>Ingredients</span>
@@ -80,7 +80,7 @@
 
     <div
       data-test-id="section-instructions"
-      class="instructions p-0 md:p-4 md:pr-0 w-full md:w-2/4 lg:w-3/5"
+      class="instructions p-0 md:p-4 md:pr-0 w-full md:w-3/5 lg:w-8/12"
     >
       <h3 class="heading-with-lines md:mt-0 md:mb-16">
         <span>Instructions</span>
@@ -90,12 +90,21 @@
           <div :class={
             "selected == '#{index}' ? 'border-blue-500 border-l-2' : 'border-transparent border-l-2'"
           }>
-            <p
-              x-on:click={"selected = '#{index}'"}
-              class="cursor-pointer break-words p-1  mb-6 pl-4"
-            >
-              <%= index + 1 %>. <%= item.instruction %>
-            </p>
+            <div class="flex mb-6">
+              <p
+                x-on:click={"selected = '#{index}'"}
+                class="flex-1 cursor-pointer break-words p-1 pl-4"
+              >
+                <%= index + 1 %>. <%= item.instruction %>
+              </p>
+              <div class="ml-6 w-16 flex justify-center">
+                <%= if item.timer.has_timer do %>
+                  <.render_timer_button socket={@socket} timer={item.timer} />
+                <% else %>
+                  <span class="text-opacity-50"></span>
+                <% end %>
+              </div>
+            </div>
           </div>
         <% end %>
       </div>

@@ -27,6 +27,32 @@ defmodule GalleyUtils do
     end
   end
 
+  def seconds_to_time_str(total_seconds) do
+    hours = (total_seconds / 3600) |> trunc
+    minutes = ((total_seconds - hours * 3600) / 60) |> trunc
+    seconds = total_seconds - hours * 3600 - minutes * 60
+
+    if hours > 0 do
+      "#{prepend_zero_to_int(hours)}:#{prepend_zero_to_int(minutes)}:#{prepend_zero_to_int(seconds)}"
+    else
+      "#{prepend_zero_to_int(minutes)}:#{prepend_zero_to_int(seconds)}"
+    end
+  end
+
+  def prepend_zero_to_int(i) do
+    if i < 10 and i > -1 do
+      "0#{to_string(i)}"
+    else
+      to_string(i)
+    end
+  end
+
+  def trx_hour_and_min_to_seconds(hours, min) do
+    s1 = hours * 60 * 60
+    s2 = min * 60
+    s1 + s2
+  end
+
   def is_dev?() do
     Application.fetch_env!(:galley, :env) == :dev
   end

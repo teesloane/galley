@@ -19,8 +19,9 @@ defmodule Galley.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Galley.PubSub},
       # Start the Endpoint (http/https)
-      GalleyWeb.Endpoint
+      GalleyWeb.Endpoint,
       # Start a worker by calling: Galley.Worker.start_link(arg)
+      Galley.TimerServer
       # {Galley.Worker, arg}
     ]
 

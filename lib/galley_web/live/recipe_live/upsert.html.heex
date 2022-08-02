@@ -1,4 +1,4 @@
-<div class="page_wrapper pb-24 lg:w-3/5">
+<div class="page_wrapper pb-24 lg:w-9/12">
   <h2 class="heading"><%= @page_title %></h2>
   <.form
     let={form_state}
@@ -150,7 +150,6 @@
         <%= inputs_for form_state, :steps, fn fp -> %>
           <tr class="mt-2 items-center">
             <td>
-              
               <%= textarea(fp, :instruction,
                 id: fp.name,
                 rows: 1,

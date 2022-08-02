@@ -24,6 +24,12 @@ defmodule Galley.RecipesFixtures do
         "instruction" => "Cut the onions",
         "temp_id" => "njwyI",
         "timer" => %{"hour" => "0", "minute" => "0"}
+      },
+
+      "1" => %{
+        "instruction" => "Fry the onions for 5 minuts",
+        "temp_id" => "njwyI",
+        "timer" => %{"hour" => "0", "minute" => "5"}
       }
     },
     "tags" => "baking, sweet",
