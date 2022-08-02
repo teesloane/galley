@@ -68,13 +68,6 @@ defmodule Galley.Recipes.Recipe do
     schema |> cast(params, [:url, :url_thumb, :is_hero, :key_s3, :is_local, :local_path])
   end
 
-  @doc """
-  we don't validate_required on :ingredient here because
-  we want it to be possible for users to submit the form with empty ingredient fields
-  (for example, when the form loads, there might be 5 empty fields to fill in
-  but they only use 3 - they shouldn't have to delete empty fields in order
-  to submit the form.)
-  """
   def ingredient_changeset(ingredient, attrs) do
     ingredient
     |> Map.put(:temp_id, ingredient.temp_id || attrs["temp_id"])
@@ -88,14 +81,14 @@ defmodule Galley.Recipes.Recipe do
     |> cast_embed(:timer)
   end
 
-  # used to validate that at least one ingredient/instruciton is filled in
-  # (since we strip all empty fields on insert.)
+  @doc """
+  Validate that a list of values have at least one change present.
+  This is used to validate that at least one ingredient/instruction has content
+  (allowing users to submit forms with unfilled out fields.)
+  """
   def validate_embed_min_one_key(changeset, field, subkey, msg) do
-    validate_change(changeset, field, fn field, value ->
-      has_min_one_ingredient =
-        Enum.any?(value, fn val ->
-          is_nil(Map.get(val.changes, subkey)) == false
-        end)
+    validate_change(changeset, field, fn field, values ->
+      has_min_one_ingredient = Enum.any?(values, fn val -> map_size(val.changes) > 0 end)
 
       if has_min_one_ingredient do
         []
