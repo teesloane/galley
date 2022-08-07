@@ -9,7 +9,7 @@
     >
       <%= @recipe.title %>
     </h1>
-    <div class="mb-4 text-neutral-700 dark:text-neutral-100">
+    <div class="mb-4 pl-2 text-neutral-700 dark:text-neutral-100 truncate">
       <%= for tag <- @recipe.tags do %>
         <span class="text-neutral-400">#<%= tag.name %></span>
       <% end %>
