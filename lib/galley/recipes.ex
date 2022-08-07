@@ -182,6 +182,7 @@ defmodule Galley.Recipes do
 
   def update_recipe(%Recipe{} = recipe, attrs \\ %{}) do
     attrs = filter_empty_ingredients_and_steps(attrs)
+
     multi_result =
       Multi.new()
       |> insert_and_get_tags(attrs)
@@ -437,29 +438,31 @@ defmodule Galley.Recipes do
         end
       end)
 
-    res =
-      image_data.s3_uploads
-      |> Task.async_stream(upload_file, max_concurrency: 1, timeout: 25000)
-      |> Stream.run()
+    if image_data do
+      res =
+        image_data.s3_uploads
+        |> Task.async_stream(upload_file, max_concurrency: 1, timeout: 25000)
+        |> Stream.run()
 
-    if res == :ok do
-      updated_recipe =
-        recipe
-        |> change_recipe(%{uploaded_images: image_data.updated_images})
-        |> Repo.update()
+      if res == :ok do
+        updated_recipe =
+          recipe
+          |> change_recipe(%{uploaded_images: image_data.updated_images})
+          |> Repo.update()
 
-      case updated_recipe do
-        {:ok, new_recipe} ->
-          # delete local images
-          Enum.each(recipe.uploaded_images, fn img ->
-            File.rm!(img.local_path)
-            File.rm!(GalleyUtils.get_thumbnail(img.local_path))
-          end)
+        case updated_recipe do
+          {:ok, new_recipe} ->
+            # delete local images
+            Enum.each(recipe.uploaded_images, fn img ->
+              File.rm!(img.local_path)
+              File.rm!(GalleyUtils.get_thumbnail(img.local_path))
+            end)
 
-          {:ok, new_recipe}
+            {:ok, new_recipe}
 
-        {:error, :recipe, changeset, _} ->
-          {:error, changeset}
+          {:error, :recipe, changeset, _} ->
+            {:error, changeset}
+        end
       end
     end
   end
@@ -517,7 +520,6 @@ defmodule Galley.Recipes do
 
   defp filter_empty_ingredients_and_steps(attrs) do
     attrs
-
     |> Map.update!("steps", fn i ->
       Enum.reject(i, fn {_, val} -> val["instruction"] === "" end)
       |> Enum.into(%{})
@@ -526,6 +528,5 @@ defmodule Galley.Recipes do
       Enum.reject(i, fn {_, val} -> val["ingredient"] === "" end)
       |> Enum.into(%{})
     end)
-
   end
 end
