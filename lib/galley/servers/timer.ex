@@ -140,6 +140,6 @@ defmodule Galley.TimerServer do
   end
 
   defp cleanup_done() do
-    Process.send_after(self(), :cleanup_done, 3 * 60 * 1000)
+    Process.send_after(self(), :cleanup_done, 10 * 60 * 1000)
   end
 end

@@ -70,6 +70,12 @@ defmodule GalleyWeb.RecipeLive.Show do
     {:noreply, socket |> align_timers_with_genserver}
   end
 
+  def handle_event("acknowledge-timer", %{"value" => timer_uuid}, socket) do
+    user = get_user_from_socket(socket)
+    Galley.TimerServer.cancel_timer({user.id, timer_uuid})
+    {:noreply, socket |> align_timers_with_genserver}
+  end
+
   def handle_event("toggle-pause-timer", %{"value" => timer_uuid}, socket) do
     user = get_user_from_socket(socket)
     Galley.TimerServer.pause_timer({user.id, timer_uuid})
