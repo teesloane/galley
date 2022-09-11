@@ -97,13 +97,11 @@
               >
                 <%= index + 1 %>. <%= item.instruction %>
               </p>
-              <div class="ml-6 w-16 flex justify-center">
                 <%= if item.timer.has_timer do %>
+              <div class="ml-6 w-16 flex justify-center">
                   <.render_timer_button socket={@socket} timer={item.timer} />
-                <% else %>
-                  <span class="text-opacity-50"></span>
-                <% end %>
               </div>
+                <% end %>
             </div>
           </div>
         <% end %>
