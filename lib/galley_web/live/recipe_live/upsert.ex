@@ -387,18 +387,15 @@ defmodule GalleyWeb.RecipeLive.Upsert do
   end
 
   defp get_current_hero_idx(uploads, recipe) do
-    up = get_uploads(uploads, recipe)
+    result =
+      get_uploads(uploads, recipe)
+      |> Enum.with_index()
+      |> Enum.filter(fn {up, _idx} -> up.is_hero end)
+      |> List.first()
 
-    if length(up) > 0 do
-      {_up, idx} =
-        get_uploads(uploads, recipe)
-        |> Enum.with_index()
-        |> Enum.filter(fn {up, _idx} -> up.is_hero end)
-        |> List.first()
-
-      idx
-    else
-      0
+    case result do
+      {_up, idx} -> idx
+      _ -> 0
     end
   end
 
